@@ -20,7 +20,6 @@
 */
 
 
-
 #ifndef _TEXTURE_
 #define _TEXTURE_
 

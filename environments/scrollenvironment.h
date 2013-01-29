@@ -20,29 +20,33 @@
 */
 
 
+#ifndef _SCROLL_ENVIRONMENT_
+#define _SCROLL_ENVIRONMENT_
 
-#ifndef _IOS_RESOURCE_SBANK_
-#define _IOS_RESOURCE_SBANK_
+#include "environment.h"
 
-#include "banks.h"
-
-@class EAGLView;
-
-class IOSResourceBank : public MacBank {
+class ScrollEnvironment : public Environment {
 public:
-	IOSResourceBank() {}
-	virtual ~IOSResourceBank() {}
+	ScrollEnvironment();
+	virtual ~ScrollEnvironment();
 	
-	EAGLView* view;
+private:
+	/*	display() gets called by the glut display function.*/
+	void display();
 	
-	virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
-	virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);
+protected:
+	void motion(int x, int y);
 	
-	virtual void initSerializableWithPath(Serializable* world, const char* path);
-	virtual void writeSerializableToPath(const Serializable* world, const char* path);
+    /*  the point where the camera is centered*/
+	Vec2 center;
 	
-	virtual void initSoundWithPath(Sound* sound, const char* path);
-	virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
+public:
+    /*	Accessor for center so subclasses can use the center*/
+	Vec2 getCenter() const;
+	
+	/*	Accessor for center so anybody can set the center*/
+	void setCenter(double x, double y);
 };
 
 #endif
+

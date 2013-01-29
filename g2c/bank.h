@@ -20,7 +20,6 @@
 */
 
 
-
 #ifndef _BANK_
 #define _BANK_
 

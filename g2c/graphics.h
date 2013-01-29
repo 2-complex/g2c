@@ -10,7 +10,7 @@
 
 #include "opengl.h"
 
-#include "banks.h"
+#include "bank.h"
 #include "util.h"
 #include "lin/lin.h"
 #include "element.h"

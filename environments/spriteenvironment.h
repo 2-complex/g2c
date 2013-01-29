@@ -20,29 +20,44 @@
 */
 
 
+#ifndef _SPRITE_ENVIRONMENT_
+#define _SPRITE_ENVIRONMENT_
 
-#if TARGET_OS_IPHONE
-	#include <OpenGLES/ES1/gl.h>
-	#include <OpenGLES/ES1/glext.h>
-	#include <OpenGLES/ES2/gl.h>
-	#include <OpenGLES/ES2/glext.h>
+#include "sprites.h"
+#include "scrollenvironment.h"
+
+#include <string>
+
+using namespace sprite;
+
+class SpriteEnvironment : public ScrollEnvironment {
+public:
+	SpriteEnvironment();
+	virtual ~SpriteEnvironment();
+	
+	sprite::World* world;
+	sprite::Renderer* renderer;
+	
+	std::string filename;
+	bool forwardKeyboard;
+	
+	void initWithPath(const char* filename);
+	
+	virtual void enables();
+	virtual void draw() const;
+	
+	virtual bool mouseDown(const Vec2& C);
+	virtual void mouseDragged(const Vec2& C);
+	virtual void mouseUp(const Vec2& C);
+	
+	virtual void keyboard(unsigned char inkey);
+	
+private:
+	int sound_index;
+	sprite::World* defaultWorld;
+	sprite::Actor* current;
+	Vec2 lastLoc;
+};
+
 #endif
-
-#if ANDROID
-	#include <GLES/gl.h>
-	#include <GLES/glext.h>
-	#include <GLES2/gl2.h>
-	#include <GLES2/gl2ext.h>
-#endif
-
-#if GLUT
-	#ifdef __APPLE_CC__
-		#include <glut/glut.h>
-	#else
-		#include <GL/glew.h>
-		#include <GL/freeglut.h>
-		#include <GL/freeglut_ext.h>
-	#endif
-#endif
-
 

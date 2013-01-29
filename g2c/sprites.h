@@ -37,7 +37,7 @@
 #include "listener.h"
 #include "parse.h"
 #include "serializable.h"
-#include "banks.h"
+#include "bank.h"
 #include "texture.h"
 #include "renderer.h"
 
@@ -280,11 +280,10 @@ namespace sprite {
 		Sprite();
 		virtual ~Sprite();
 		
-		bool center;
-		
 		int numberOfColumns;
 		int numberOfRows;
 		
+		bool center;
 		bool flipRows;
 		
 		Polygon polygon;

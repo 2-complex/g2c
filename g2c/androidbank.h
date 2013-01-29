@@ -21,25 +21,21 @@
 
 
 
-#ifndef _MAC_BANK_
-#define _MAC_BANK_
+#ifndef _ANDROID_BANK_
+#define _ANDROID_BANK_
 
-#include "serializable.h"
-#if !defined(STUB_SOUND)
-#include "sound.h"
-#endif
-#include "texture.h"
+#include "bank.h"
 
-#include <QuartzCore/QuartzCore.h>
+#include <jni.h>
 
-#include <queue>
-
-class MacBank : public Bank {
+class AndroidBank : public Bank {
 public:
-	MacBank() {}
-	virtual ~MacBank() {}
+	AndroidBank() : env(NULL), loader(NULL) {}
+	virtual ~AndroidBank() {}
 	
 	std::string base_path;
+	
+	void setEnvAndLoader(JNIEnv* env, jobject loader);
 	
 	virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
 	virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);
@@ -47,28 +43,22 @@ public:
 	virtual void initSerializableWithPath(Serializable* s, const char* path);
 	virtual void writeSerializableToPath(const Serializable* s, const char* path);
 	virtual void initTextureWithPath(Texture2D* texture, const char* path);
+	virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
 
 #if !defined(STUB_SOUND)
 	virtual void initSoundWithPath(Sound* sound, const char* path);
-#endif	
-
 	void* getOpenALAudioData(CFURLRef inFileURL,
 					 ALsizei* outDataSize,
 					 ALenum* outDataFormat,
 					 ALsizei* outSampleRate) const;
-	
+#endif
+
 protected:
 	std::string directory;
 	
-	void initTextureWithCGImage(Texture2D* texture, CGImageRef image);
-	void initBitmapWithCGImage(Bitmap* bitmap, CGImageRef image);
-};
-
-class MacFileSystemBank : public MacBank {
-public:
-	MacFileSystemBank() {}
-	virtual ~MacFileSystemBank() {}
-	virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
+	JNIEnv* env;
+	jobject loader;
 };
 
 #endif
+
