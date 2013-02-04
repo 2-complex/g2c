@@ -29,8 +29,24 @@
 ScrollEnvironment::ScrollEnvironment() {}
 ScrollEnvironment::~ScrollEnvironment() {}
 
-void ScrollEnvironment::display()
+void ScrollEnvironment::reshape(int w, int h)
 {
+	Environment::reshape(w, h);
+	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0.0, w, 0.0, h);
+	glTranslatef(center.x, center.y, 0.0);
+}
+
+void ScrollEnvironment::display()
+{	
+	if(!initted)
+	{
+		init();
+		initted = true;
+	}
+	
 	if(!valid || animate)
 	{
 		compute();
@@ -39,11 +55,7 @@ void ScrollEnvironment::display()
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	gluOrtho2D(0.0, windowWidth, 0.0, windowHeight);
-	glTranslatef(center.x, center.y, 0.0);
+	
     
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -53,9 +65,6 @@ void ScrollEnvironment::display()
     glPushMatrix();
     glLoadIdentity();
     draw();
-    glPopMatrix();
-    
-    glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     
     glutSwapBuffers();
@@ -73,16 +82,12 @@ void ScrollEnvironment::motion(int x, int y)
 		last = c;
 	}
 	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0.0, windowWidth, 0.0, windowHeight);
+	glTranslatef(center.x, center.y, 0.0);
+	
 	mouseDragged(c);
 }
 
-Vec2 ScrollEnvironment::getCenter() const
-{
-	return center;
-}
-
-void ScrollEnvironment::setCenter(double x, double y)
-{
-	center.set(x,y);
-}
 

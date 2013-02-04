@@ -26,6 +26,8 @@
 #include "sprites.h"
 #include "scrollenvironment.h"
 
+#include "macbank.h"
+
 #include <string>
 
 using namespace sprite;
@@ -35,15 +37,18 @@ public:
 	SpriteEnvironment();
 	virtual ~SpriteEnvironment();
 	
-	sprite::World* world;
-	sprite::Renderer* renderer;
-	
-	std::string filename;
 	bool forwardKeyboard;
 	
 	void initWithPath(const char* filename);
+
+protected:
+	sprite::World world;
+	mutable sprite::RendererGL1 renderer;
+	MacFileSystemBank bank;
 	
 	virtual void enables();
+	
+	virtual void reshape(int x, int y);
 	virtual void draw() const;
 	
 	virtual bool mouseDown(const Vec2& C);
@@ -53,8 +58,9 @@ public:
 	virtual void keyboard(unsigned char inkey);
 	
 private:
+	std::string filename;
+	
 	int sound_index;
-	sprite::World* defaultWorld;
 	sprite::Actor* current;
 	Vec2 lastLoc;
 };

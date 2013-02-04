@@ -31,21 +31,14 @@ public:
 	virtual ~ScrollEnvironment();
 	
 private:
-	/*	display() gets called by the glut display function.*/
 	void display();
 	
 protected:
+	void reshape(int w, int h);
 	void motion(int x, int y);
 	
     /*  the point where the camera is centered*/
 	Vec2 center;
-	
-public:
-    /*	Accessor for center so subclasses can use the center*/
-	Vec2 getCenter() const;
-	
-	/*	Accessor for center so anybody can set the center*/
-	void setCenter(double x, double y);
 };
 
 #endif

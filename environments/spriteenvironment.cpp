@@ -30,19 +30,13 @@ using namespace sprite;
 
 SpriteEnvironment::SpriteEnvironment() : sound_index(0), forwardKeyboard(false)
 {
-	world = defaultWorld = new sprite::World;
-	world->bank = new MacFileSystemBank;
-	renderer = new RendererGL1;
-	Sprite::renderer = renderer;
+	world.bank = &bank;
+	Sprite::renderer = &renderer;
 }
 
 SpriteEnvironment::~SpriteEnvironment()
 {
-	delete defaultWorld;
-	delete world->bank;
-	delete renderer;
 }
-
 
 void SpriteEnvironment::enables()
 {
@@ -65,19 +59,24 @@ void SpriteEnvironment::enables()
 	
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	
-	renderer->init();
+	renderer.init();
 }
 
 void SpriteEnvironment::initWithPath(const char* filename)
 {
-	world->bank->initSerializableWithPath(world, filename);
+	bank.initSerializableWithPath(&world, filename);
 	this->filename = filename;
+}
+
+void SpriteEnvironment::reshape(int w, int h)
+{
+	ScrollEnvironment::reshape(w, h);
+	renderer.projection = getProjection();
 }
 
 void SpriteEnvironment::draw() const
 {
-	renderer->projection = getProjection();
-	world->draw();
+	world.draw();
 	
 	if(Sprite::drawLines)
 	{
@@ -101,9 +100,9 @@ void SpriteEnvironment::draw() const
 
 bool SpriteEnvironment::mouseDown(const Vec2& C)
 {
-	Vec2 localC = C - getCenter();
+	Vec2 localC = C - center;
 	lastLoc = localC;
-	current = world->actorInClick(localC);
+	current = world.actorInClick(localC);
 	
 	if( current )
 	{
@@ -115,7 +114,7 @@ bool SpriteEnvironment::mouseDown(const Vec2& C)
 
 void SpriteEnvironment::mouseDragged(const Vec2& C)
 {
-	Vec2 localC = C - getCenter();
+	Vec2 localC = C - center;
 	if( current )
 	{
 		Mat4 m = current->getWorldMatrix();
@@ -138,7 +137,7 @@ void SpriteEnvironment::keyboard(unsigned char inkey)
 {
 	if( forwardKeyboard )
 	{
-		world->keyboard(inkey);
+		world.keyboard(inkey);
 		return;
 	}
 	
@@ -150,7 +149,7 @@ void SpriteEnvironment::keyboard(unsigned char inkey)
 			if( fp )
 			{
 				printf( "writing to file: %s\n", filename.c_str() );
-				string s = world->serialize("");
+				string s = world.serialize("");
 				fwrite(s.c_str(), 1, s.size(), fp);
 				fclose(fp);
 			}
@@ -161,7 +160,7 @@ void SpriteEnvironment::keyboard(unsigned char inkey)
 		
 		case 'p':
 		{
-			string s = world->serialize("");
+			string s = world.serialize("");
 			printf("%s\n", s.c_str());
 		}
 		break;
@@ -172,21 +171,21 @@ void SpriteEnvironment::keyboard(unsigned char inkey)
 		break;
 		
 		case 'c':
-			getCenter().display();
+			center.display();
 		break;
 		
 		case ' ':
 		{
 			int i = 0;
-			int n = world->sounds.size();
-			for(vector<Sound*>::iterator itr = world->sounds.begin();
-				itr!=world->sounds.end();
+			int n = world.sounds.size();
+			for(vector<Sound*>::iterator itr = world.sounds.begin();
+				itr!=world.sounds.end();
 				itr++)
 			{
 				if( i == sound_index )
 				{
 					printf( "playing sound %s\n", (*itr)->name.c_str() );
-					world->playSound((*itr)->name);
+					world.playSound((*itr)->name);
 				}
 				i++;
 			}

@@ -36,6 +36,7 @@ Environment* gE = NULL;
 Environment::Environment() : animate(false),
 							 dragging(false),
 							 valid(false),
+							 initted(false),
 							 glutInitted(false) {}
 
 Environment::~Environment() {}
@@ -71,6 +72,12 @@ void Environment::invalidate() const
 
 void Environment::display()
 {
+	if(!initted)
+	{
+		init();
+		initted = true;
+	}
+	
 	if(!valid || animate)
 	{
         compute();
@@ -99,12 +106,6 @@ void Environment::display()
     if(animate)
     	glutPostRedisplay();
 }
-
-
-void Environment::draw() const
-{
-}
-
 
 void Environment::reshape(int w, int h)
 {
@@ -152,9 +153,9 @@ void freshape(int w, int h) { gE->reshape(w,h); }
 void fidle() { gE->idle(); }
 
 
-void Environment::initGlut(const char* windowName,
-                           int windowSizeX,
-                           int windowSizeY)
+void Environment::initWindow(const char* name,
+                             int width,
+                             int height)
 {
 	int argc = 0;
 	char** args = NULL;
@@ -164,17 +165,19 @@ void Environment::initGlut(const char* windowName,
     glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
     
     // bring up a window called windowName
-    glutInitWindowSize( windowSizeX, windowSizeY );
-    glutCreateWindow( windowName );
+    glutInitWindowSize( width, height );
+    glutCreateWindow( name );
     
 	// call the virtual function in case somebody wants more enables
 	enables();
+	
+	glutInitted = true;
 }
 
 
 void Environment::enables()
 {
-	glClearColor(0, 0, 0, 1);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 }
@@ -183,7 +186,11 @@ void Environment::enables()
 void Environment::mainLoop()
 {
 	if( !glutInitted )
-		initGlut();
+	{
+		initWindow();
+	}
+	
+	glutInitted = true;
 	
 	gE = this;
 	setGlobalListener(this);
@@ -199,6 +206,9 @@ void Environment::mainLoop()
 }
 
 /* Empty virtual funcitons. */
+void Environment::init() {}
 void Environment::compute() {}
+void Environment::draw() const {}
 void Environment::idle() {}
+
 

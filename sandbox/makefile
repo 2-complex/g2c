@@ -2,13 +2,16 @@
 OPTIMIZATION = -O0
 DEBUG = -g3
 ODEBUG = $(DEBUG)
-SOURCE_DIR = ../source
+SOURCE_DIR = ../g2c
 ENVIRONMENTS_DIR = ../environments
 OBJ_DIR = obj
 
 CURRENT = test
 
 ifneq ($(MAKECMDGOALS), clean)
+
+CURRENT = $(MAKECMDGOALS)
+
 current: $(CURRENT)
 
 run: current

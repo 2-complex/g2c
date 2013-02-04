@@ -46,6 +46,10 @@ protected:
 	    the scene needs to recompute.*/
 	mutable bool valid;
 	
+	/*	initted says whether the init() function has been called.  Inside display(),
+		there is a check to call init once, then */
+	mutable bool initted;
+	
 	/*	dragging is a variable for use by the click-drag mechanism for moving the
 	    camera.  When the flag gets set in button, the subsequent mouse-drag and
 	    mouse-up events are interpreted to pan the camera.*/
@@ -55,10 +59,13 @@ protected:
 		mouse event*/
 	Vec2 last;
 	
+	/*	flip reports the screen location of the point given coordinates of the
+	    form that gl button etc reports them.*/
+	Vec2 flip(const Vec2& v) const;
 	
 	/*	display gets called by the glut display function.  Think twice before
-		overriding if draw can do the job.  display calls compute, so it is
-		not const.*/
+		overriding if draw() can do the job.  display calls compute() and init(),
+		so it is not const.*/
 	virtual void display();
 	
 	/*	button gets called by the like-named glut function.
@@ -77,9 +84,9 @@ protected:
 	/*	idle gets called by the glut idle function.*/
 	virtual void idle();
 	
-	/*	flip reports the screen location of the point given coordinates of the
-	    form that gl button etc reports them.*/
-	Vec2 flip(const Vec2& v) const;
+	/*	init() is called by display() when the initted flag is set to false.
+		then initted gets set true.*/
+	virtual void init();
 	
 	/*	compute() is called by display() when the valid flag is set false.
 	    Override compute() to do work to compute what to draw.  Call
@@ -94,8 +101,8 @@ protected:
 	    (not redraw, recompute)*/
 	void invalidate() const;
     
-    /*  gets called by initGlut.  Override to turn things on and off, or set the
-        clear-color blending or whathaveyou*/
+    /*  gets called by initWindow.  Override to turn things on and off, or set the
+        clear-color blending or whathaveyou.*/
     virtual void enables();
     
 public:
@@ -106,11 +113,11 @@ public:
     Mat4 getModelView() const;
     Mat4 getProjection() const;
     
-    /*  initGlut Initilaizes glut.  Sets up the gl context, sets flags etc.
+    /*  initWindow Initilaizes glut.  Sets up the gl context, sets flags etc.
         Must be called before the mainLoop.*/
-    void initGlut(const char* windowName="",
-                  int windowSizeX=640,
-                  int windowSizeY=480);
+    void initWindow(const char* windowName="Environment",
+                  	int windowSizeX=640,
+                  	int windowSizeY=480);
     
     /*  Call this to start the glut machine.*/
     void mainLoop();
