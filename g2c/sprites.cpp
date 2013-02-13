@@ -158,7 +158,7 @@ double Font::charWidth(char c) const
 	int n = widths.size();
 	if( index < 0 || index >= n )
 	{
-		printf( "charWidth: Attempt to access off "
+		error( "charWidth: Attempt to access off "
 				"the edge of widths array: %d\n", c );
 		exit(0);
 	}
@@ -465,7 +465,7 @@ Node* Node::findChild(const string& name) const
 		if( (*itr)->name == name )
 			return *itr;
 	}
-	printf( "WARNING: child %s of node %s not found.\n", name.c_str(), this->name.c_str() );
+	log( "WARNING: child %s of node %s not found.\n", name.c_str(), this->name.c_str() );
 	return NULL;
 }
 
@@ -909,7 +909,7 @@ void Polygon::print() const {
 	for( const_iterator itr=begin(); itr!=end(); itr++ )
 	{
 		itr->print();
-		printf( ", " );
+		log( ", " );
 	}
 }
 
@@ -924,7 +924,7 @@ void Polygon::draw() const
 		Sprite::renderer->drawMesh(mesh, this);
 	else
 	{
-		printf( "Attempt to draw polygon with no renderer.\n" );
+		error( "Attempt to draw polygon with no renderer.\n" );
 		exit(0);
 	}
 }
@@ -987,7 +987,7 @@ void Polygon::update() const
 		break;
 		
 		default:
-			printf( "drawtype unknown: %d\n", drawType );
+			error( "drawtype unknown: %d\n", drawType );
 			exit(0);
 		break;
 	}
@@ -1015,7 +1015,7 @@ void Polygon::update() const
 		break;
 		
 		default:
-			printf( "drawtype unknown: %d\n", drawType );
+			error( "drawtype unknown: %d\n", drawType );
 			exit(0);
 		break;
 	}
@@ -1332,7 +1332,7 @@ void Button::draw() const
 {
 	if( !sprite )
 	{
-		printf( "Button %s drawing with null sprite.\n", name.c_str() );
+		error( "Button %s drawing with null sprite.\n", name.c_str() );
 		exit(0);
 	}
 	
@@ -1391,7 +1391,7 @@ void Button::mouseUp(const Vec2& C)
 		if( handler )
 			handler->click(this);
 		else
-			printf( "WARNING: button %s with no handler.\n", name.c_str() );
+			log( "WARNING: button %s with no handler.\n", name.c_str() );
 	}
 	
 	if( depressed )
@@ -1464,8 +1464,8 @@ void String::draw() const
 	}
 	else
 	{
-		printf( "Attempt to draw string with no font.\n" );
-		printf( "string = %s fontName = %s\n", s.c_str(), fontName.c_str() );
+		error( "Attempt to draw string with no font.\n" );
+		error( "string = %s fontName = %s\n", s.c_str(), fontName.c_str() );
 		exit(0);
 	}
 }
@@ -1525,7 +1525,7 @@ Polygon String::collisionPolygon() const
 	}
 	else
 	{
-		printf( "Attempt to compute string rectangle with no font.\n" );
+		error( "Attempt to compute string rectangle with no font.\n" );
 		exit(0);
 	}
 	
@@ -1602,7 +1602,7 @@ void World::draw() const
 {
 	if( !Sprite::renderer )
 	{
-		printf( "Attempt to draw with no renderer world: %s\n", name.c_str() );
+		error( "Attempt to draw with no renderer world: %s\n", name.c_str() );
 		exit(0);
 	}
 	worldMatrix = matrix;
@@ -1614,7 +1614,7 @@ void World::resize(int width, int height)
 {
 	if( !Sprite::renderer )
 	{
-		printf( "Attempt to resize with no renderer world: %s\n", name.c_str() );
+		error( "Attempt to resize with no renderer world: %s\n", name.c_str() );
 		exit(0);
 	}
 	
@@ -1681,7 +1681,7 @@ void World::initWithPath(const char* path)
 		bank->initSerializableWithPath(this, path);
 	else
 	{
-		printf( "World initiailzied with no bank.\n" );
+		error( "World initiailzied with no bank.\n" );
 		exit(0);
 	}
 }
@@ -1710,7 +1710,7 @@ void World::initWithParseNode(const parse::Node* n)
 				itr->first->sprite = mitr->second;
 			else
 			{
-				printf( "Actor %s requested sprite not found: %s\n",
+				error( "Actor %s requested sprite not found: %s\n",
 						itr->first->name.c_str(), spriteName.c_str() );
 				exit(0);
 			}
@@ -1789,7 +1789,7 @@ void World::handleChild(const parse::Node* n)
 					sprite = new Font();
 				else
 				{
-					printf("Object in sprite list must be type Sprite or Font.\n");
+					error("Object in sprite list must be type Sprite or Font.\n");
 					exit(0);
 				}
 				
@@ -1818,7 +1818,7 @@ void World::handleChild(const parse::Node* n)
 					sound = new Sound();
 				else
 				{
-					printf("Object in sound list must be type Sound.\n");
+					error("Object in sound list must be type Sound.\n");
 					exit(0);
 				}
 				
@@ -2009,7 +2009,7 @@ void Animator::remove(Animation* a)
 			
 			if(eventStoppedCounter < 0)
 			{
-				printf( "Animator event stopped counter dropped below 0.\n" );	
+				error( "Animator event stopped counter dropped below 0.\n" );	
 				exit(0);
 			}
 		}
@@ -2141,13 +2141,13 @@ void Animation::end()
 
 void Animation::print() const
 {
-	printf( "start: %f duration: %f stopsEvents: %d", start, duration, stopsEvents );
+	log( "start: %f duration: %f stopsEvents: %d", start, duration, stopsEvents );
 }
 
 void Animation::display() const
 {
 	print();
-	printf( "\n" );
+	log( "\n" );
 }
 
 }

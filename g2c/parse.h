@@ -23,10 +23,10 @@
 #ifndef _PARSE_
 #define _PARSE_
 
+#include "log.h"
+
 #include <vector>
 #include <string>
-
-#include <stdio.h>
 
 
 namespace parse {

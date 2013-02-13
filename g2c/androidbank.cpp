@@ -23,7 +23,6 @@
 #include "androidbank.h"
 #include "util.h"
 
-#include <android/log.h>
 #include <android/bitmap.h>
 
 #include <assert.h>
@@ -31,9 +30,6 @@
 
 using namespace std;
 
-#define  LOG_TAG    "android-bank"
-#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
-#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
 namespace g2c {
 
@@ -113,19 +109,19 @@ void AndroidBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
 	
     if( (ret = AndroidBitmap_getInfo(env, java_bitmap, &info)) < 0 )
     {
-        LOGE("AndroidBitmap_getInfo failed. error=%d", ret);
+        error("AndroidBitmap_getInfo failed. error=%d", ret);
         return;
     }
 	
     if( info.format != ANDROID_BITMAP_FORMAT_RGBA_8888 )
     {
-        LOGE("Bitmap format is not ANDROID_BITMAP_FORMAT_RGBA_8888 is %d !", info.format);
+        error("Bitmap format is not ANDROID_BITMAP_FORMAT_RGBA_8888 is %d !", info.format);
         return;
     }
 	
     if( (ret = AndroidBitmap_lockPixels(env, java_bitmap, &pixels)) < 0 )
     {
-        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+        error("AndroidBitmap_lockPixels() failed ! error=%d", ret);
         return;
     }
 	
@@ -137,7 +133,7 @@ void AndroidBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
 	
 	if( (ret = AndroidBitmap_unlockPixels(env, java_bitmap)) < 0 )
     {
-        LOGE("AndroidBitmap_unlockPixels() failed ! error=%d", ret);
+        error("AndroidBitmap_unlockPixels() failed ! error=%d", ret);
         return;
     }
 	

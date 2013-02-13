@@ -54,7 +54,7 @@ void Renderer::drawMesh(const Mesh* mesh, const Node* node) const
 	
 	if( projection == Mat4() )
 	{
-		printf( "WARNING: using renderer with projection = identity matrix.\n" );
+		log( "WARNING: using renderer with projection = identity matrix.\n" );
 	}
 	
 	drawMesh(mesh, matrix, Mat3(), color, texture);
@@ -232,7 +232,7 @@ void RendererGL2::init()
 	{
 		GLchar *log = (GLchar *)malloc(logLength);
 		glGetShaderInfoLog(vertexShader, logLength, &logLength, log);
-		printf("Shader compile log:\n%s", log);
+		log("Shader compile log:\n%s", log);
 		free(log);
 	}
 	
@@ -254,7 +254,7 @@ void RendererGL2::init()
 	{
 		GLchar *log = (GLchar *)malloc(logLength);
 		glGetShaderInfoLog(fragmentShader, logLength, &logLength, log);
-		printf("Shader compile log:\n%s", log);
+		log("Shader compile log:\n%s", log);
 		free(log);
 	}
 	
@@ -275,7 +275,7 @@ void RendererGL2::init()
 	glGetProgramiv(program, GL_LINK_STATUS, &status);
 	if( status == 0 )
 	{
-		printf( "Didn't link\n" );
+		error( "Shader program did not link.\n" );
 		exit(0);
 	}
 	
@@ -300,7 +300,7 @@ void RendererGL2::drawMesh(const Mesh* mesh,
 {
 	if( !initialized )
 	{
-		printf( "RendererGL2 draw called before initialization\n" );
+		error( "RendererGL2 draw called before initialization.\n" );
 		exit(0);
 	}
 	

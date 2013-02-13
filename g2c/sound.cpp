@@ -44,8 +44,8 @@ Context::Context() : device(NULL), context(NULL)
 	ALenum  error = AL_NO_ERROR;
 	if((error = alGetError()) != AL_NO_ERROR)
 	{
-		printf("OpenAL error in context initialization: 0x%x\n", error);
-		exit(1);
+		error("OpenAL error in context initialization: 0x%x\n", error);
+		exit(0);
 	}
 }
 

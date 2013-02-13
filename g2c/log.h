@@ -26,6 +26,7 @@
 	#define error(...)  __android_log_print(ANDROID_LOG_ERROR, "g2c", __VA_ARGS__)
 	#define
 #else
+	#include <stdio.h>
 	#define log(...) printf(__VA_ARGS__)
 	#define error(...) fprintf(stderr,__VA_ARGS__)
 #endif

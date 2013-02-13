@@ -20,7 +20,7 @@
 */
 
 
-#if TARGET_OS_IPHONE
+#if IOS
 	#include <OpenGLES/ES1/gl.h>
 	#include <OpenGLES/ES1/glext.h>
 	#include <OpenGLES/ES2/gl.h>

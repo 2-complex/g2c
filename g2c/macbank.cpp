@@ -23,6 +23,8 @@
 #include "macbank.h"
 #include "util.h"
 
+#include "log.h"
+
 using namespace std;
 
 
@@ -43,7 +45,7 @@ void MacBank::initSerializableWithPath(Serializable* s, const char* path)
 	FILE* fp = fopen(fullpath.c_str(), "r");
 	if( !fp )
 	{
-		printf( "serializable file not found: %s\n", fullpath.c_str() );
+		error( "serializable file not found: %s\n", fullpath.c_str() );
 		exit(0);
 	}
 	
@@ -70,7 +72,7 @@ void MacBank::writeSerializableToPath(const Serializable* s, const char* path)
 	FILE* fp = fopen(path, "w");
 	if( !fp )
 	{
-		printf( "serializable file failed to open for writing: %s\n", path );
+		error( "serializable file failed to open for writing: %s\n", path );
 		exit(0);
 	}
 	string data = s->serialize();
@@ -84,7 +86,7 @@ void MacBank::initTextureWithCGImage(Texture2D* texture, CGImageRef image)
 	int height = CGImageGetHeight(image);
 	
 	if(((width-1)&width) != 0 || ((height-1)&height) != 0)
-		printf( "WARNING: texture dimensions not a power of two: %s.\n",
+		log( "WARNING: texture dimensions not a power of two: %s.\n",
 				texture->name.c_str() );
 	
 	if(image) {
@@ -142,7 +144,7 @@ void MacFileSystemBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
 	CGImageSourceRef image_source = CGImageSourceCreateWithURL(fileURL, NULL);
 	if(!image_source || CGImageSourceGetCount(image_source) <= 0)
 	{
-		printf( "Image source failed for %s\n", path );
+		error( "Image source failed for %s\n", path );
 		
 		// default 64x64 white
 		int w = 64, h = 64;
@@ -191,8 +193,8 @@ void MacBank::initSoundWithPath(Sound* sound, const char* path)
 	
 	if((error = alGetError()) != AL_NO_ERROR)
 	{
-		printf("OpenAL error = 0x%x loading audio file: %s\n", error, fullpath.c_str());
-		exit(1);
+		error("OpenAL error = 0x%x loading audio file: %s\n", error, fullpath.c_str());
+		exit(0);
 	}
 	
 	// Attach Audio Data to OpenAL Buffer
@@ -218,7 +220,7 @@ void* MacBank::getOpenALAudioData(CFURLRef inFileURL,
 	err = ExtAudioFileOpenURL(inFileURL, &extRef);
 	if(err)
 	{
-		printf("getOpenALAudioData: ExtAudioFileOpenURL FAILED, Error = %d\n", (int)err);
+		error("getOpenALAudioData: ExtAudioFileOpenURL FAILED, Error = %d\n", (int)err);
 		exit(0);
 	}
 	
@@ -229,14 +231,14 @@ void* MacBank::getOpenALAudioData(CFURLRef inFileURL,
 								  &theFileFormat);
 	if(err)
 	{
-		printf("getOpenALAudioData: ExtAudioFileGetProperty"
-			   "(kExtAudioFileProperty_FileDataFormat) FAILED, Error = %d\n", (int)err);
+		error("getOpenALAudioData: ExtAudioFileGetProperty"
+			  "(kExtAudioFileProperty_FileDataFormat) FAILED, Error = %d\n", (int)err);
 		exit(0);
 	}
 	if (theFileFormat.mChannelsPerFrame > 2)
 	{
-		printf("getOpenALAudioData - Unsupported Format, channel count = %d.\n",
-			   (int)(theFileFormat.mChannelsPerFrame));
+		errpr("getOpenALAudioData - Unsupported Format, channel count = %d.\n",
+			  (int)(theFileFormat.mChannelsPerFrame));
 		exit(0);
 	}
 	
@@ -260,7 +262,7 @@ void* MacBank::getOpenALAudioData(CFURLRef inFileURL,
 								  &theOutputFormat);
 	if(err)
 	{
-		printf("getOpenALAudioData: ExtAudioFileSetProperty"
+		error("getOpenALAudioData: ExtAudioFileSetProperty"
 			   "(kExtAudioFileProperty_ClientDataFormat) FAILED, Error = %d\n", (int)err);
 		exit(0);
 	}
@@ -273,8 +275,8 @@ void* MacBank::getOpenALAudioData(CFURLRef inFileURL,
 								  &theFileLengthInFrames);
 	if(err)
 	{
-		printf("getOpenALAudioData: ExtAudioFileGetProperty"
-			   "(kExtAudioFileProperty_FileLengthFrames) FAILED, Error = %d\n", (int)err);
+		error("getOpenALAudioData: ExtAudioFileGetProperty"
+			  "(kExtAudioFileProperty_FileLengthFrames) FAILED, Error = %d\n", (int)err);
 		exit(0);
 	}
 	
@@ -305,7 +307,7 @@ void* MacBank::getOpenALAudioData(CFURLRef inFileURL,
 			// failure
 			free (theData);
 			theData = NULL; // make sure to return NULL
-			printf("getOpenALAudioData: ExtAudioFileRead FAILED, Error = %d\n", (int)err);
+			error("getOpenALAudioData: ExtAudioFileRead FAILED, Error = %d\n", (int)err);
 			exit(0);
 		}	
 	}
@@ -314,3 +316,4 @@ void* MacBank::getOpenALAudioData(CFURLRef inFileURL,
 	if (extRef) ExtAudioFileDispose(extRef);
 	return theData;
 }
+

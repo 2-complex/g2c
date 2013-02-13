@@ -24,6 +24,8 @@
 #include "serializable.h"
 #include "util.h"
 
+#include "log.h"
+
 #include <vector>
 
 using namespace std;
@@ -393,5 +395,5 @@ void StringProperty::initWithParseNode(const parse::Node* n)
 
 void Serializable::display() const
 {
-	printf( "%s\n", serialize().c_str() );
+	log( "%s\n", serialize().c_str() );
 }

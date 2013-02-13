@@ -62,7 +62,7 @@ bool AsynchronousBank::step()
 {
 	if(!bank)
 	{
-		printf( "AsynchronousBank used with no bank set.\n" );
+		error( "AsynchronousBank used with no bank set.\n" );
 		exit(0);
 	}
 	

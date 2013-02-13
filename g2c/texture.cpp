@@ -98,7 +98,6 @@ void Bitmap::swizzleRGB()
 
 void Bitmap::mimmic(const Bitmap& b)
 {
-	printf( "mimmic = %d %d \n", b.width, b.height );
 	set(b.data, b.width, b.height, b.bitsPerPixel);
 }
 
@@ -249,8 +248,8 @@ void Texture2D::initWithImageData(const GLubyte* inData,
 	
 	if( width == 0 || height == 0 )
 	{
-		printf( "Attempt to initialize texture with zero height or width.\n" );
-		printf( "texture: %s\n", name.c_str() );
+		error( "Attempt to initialize texture with zero height or width.\n" );
+		error( "texture: %s\n", name.c_str() );
 		exit(0);
 	}
 	
@@ -355,8 +354,8 @@ void CubeMap::initWithImageData(const GLubyte* inDataPositiveX,
 	
 	if( width == 0 )
 	{
-		printf( "Attempt to initialize cubemap with zero height or width.\n" );
-		printf( "cubemap: %s\n", name.c_str() );
+		error( "Attempt to initialize cubemap with zero height or width.\n" );
+		error( "cubemap: %s\n", name.c_str() );
 		exit(0);
 	}
 	
@@ -393,7 +392,7 @@ void CubeMap::initWithBitmaps(const Bitmap* bitmapPositiveX,
 		w != bitmapPositiveZ->getWidth() || w != bitmapPositiveZ->getHeight() ||
 		w != bitmapNegativeZ->getWidth() || w != bitmapNegativeZ->getHeight())
 	{
-		printf( "Attempt to make cube map from images which are not all the same square size.\n" );
+		error( "Attempt to make cube map from images which are not all the same square size.\n" );
 		exit(0);
 	}
 	
@@ -405,7 +404,7 @@ void CubeMap::initWithBitmaps(const Bitmap* bitmapPositiveX,
 		bpp != bitmapPositiveZ->getBitsPerPixel() ||
 		bpp != bitmapNegativeZ->getBitsPerPixel())
 	{
-		printf( "Attempt to make cube map from images which are not all the same bit-depth.\n" );
+		error( "Attempt to make cube map from images which are not all the same bit-depth.\n" );
 		exit(0);
 	}
 	
