@@ -27,7 +27,7 @@
 
 using namespace std;
 
-namespace sprite {
+namespace g2c {
 
 bool Sprite::drawLines = false;
 Renderer* Sprite::renderer = NULL;

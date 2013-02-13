@@ -26,13 +26,21 @@
 
 #include "lin/lin.h"
 
+#include <set>
+
+namespace g2c {
+
 class Listener;
 
 class Listener {
     friend void fbutton( int b, int state, int x, int y );
     friend void fkeyboard(unsigned char inkey, int x, int y);
+    friend void fkeyboardUp(unsigned char inkey, int x, int y);
 	friend void fspecial(int inkey, int x, int y);
     friend void fmotion(int x, int y);
+    
+private:
+    std::set<unsigned char> keys;
     
 public:
 	Listener();
@@ -47,6 +55,14 @@ public:
 	/*	keyboard gets called directly by the glut function keyboard.
 	    It should be overridden to handle key events.*/
 	virtual void keyboard(unsigned char inkey);
+	
+	/*	keyDown gets called when a key is first pressed.
+	    Override to handle key events.*/
+	virtual void keyDown(unsigned char inkey);
+	
+	/*	keyUp gets called when a key is released.
+	    Override to handle key events.*/
+	virtual void keyUp(unsigned char inkey);
 
 	/*	special gets called directly by the glut function special.
 	    It should be overridden to handle special keys such as
@@ -72,5 +88,7 @@ public:
 
 void setGlobalListener(Listener* listener);
 void initListenerGlut();
+
+} // end namespace
 
 #endif

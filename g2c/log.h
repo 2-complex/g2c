@@ -20,50 +20,13 @@
 */
 
 
-#ifndef _SPRITE_ENVIRONMENT_
-#define _SPRITE_ENVIRONMENT_
-
-#include "sprites.h"
-#include "scrollenvironment.h"
-
-#include "macbank.h"
-
-#include <string>
-
-using namespace g2c;
-
-class SpriteEnvironment : public ScrollEnvironment {
-public:
-	SpriteEnvironment();
-	virtual ~SpriteEnvironment();
-	
-	bool forwardKeyboard;
-	
-	void initWithPath(const char* filename);
-
-protected:
-	World world;
-	mutable RendererGL1 renderer;
-	MacFileSystemBank bank;
-	
-	virtual void enables();
-	
-	virtual void reshape(int x, int y);
-	virtual void draw() const;
-	
-	virtual bool mouseDown(const Vec2& C);
-	virtual void mouseDragged(const Vec2& C);
-	virtual void mouseUp(const Vec2& C);
-	
-	virtual void keyboard(unsigned char inkey);
-	
-private:
-	std::string filename;
-	
-	int sound_index;
-	Actor* current;
-	Vec2 lastLoc;
-};
-
+#if defined(ANDROID)
+	#include <android/log.h>
+	#define log(...)  __android_log_print(ANDROID_LOG_INFO, "g2c", __VA_ARGS__)
+	#define error(...)  __android_log_print(ANDROID_LOG_ERROR, "g2c", __VA_ARGS__)
+	#define
+#else
+	#define log(...) printf(__VA_ARGS__)
+	#define error(...) fprintf(stderr,__VA_ARGS__)
 #endif
 

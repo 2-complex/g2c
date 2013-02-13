@@ -25,6 +25,8 @@
 #include "opengl.h"
 
 
+namespace g2c {
+
 Listener* gListener = NULL;
 
 Listener::Listener() : listening(true), delegate(NULL) {}
@@ -48,6 +50,18 @@ void Listener::keyboard(unsigned char inkey)
 		delegate->keyboard(inkey);
 }
 
+void Listener::keyDown(unsigned char inkey)
+{
+	if( delegate )
+		delegate->keyDown(inkey);
+}
+
+void Listener::keyUp(unsigned char inkey)
+{
+	if( delegate )
+		delegate->keyUp(inkey);
+}
+
 void Listener::special(int inkey)
 {
 	if( delegate )
@@ -64,13 +78,13 @@ bool Listener::mouseDown(const Vec2& C)
 void Listener::mouseDragged(const Vec2& C)
 {
 	if( delegate )
-		return delegate->mouseDragged(C);
+		delegate->mouseDragged(C);
 }
 
 void Listener::mouseUp(const Vec2& C)
 {
 	if( delegate )
-		return delegate->mouseUp(C);
+		delegate->mouseUp(C);
 }
 
 #if defined( GLUT )
@@ -82,7 +96,21 @@ void fbutton( int b, int state, int x, int y )
 
 void fkeyboard(unsigned char inkey, int x, int y)
 {
+	if( gListener->keys.find(inkey)==gListener->keys.end() )
+	{
+		gListener->keyDown(inkey);
+		gListener->keys.insert(inkey);
+	}
+	
 	gListener->keyboard(inkey);
+	glutPostRedisplay();
+}
+
+void fkeyboardUp(unsigned char inkey, int x, int y)
+{
+	gListener->keys.erase(inkey);
+	
+	gListener->keyUp(inkey);
 	glutPostRedisplay();
 }
 
@@ -108,6 +136,10 @@ void initListenerGlut()
     glutMotionFunc(fmotion);
     glutMouseFunc(fbutton);
 	glutKeyboardFunc(fkeyboard);
+	glutKeyboardUpFunc(fkeyboardUp);
 	glutSpecialFunc(fspecial);
 }
+
+} // end namespace
+
 #endif

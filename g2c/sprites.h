@@ -46,7 +46,7 @@
 #endif
 
 
-namespace sprite {
+namespace g2c {
 	class Color;
 	class Node;
 	class Animator;
@@ -486,6 +486,6 @@ namespace sprite {
 	
 	void setDebugString(std::string* inDebugString);
 	
-} // namespace sprite
+} // end namespace
 
 #endif

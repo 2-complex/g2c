@@ -23,6 +23,8 @@
 
 #include "parse.h"
 
+#include <stack>
+
 using namespace parse;
 using namespace std;
 

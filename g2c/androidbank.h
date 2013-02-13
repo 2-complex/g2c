@@ -28,6 +28,8 @@
 
 #include <jni.h>
 
+namespace g2c {
+
 class AndroidBank : public Bank {
 public:
 	AndroidBank() : env(NULL), loader(NULL) {}
@@ -59,6 +61,8 @@ protected:
 	JNIEnv* env;
 	jobject loader;
 };
+
+}
 
 #endif
 

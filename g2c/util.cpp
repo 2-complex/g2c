@@ -20,9 +20,12 @@
 */
 
 
-
 #include <stdlib.h>
-// #include <sys/time.h>
+
+#if( !defined(WINDOWS) )
+#include <sys/time.h>
+#endif
+
 #include <string>
 #include <math.h>
 #include <time.h>
@@ -32,16 +35,22 @@
 
 double currentTime()
 {
-	return ((double)(clock()) / CLOCKS_PER_SEC);
+#if( defined(WINDOWS) )
+	return std::clock();
+#else
+	struct timeval t;
+	gettimeofday(&t, NULL);
+	return 0.000001 * t.tv_usec + 1.0 * t.tv_sec;
+#endif
 }
 
 double clamp(double x, double m, double M)
 {
-	if( x>M )
-		x=M;
+	if( x > M )
+		x = M;
 	
-	if( x<m )
-		x=m;
+	if( x < m )
+		x = m;
 	
 	return x;
 }
@@ -205,20 +214,21 @@ std::string flattenWhitespace(const char* s)
 
 void seedRand()
 {
-	/* REVISIT
+	int seed = 0xc0ffee;
+
+#if( !defined(WINDOWS) )
 	struct timeval tv;
     gettimeofday(&tv, NULL);
 	srandom(0xc0ffee + tv.tv_usec + tv.tv_sec);
-	*/
+#endif
 
-    srand(0xc0ffee);
+    srand( seed );
 }
 
 int randInt(int m)
 {
 	return ((rand() % m) + m) % m;
 }
-
 
 std::string directoryOfPath(const std::string& path)
 {
@@ -294,3 +304,4 @@ std::string relativePath(const std::string& source, const std::string& target)
 	
 	return result;
 }
+

@@ -27,7 +27,7 @@
 #include "opengl.h"
 #include "lin/lin.h"
 
-namespace sprite {
+namespace g2c {
 
 class Color;
 class Node;
@@ -103,6 +103,6 @@ protected:
 						  const Texture* texture) const;
 };
 
-}
+} // end namespace
 
 #endif

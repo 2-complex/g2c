@@ -28,6 +28,8 @@
 #include "util.h"
 #include "lin/lin.h"
 
+using namespace g2c;
+
 class Environment : public Listener {
 friend void fdisplay();
 friend void freshape(int w, int h);

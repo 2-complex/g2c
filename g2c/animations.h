@@ -26,7 +26,7 @@
 
 #include "sprites.h"
 
-namespace sprite {
+namespace g2c {
 
 class MoveVec2 : public Animation {
 public:
@@ -75,7 +75,7 @@ public:
 
 class Transition : public StopEvents {
 public:
-	Transition(double instart, double induration, sprite::Node* outgoing, sprite::Node* incoming);
+	Transition(double instart, double induration, g2c::Node* outgoing, g2c::Node* incoming);
 	
 	Node* outgoing;
 	Node* incoming;
@@ -87,7 +87,7 @@ public:
 
 class FadeIn: public Animation {
 public:
-	FadeIn(double instart, double induration, sprite::Node* node, bool inStopsEvents = true);
+	FadeIn(double instart, double induration, g2c::Node* node, bool inStopsEvents = true);
 	
 	Node* node;
 	
@@ -98,7 +98,7 @@ public:
 
 class FadeOut: public Animation {
 public:
-	FadeOut(double instart, double induration, sprite::Node* node, bool inStopsEvents = true);
+	FadeOut(double instart, double induration, g2c::Node* node, bool inStopsEvents = true);
 	
 	Node* node;
 	

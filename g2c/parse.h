@@ -24,8 +24,8 @@
 #define _PARSE_
 
 #include <vector>
-#include <stack>
 #include <string>
+
 #include <stdio.h>
 
 

@@ -35,6 +35,7 @@ using namespace std;
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
+namespace g2c {
 
 void AndroidBank::setEnvAndLoader(JNIEnv* env, jobject loader)
 {
@@ -141,7 +142,6 @@ void AndroidBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
     }
 	
 	bitmap->flipVertically();
-	// bitmap->swizzleRGB();
 }
 
 void AndroidBank::initTextureWithPath(Texture2D* texture, const char* path)
@@ -164,5 +164,8 @@ void* AndroidBank::getOpenALAudioData(CFURLRef inFileURL,
 {
 	
 }
+
+} // end namespace
+
 #endif
 

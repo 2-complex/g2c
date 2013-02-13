@@ -17,6 +17,8 @@
 #include "texture.h"
 
 
+namespace g2c {
+
 class Model;
 class Effect;
 class Assumption;
@@ -25,7 +27,6 @@ class Shape;
 class Buffer;
 class IndexBuffer;
 class Field;
-
 
 class Value {
 public:
@@ -325,5 +326,6 @@ Mat4 axisRotate(const Vec3& axis, double theta);
 /*	Retrieves the upper 3x3 matrix of a 4x4 transformation matrix.*/
 Mat3 upper3x3(const Mat4& m);
 
+} // end namespace
 
 #endif

@@ -40,7 +40,7 @@ void ScrollEnvironment::reshape(int w, int h)
 }
 
 void ScrollEnvironment::display()
-{	
+{
 	if(!initted)
 	{
 		init();
@@ -55,8 +55,6 @@ void ScrollEnvironment::display()
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-	
-    
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
@@ -68,6 +66,7 @@ void ScrollEnvironment::display()
     glPopMatrix();
     
     glutSwapBuffers();
+    
     if(animate)
     	glutPostRedisplay();
 }

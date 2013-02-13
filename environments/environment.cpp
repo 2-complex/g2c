@@ -31,7 +31,7 @@ void idle();
 void motion(int x, int y);
 void button(int b, int state, int x, int y);
 void keyboard(unsigned char inkey, int x, int y);
-Environment* gE = NULL;
+Environment* gEnvironment = NULL;
 
 Environment::Environment() : animate(false),
 							 dragging(false),
@@ -148,9 +148,9 @@ void Environment::motion(int x, int y)
 }
 
 
-void fdisplay() { gE->display(); }
-void freshape(int w, int h) { gE->reshape(w,h); }
-void fidle() { gE->idle(); }
+void fdisplay() { gEnvironment->display(); }
+void freshape(int w, int h) { gEnvironment->reshape(w,h); }
+void fidle() { gEnvironment->idle(); }
 
 
 void Environment::initWindow(const char* name,
@@ -192,7 +192,7 @@ void Environment::mainLoop()
 	
 	glutInitted = true;
 	
-	gE = this;
+	gEnvironment = this;
 	setGlobalListener(this);
 	initListenerGlut();
 	

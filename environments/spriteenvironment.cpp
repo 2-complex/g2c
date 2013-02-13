@@ -26,7 +26,7 @@
 #include <string>
 
 using namespace std;
-using namespace sprite;
+using namespace g2c;
 
 SpriteEnvironment::SpriteEnvironment() : sound_index(0), forwardKeyboard(false)
 {

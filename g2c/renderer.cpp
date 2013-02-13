@@ -24,7 +24,7 @@
 #include "opengl.h"
 #include "sprites.h"
 
-namespace sprite {
+namespace g2c {
 
 Renderer::Renderer()
 {
