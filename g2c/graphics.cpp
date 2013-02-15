@@ -98,7 +98,7 @@ Value& Value::operator=(const Value& v)
 	
 	if(type != v.type)
 	{
-		error( "Attempt to set value to incongruous type.\n" );
+		g2cerror( "Attempt to set value to incongruous type.\n" );
 		exit(0);
 	}
 	
@@ -119,7 +119,7 @@ void Value::applyToLocation(GLuint location) const
 	switch(type)
 	{
 		case NONE:
-			error( "Attempt to bind emtpy value to location." );
+			g2cerror( "Attempt to bind emtpy value to location." );
 			exit(0);
 		break;
 		
@@ -163,7 +163,7 @@ float Value::getFloat() const
 {
 	if( type!=FLOAT )
 	{
-		error( "Attempt to get float from value of incongruous type.\n" );
+		g2cerror( "Attempt to get float from value of incongruous type.\n" );
 		exit(0);
 	}
 	GLfloat* t = data.ptr;
@@ -174,7 +174,7 @@ Vec2 Value::getVec2() const
 {
 	if( type!=VEC2 )
 	{
-		error( "Attempt to get Vec2 from value of incongruous type.\n" );
+		g2cerror( "Attempt to get Vec2 from value of incongruous type.\n" );
 		exit(0);
 	}
 	GLfloat* t = data.ptr;
@@ -185,7 +185,7 @@ Vec3 Value::getVec3() const
 {
 	if( type!=VEC3 )
 	{
-		error( "Attempt to get Vec3 from value of incongruous type.\n" );
+		g2cerror( "Attempt to get Vec3 from value of incongruous type.\n" );
 		exit(0);
 	}
 	GLfloat* t = data.ptr;
@@ -196,7 +196,7 @@ Vec4 Value::getVec4() const
 {
 	if( type!=VEC4 )
 	{
-		error( "Attempt to get Vec4 from value of incongruous type.\n" );
+		g2cerror( "Attempt to get Vec4 from value of incongruous type.\n" );
 		exit(0);
 	}
 	GLfloat* t = data.ptr;
@@ -207,7 +207,7 @@ Mat2 Value::getMat2() const
 {
 	if( type!=MAT2 )
 	{
-		error( "Attempt to get Mat2 from value of incongruous type.\n" );
+		g2cerror( "Attempt to get Mat2 from value of incongruous type.\n" );
 		exit(0);
 	}
 	GLfloat* t = data.ptr;
@@ -219,7 +219,7 @@ Mat3 Value::getMat3() const
 {
 	if( type!=MAT3 )
 	{
-		error( "Attempt to get Mat3 from value of mismatched type.\n" );
+		g2cerror( "Attempt to get Mat3 from value of mismatched type.\n" );
 		exit(0);
 	}
 	GLfloat* t = data.ptr;
@@ -232,7 +232,7 @@ Mat4 Value::getMat4() const
 {
 	if( type!=MAT4 )
 	{
-		error( "Attempt to get Mat4 from value of mismatched type.\n" );
+		g2cerror( "Attempt to get Mat4 from value of mismatched type.\n" );
 		exit(0);
 	}
 	GLfloat* t = data.ptr;
@@ -246,7 +246,7 @@ const Texture* Value::getTexture() const
 {
 	if( type!=TEXTURE )
 	{
-		error( "Attempt to get Texture from value of mismatched type.\n" );
+		g2cerror( "Attempt to get Texture from value of mismatched type.\n" );
 		exit(0);
 	}
 	return data.texture;
@@ -379,7 +379,7 @@ void Effect::bindAttributeToField(const string& name, const Field& field) const
 {
 	if( !field.buffer )
 	{
-		error( "Attempt to bind attributes to field with no buffer\n" );
+		g2cerror( "Attempt to bind attributes to field with no buffer\n" );
 		exit(0);
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, field.buffer->index);
@@ -387,7 +387,7 @@ void Effect::bindAttributeToField(const string& name, const Field& field) const
 	map<string, GLint>::const_iterator itr = attributeLocationMap.find(name);
 	if(itr == attributeLocationMap.end())
 	{
-		error( "Attempt to bind to non-existant attribute: %s\n", name.c_str() );
+		g2cerror( "Attempt to bind to non-existant attribute: %s\n", name.c_str() );
 		exit(0);
 	}
 	GLuint attributeLocaion = itr->second;
@@ -397,7 +397,7 @@ void Effect::bindAttributeToField(const string& name, const Field& field) const
 	
 	if( field.size < 1 || field.size > 4 )
 	{
-		error( "Attempt to draw with field size not 1 2 3 or 4.\n" );
+		g2cerror( "Attempt to draw with field size not 1 2 3 or 4.\n" );
 		exit(0);
 	}
 	
@@ -431,7 +431,7 @@ bool Effect::compileShader(GLuint *shader, GLenum type, const char* code)
 	{
 		GLchar *log = (GLchar *)malloc(logLength);
 		glGetShaderInfoLog(*shader, logLength, &logLength, log);
-		log("Shader compile log:\n%s", log);
+		g2clog("Shader compile log:\n%s", log);
 		free(log);
 	}
 	
@@ -469,7 +469,7 @@ void Effect::addUniform(const char* name)
 	
 	if(location<0)
 	{
-		error( "location turned up negative for uniform: %s\n", name );
+		g2cerror( "location turned up negative for uniform: %s\n", name );
 		exit(0);
 	}
 	uniformLocationMap[name] = location;
@@ -608,7 +608,7 @@ void Assumption::handleChild(const parse::Node* n)
 			break;
 			
 			default:
-				log( "Value of %s of unusual size : %d\n", n_name.c_str(), (int)(v.size()) );
+				g2clog( "Value of %s of unusual size : %d\n", n_name.c_str(), (int)(v.size()) );
 				exit(0);
 			break;
 		}
@@ -897,7 +897,7 @@ void Geometry::bindAttributes(const Effect* effect)
 {
 	if(!effect)
 	{
-		error( "Attributes bound to null effect\n" );
+		g2cerror( "Attributes bound to null effect\n" );
 		exit(0);
 	}
 	
@@ -911,7 +911,7 @@ void Geometry::draw() const
 {
 	if( !indices )
 	{
-		error( "Attempt to draw geometry with undefined indices.\n" );
+		g2cerror( "Attempt to draw geometry with undefined indices.\n" );
 		exit(0);
 	}
 	
@@ -1004,7 +1004,7 @@ void Shape::draw() const
 	
 	if(!geometry)
 	{
-		error( "Shape drawn with no geometry.\n" );
+		g2cerror( "Shape drawn with no geometry.\n" );
 		exit(0);
 	}
 	
@@ -1025,7 +1025,7 @@ void Shape::draw() const
 	// If we didn't find an effect, bail.
 	if(!effect)
 	{
-		error( "Shape %s drawn with no effect.\n", name.c_str() );
+		g2cerror( "Shape %s drawn with no effect.\n", name.c_str() );
 		exit(0);
 	}
 	
@@ -1130,7 +1130,7 @@ Model& Model::add(Element* element, bool flagForDelete)
 		textures[element->name] = (Texture*)element;
 	else
 	{
-		error( "Element not inserted" );
+		g2cerror( "Element not inserted" );
 		exit(0);
 	}
 	
@@ -1163,7 +1163,7 @@ void Model::resolveNames()
 			map<string, Effect*>::iterator mitr = effects.find(effectName);
 			if(mitr == effects.end())
 			{
-				error( "effect not found %s\n", effectName.c_str() );
+				g2cerror( "effect not found %s\n", effectName.c_str() );
 				exit(0);
 			}
 			else
@@ -1180,7 +1180,7 @@ void Model::resolveNames()
 				map<string, Texture*>::iterator mitr = textures.find(textureName);
 				if(mitr == textures.end())
 				{
-					error( "texture not found %s\n", textureName.c_str() );
+					g2cerror( "texture not found %s\n", textureName.c_str() );
 					exit(0);
 				}
 				else
@@ -1200,7 +1200,7 @@ void Model::resolveNames()
 			map<string, IndexBuffer*>::iterator mitr = indexBuffers.find(indicesName);
 			if(mitr == indexBuffers.end())
 			{
-				error( "indexbuffer not found %s\n", indicesName.c_str() );
+				g2cerror( "indexbuffer not found %s\n", indicesName.c_str() );
 				exit(0);
 			}
 			else
@@ -1213,7 +1213,7 @@ void Model::resolveNames()
 			map<string, Buffer*>::iterator mitr = buffers.find(bufferName);
 			if(mitr == buffers.end())
 			{
-				error( "buffer not found %s\n", bufferName.c_str() );
+				g2cerror( "buffer not found %s\n", bufferName.c_str() );
 				exit(0);
 			}
 			else
@@ -1231,7 +1231,7 @@ void Model::resolveNames()
 			map<string, Geometry*>::iterator mitr = geometries.find(geometryName);
 			if(mitr == geometries.end())
 			{
-				error( "geometry not found %s\n", geometryName.c_str() );
+				g2cerror( "geometry not found %s\n", geometryName.c_str() );
 				exit(0);
 			}
 			else
@@ -1246,7 +1246,7 @@ void Model::resolveNames()
 			map<string, Assumption*>::iterator mitr = assumptions.find(assumptionName);
 			if(mitr == assumptions.end())
 			{
-				error( "assumption not found %s\n", assumptionName.c_str() );
+				g2cerror( "assumption not found %s\n", assumptionName.c_str() );
 				exit(0);
 			}
 			else

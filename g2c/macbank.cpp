@@ -45,7 +45,7 @@ void MacBank::initSerializableWithPath(Serializable* s, const char* path)
 	FILE* fp = fopen(fullpath.c_str(), "r");
 	if( !fp )
 	{
-		error( "serializable file not found: %s\n", fullpath.c_str() );
+		g2cerror( "serializable file not found: %s\n", fullpath.c_str() );
 		exit(0);
 	}
 	
@@ -72,7 +72,7 @@ void MacBank::writeSerializableToPath(const Serializable* s, const char* path)
 	FILE* fp = fopen(path, "w");
 	if( !fp )
 	{
-		error( "serializable file failed to open for writing: %s\n", path );
+		g2cerror( "serializable file failed to open for writing: %s\n", path );
 		exit(0);
 	}
 	string data = s->serialize();
@@ -86,7 +86,7 @@ void MacBank::initTextureWithCGImage(Texture2D* texture, CGImageRef image)
 	int height = CGImageGetHeight(image);
 	
 	if(((width-1)&width) != 0 || ((height-1)&height) != 0)
-		log( "WARNING: texture dimensions not a power of two: %s.\n",
+		g2clog( "WARNING: texture dimensions not a power of two: %s.\n",
 				texture->name.c_str() );
 	
 	if(image) {
@@ -144,7 +144,7 @@ void MacFileSystemBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
 	CGImageSourceRef image_source = CGImageSourceCreateWithURL(fileURL, NULL);
 	if(!image_source || CGImageSourceGetCount(image_source) <= 0)
 	{
-		error( "Image source failed for %s\n", path );
+		g2cerror( "Image source failed for %s\n", path );
 		
 		// default 64x64 white
 		int w = 64, h = 64;
@@ -193,7 +193,7 @@ void MacBank::initSoundWithPath(Sound* sound, const char* path)
 	
 	if((error = alGetError()) != AL_NO_ERROR)
 	{
-		error("OpenAL error = 0x%x loading audio file: %s\n", error, fullpath.c_str());
+		g2cerror("OpenAL error = 0x%x loading audio file: %s\n", error, fullpath.c_str());
 		exit(0);
 	}
 	
@@ -220,7 +220,7 @@ void* MacBank::getOpenALAudioData(CFURLRef inFileURL,
 	err = ExtAudioFileOpenURL(inFileURL, &extRef);
 	if(err)
 	{
-		error("getOpenALAudioData: ExtAudioFileOpenURL FAILED, Error = %d\n", (int)err);
+		g2cerror("getOpenALAudioData: ExtAudioFileOpenURL FAILED, Error = %d\n", (int)err);
 		exit(0);
 	}
 	
@@ -231,14 +231,14 @@ void* MacBank::getOpenALAudioData(CFURLRef inFileURL,
 								  &theFileFormat);
 	if(err)
 	{
-		error("getOpenALAudioData: ExtAudioFileGetProperty"
-			  "(kExtAudioFileProperty_FileDataFormat) FAILED, Error = %d\n", (int)err);
+		g2cerror("getOpenALAudioData: ExtAudioFileGetProperty"
+			     "(kExtAudioFileProperty_FileDataFormat) FAILED, Error = %d\n", (int)err);
 		exit(0);
 	}
 	if (theFileFormat.mChannelsPerFrame > 2)
 	{
-		errpr("getOpenALAudioData - Unsupported Format, channel count = %d.\n",
-			  (int)(theFileFormat.mChannelsPerFrame));
+		g2cerror("getOpenALAudioData - Unsupported Format, channel count = %d.\n",
+				 (int)(theFileFormat.mChannelsPerFrame));
 		exit(0);
 	}
 	
@@ -262,7 +262,7 @@ void* MacBank::getOpenALAudioData(CFURLRef inFileURL,
 								  &theOutputFormat);
 	if(err)
 	{
-		error("getOpenALAudioData: ExtAudioFileSetProperty"
+		g2cerror("getOpenALAudioData: ExtAudioFileSetProperty"
 			   "(kExtAudioFileProperty_ClientDataFormat) FAILED, Error = %d\n", (int)err);
 		exit(0);
 	}
@@ -275,7 +275,7 @@ void* MacBank::getOpenALAudioData(CFURLRef inFileURL,
 								  &theFileLengthInFrames);
 	if(err)
 	{
-		error("getOpenALAudioData: ExtAudioFileGetProperty"
+		g2cerror("getOpenALAudioData: ExtAudioFileGetProperty"
 			  "(kExtAudioFileProperty_FileLengthFrames) FAILED, Error = %d\n", (int)err);
 		exit(0);
 	}
@@ -307,7 +307,7 @@ void* MacBank::getOpenALAudioData(CFURLRef inFileURL,
 			// failure
 			free (theData);
 			theData = NULL; // make sure to return NULL
-			error("getOpenALAudioData: ExtAudioFileRead FAILED, Error = %d\n", (int)err);
+			g2cerror("getOpenALAudioData: ExtAudioFileRead FAILED, Error = %d\n", (int)err);
 			exit(0);
 		}	
 	}

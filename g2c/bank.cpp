@@ -62,7 +62,7 @@ bool AsynchronousBank::step()
 {
 	if(!bank)
 	{
-		error( "AsynchronousBank used with no bank set.\n" );
+		g2cerror( "AsynchronousBank used with no bank set.\n" );
 		exit(0);
 	}
 	

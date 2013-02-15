@@ -51,7 +51,7 @@ void WindowsBank::initSerializableWithPath(Serializable* s, const char* path)
 	FILE* fp = fopen(fullpath.c_str(), "rb");
 	if( !fp )
 	{
-		error( "serializable file not found: %s\n", fullpath.c_str() );
+		g2cerror( "serializable file not found: %s\n", fullpath.c_str() );
 		exit(0);
 	}
 	
@@ -76,7 +76,7 @@ void WindowsBank::writeSerializableToPath(const Serializable* s, const char* pat
 	FILE* fp = fopen(path, "w");
 	if( !fp )
 	{
-		error( "serializable file failed to open for writing: %s\n", path );
+		g2cerror( "serializable file failed to open for writing: %s\n", path );
 		exit(0);
 	}
 	string data = s->serialize();
@@ -101,7 +101,7 @@ void WindowsBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
 	
 	if( !gdiBitmap )
 	{
-		error( "Image file failed to open: %s\n", path );
+		g2cerror( "Image file failed to open: %s\n", path );
 		exit(0);
 	}
 

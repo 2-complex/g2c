@@ -395,5 +395,5 @@ void StringProperty::initWithParseNode(const parse::Node* n)
 
 void Serializable::display() const
 {
-	log( "%s\n", serialize().c_str() );
+	g2clog( "%s\n", serialize().c_str() );
 }

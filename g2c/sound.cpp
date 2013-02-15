@@ -24,6 +24,7 @@
 #include "sound.h"
 #include "util.h"
 
+#include "log.h"
 
 int Context::alcDeviceRefCounter = 0;
 ALCdevice* Context::alcDevice = NULL;
@@ -44,7 +45,7 @@ Context::Context() : device(NULL), context(NULL)
 	ALenum  error = AL_NO_ERROR;
 	if((error = alGetError()) != AL_NO_ERROR)
 	{
-		error("OpenAL error in context initialization: 0x%x\n", error);
+		g2cerror("OpenAL error in context initialization: 0x%x\n", error);
 		exit(0);
 	}
 }

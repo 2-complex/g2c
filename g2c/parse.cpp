@@ -273,7 +273,7 @@ void Node::parse()
 void Node::display() const
 {
 	print();
-	log( "\n" );
+	g2clog( "\n" );
 }
 
 void Node::print() const
@@ -281,15 +281,15 @@ void Node::print() const
 	switch(type)
 	{
 		case kInt:
-			log( "%d", data.i );
+			g2clog( "%d", data.i );
 		break;
 		
 		case kFloat:
-			log( "%f", data.x );
+			g2clog( "%f", data.x );
 		break;
 		
 		case kString:
-			log( "'%s'", data.s.c_str() );
+			g2clog( "'%s'", data.s.c_str() );
 		break;
 		
 		default:
@@ -320,7 +320,7 @@ void Node::print() const
 					putchar(':');
 					n->data.value->print();
 				}
-				log( "," );
+				g2clog( "," );
 			}
 			if(back)
 				putchar(back);

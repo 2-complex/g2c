@@ -248,8 +248,8 @@ void Texture2D::initWithImageData(const GLubyte* inData,
 	
 	if( width == 0 || height == 0 )
 	{
-		error( "Attempt to initialize texture with zero height or width.\n" );
-		error( "texture: %s\n", name.c_str() );
+		g2cerror( "Attempt to initialize texture with zero height or width.\n" );
+		g2cerror( "texture: %s\n", name.c_str() );
 		exit(0);
 	}
 	
@@ -354,8 +354,8 @@ void CubeMap::initWithImageData(const GLubyte* inDataPositiveX,
 	
 	if( width == 0 )
 	{
-		error( "Attempt to initialize cubemap with zero height or width.\n" );
-		error( "cubemap: %s\n", name.c_str() );
+		g2cerror( "Attempt to initialize cubemap with zero height or width.\n" );
+		g2cerror( "cubemap: %s\n", name.c_str() );
 		exit(0);
 	}
 	
@@ -392,7 +392,7 @@ void CubeMap::initWithBitmaps(const Bitmap* bitmapPositiveX,
 		w != bitmapPositiveZ->getWidth() || w != bitmapPositiveZ->getHeight() ||
 		w != bitmapNegativeZ->getWidth() || w != bitmapNegativeZ->getHeight())
 	{
-		error( "Attempt to make cube map from images which are not all the same square size.\n" );
+		g2cerror( "Attempt to make cube map from images which are not all the same square size.\n" );
 		exit(0);
 	}
 	
@@ -404,7 +404,7 @@ void CubeMap::initWithBitmaps(const Bitmap* bitmapPositiveX,
 		bpp != bitmapPositiveZ->getBitsPerPixel() ||
 		bpp != bitmapNegativeZ->getBitsPerPixel())
 	{
-		error( "Attempt to make cube map from images which are not all the same bit-depth.\n" );
+		g2cerror( "Attempt to make cube map from images which are not all the same bit-depth.\n" );
 		exit(0);
 	}
 	

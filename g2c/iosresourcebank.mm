@@ -76,7 +76,7 @@ void IOSResourceBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
 		[NSString stringWithUTF8String:revisedpath.c_str()]].CGImage;
 	if( !image )
 	{
-		error( "image %s not found\n", revisedpath.c_str() );
+		g2cerror( "image %s not found\n", revisedpath.c_str() );
 		exit(0);
 	}
 	MacBank::initBitmapWithCGImage(bitmap, image);

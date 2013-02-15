@@ -109,19 +109,19 @@ void AndroidBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
 	
     if( (ret = AndroidBitmap_getInfo(env, java_bitmap, &info)) < 0 )
     {
-        error("AndroidBitmap_getInfo failed. error=%d", ret);
+        g2cerror("AndroidBitmap_getInfo failed. error=%d", ret);
         return;
     }
 	
     if( info.format != ANDROID_BITMAP_FORMAT_RGBA_8888 )
     {
-        error("Bitmap format is not ANDROID_BITMAP_FORMAT_RGBA_8888 is %d !", info.format);
+        g2cerror("Bitmap format is not ANDROID_BITMAP_FORMAT_RGBA_8888 is %d !", info.format);
         return;
     }
 	
     if( (ret = AndroidBitmap_lockPixels(env, java_bitmap, &pixels)) < 0 )
     {
-        error("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+        g2cerror("AndroidBitmap_lockPixels() failed ! error=%d", ret);
         return;
     }
 	
@@ -133,7 +133,7 @@ void AndroidBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
 	
 	if( (ret = AndroidBitmap_unlockPixels(env, java_bitmap)) < 0 )
     {
-        error("AndroidBitmap_unlockPixels() failed ! error=%d", ret);
+        g2cerror("AndroidBitmap_unlockPixels() failed ! error=%d", ret);
         return;
     }
 	
