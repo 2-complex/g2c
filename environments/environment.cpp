@@ -27,17 +27,15 @@
 
 void display();
 void reshape(int w, int h);
-void idle();
 void motion(int x, int y);
 void button(int b, int state, int x, int y);
 void keyboard(unsigned char inkey, int x, int y);
 Environment* gEnvironment = NULL;
 
-Environment::Environment() : animate(false),
-							 dragging(false),
-							 valid(false),
+Environment::Environment() : dragging(false),
 							 initted(false),
-							 glutInitted(false) {}
+							 glutInitted(false),
+							 animate(true) {}
 
 Environment::~Environment() {}
 
@@ -59,30 +57,31 @@ Mat4 Environment::getProjection() const
 	return M;
 }
 
+int Environment::getWindowWidth() const
+{
+	return windowWidth;
+}
+
+int Environment::getWindowHeight() const
+{
+	return windowHeight;
+}
+
+
 Vec2 Environment::flip(const Vec2& v) const
 {
 	return Vec2(v.x, windowHeight - v.y);
 }
 
-void Environment::invalidate() const
-{
-	valid = false;
-	glutPostRedisplay();
-}
-
 void Environment::display()
 {
-	if(!initted)
+	if( !initted )
 	{
 		init();
 		initted = true;
 	}
 	
-	if(!valid || animate)
-	{
-        compute();
-		valid = true;
-	}
+	step( currentTime() );
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
@@ -103,7 +102,7 @@ void Environment::display()
     
 	glutSwapBuffers();
 	
-    if(animate)
+    if( animate )
     	glutPostRedisplay();
 }
 
@@ -111,6 +110,12 @@ void Environment::reshape(int w, int h)
 {
 	windowHeight = h;
 	windowWidth = w;
+	
+	if( !initted )
+	{
+		init();
+		initted = true;
+	}
     
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 }
@@ -150,7 +155,6 @@ void Environment::motion(int x, int y)
 
 void fdisplay() { gEnvironment->display(); }
 void freshape(int w, int h) { gEnvironment->reshape(w,h); }
-void fidle() { gEnvironment->idle(); }
 
 
 void Environment::initWindow(const char* name,
@@ -178,8 +182,14 @@ void Environment::initWindow(const char* name,
 void Environment::enables()
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
+	
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    
+    glCullFace(GL_NONE);
+	
+	glEnable(GL_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 
@@ -199,16 +209,13 @@ void Environment::mainLoop()
 	// install the functions in this file as callbacks
     glutDisplayFunc(fdisplay);
     glutReshapeFunc(freshape);
-    glutIdleFunc(fidle);
 	
 	// leave the rest to glut
     glutMainLoop();
 }
 
-/* Empty virtual funcitons. */
 void Environment::init() {}
-void Environment::compute() {}
+void Environment::step(double /*t*/) {animate = false;}
 void Environment::draw() const {}
-void Environment::idle() {}
 
 

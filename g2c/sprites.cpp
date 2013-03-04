@@ -32,13 +32,6 @@ namespace g2c {
 bool Sprite::drawLines = false;
 Renderer* Sprite::renderer = NULL;
 
-std::string* gDebugString = NULL;
-
-
-void setDebugString(std::string* inDebugString)
-{
-	gDebugString = inDebugString;
-}
 
 Sprite::Sprite() : numberOfRows(1),
 				   numberOfColumns(1),
@@ -1954,7 +1947,7 @@ void Animator::add(Animation* a)
 	
 	retain(a);
 	S.insert(a);
-		
+	
 	if(a->stopsEvents)
 	{
 		if( eventStoppedCounter==0 )
@@ -2023,10 +2016,8 @@ void Animator::remove(Animation* a)
 }
 
 
-void Animator::step()
+void Animator::step(double t)
 {
-	double t = currentTime();
-	
 	vector<Animation*> beginMe, advanceMe, endMe;
 	
 	for(set<Animation*>::iterator itr = S.begin(); itr!= S.end(); itr++)
@@ -2121,6 +2112,7 @@ void Animation::advance(double t)
 		if( scaled_t > 1.0 )
 			scaled_t = 1.0;
 	}
+	
 	step(scaled_t);
 }
 

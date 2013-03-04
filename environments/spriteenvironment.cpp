@@ -58,6 +58,7 @@ void SpriteEnvironment::enables()
 	glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE); // ?
 	
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glDisable(GL_DEPTH_TEST);
 	
 	renderer.init();
 }
@@ -198,7 +199,6 @@ void SpriteEnvironment::keyboard(unsigned char inkey)
 	{
 		switch(inkey)
 		{
-			
 			case '+':
 			case '=':
 				current->k += 0.01;
@@ -230,7 +230,5 @@ void SpriteEnvironment::keyboard(unsigned char inkey)
 				break;
 		}
 	}
-	
-	invalidate();
 }
 

@@ -41,17 +41,13 @@ void ScrollEnvironment::reshape(int w, int h)
 
 void ScrollEnvironment::display()
 {
-	if(!initted)
+	if( !initted )
 	{
 		init();
 		initted = true;
 	}
 	
-	if(!valid || animate)
-	{
-		compute();
-		valid = true;
-	}
+	step( currentTime() );
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
@@ -83,7 +79,9 @@ void ScrollEnvironment::motion(int x, int y)
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0.0, windowWidth, 0.0, windowHeight);
+	int w = getWindowWidth();
+	int h = getWindowHeight();
+	gluOrtho2D(0.0, w, 0.0, h);
 	glTranslatef(center.x, center.y, 0.0);
 	
 	mouseDragged(c);

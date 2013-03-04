@@ -20,7 +20,6 @@
 */
 
 
-
 #include "app.h"
 
 App::App()
@@ -28,6 +27,14 @@ App::App()
 }
 
 App::~App()
+{
+}
+
+void App::init()
+{
+}
+
+void App::step(double /*t*/)
 {
 }
 
@@ -57,10 +64,6 @@ void App::mouseDragged(const Vec2& /*C*/)
 }
 
 void App::mouseUp(const Vec2& /*C*/)
-{
-}
-
-void App::step()
 {
 }
 

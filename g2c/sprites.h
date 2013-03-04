@@ -334,6 +334,7 @@ namespace g2c {
 	class Font : public Sprite {
 	public:
 		Font();
+		
 		std::vector<double> widths;
 		std::vector<double> lefts;
 		double lineHeight;
@@ -475,7 +476,7 @@ namespace g2c {
 		void retain(Animation*);
 		bool release(Animation*);
 		
-		void step();
+		void step(double t);
 		
 		void clear();
 		

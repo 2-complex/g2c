@@ -30,6 +30,8 @@ public:
 	App();
 	virtual ~App();
 	
+	virtual void init();
+	virtual void step(double t);
 	virtual void draw() const;
 	
 	virtual void keyboard(unsigned char inkey);
@@ -40,8 +42,6 @@ public:
 	virtual bool mouseDown(const Vec2& C);
 	virtual void mouseDragged(const Vec2& C);
 	virtual void mouseUp(const Vec2& C);
-	
-	virtual void step();
 };
 
 #endif

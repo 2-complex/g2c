@@ -20,7 +20,6 @@
 */
 
 
-
 #include "opengl.h"
 #include "sprites.h"
 

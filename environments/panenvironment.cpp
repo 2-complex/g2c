@@ -44,11 +44,13 @@ PanEnvironment::~PanEnvironment() {}
 
 void PanEnvironment::display()
 {	
-	if(!valid || animate)
+	if( !initted )
 	{
-		compute();
-		valid = true;
+		init();
+		initted = true;
 	}
+	
+	step( currentTime() );
 	
     glEnable(GL_DEPTH_TEST);
    	
@@ -56,9 +58,13 @@ void PanEnvironment::display()
     
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    
+    int w = getWindowWidth();
+    int h = getWindowHeight();
+    
     gluPerspective(
         40.0, /* field of view in degree */
-        windowWidth/windowHeight, /* aspect ratio */
+        1.0*w/h, /* aspect ratio */
         0.1*cameraRadius, /* Z near */
         1000*cameraRadius ); /* Z far */
 	
@@ -80,7 +86,7 @@ void PanEnvironment::display()
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    gluOrtho2D(0.0, windowWidth, 0.0, windowHeight);
+    gluOrtho2D(0.0, w, 0.0, h);
     
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();

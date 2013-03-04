@@ -1,23 +1,21 @@
 
+
 OPTIMIZATION = -O0
 DEBUG = -g3
 ODEBUG = $(DEBUG)
-SOURCE_DIR = ../g2c
-ENVIRONMENTS_DIR = ../environments
+
+G2C_DIRECTORY = ..
+
+SOURCE_DIR = $(G2C_DIRECTORY)/g2c
+ENVIRONMENTS_DIR = $(G2C_DIRECTORY)/environments
 OBJ_DIR = obj
 
-CURRENT = test
-
-ifneq ($(MAKECMDGOALS), clean)
-
-CURRENT = $(MAKECMDGOALS)
+CURRENT = libg2c.a
 
 current: $(CURRENT)
 
 run: current
 	./$(CURRENT) $(CURRENTARGS)
-endif
-
 
 FLAGS = -DGLUT
 GLFLAGS = -framework GLUT -framework OpenGL
@@ -26,18 +24,15 @@ AUDIOFLAGS = -framework AudioToolbox -framework Foundation -framework OpenAL
 
 GRAPHICS = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/bank.o $(OBJ_DIR)/macbank.o $(OBJ_DIR)/graphics.o
 SPRITES = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/sound.o $(OBJ_DIR)/bank.o $(OBJ_DIR)/macbank.o $(OBJ_DIR)/renderer.o $(OBJ_DIR)/sprites.o $(OBJ_DIR)/animations.o
-GAMES = $(SPRITES) $(WEBCLIENT) $(OBJ_DIR)/graphics.o
+GAMES = $(SPRITES) $(OBJ_DIR)/graphics.o $(OBJ_DIR)/transforms.o
 
 ENVIRONMENT = $(SOURCE_DIR)/lin/lin.h $(OBJ_DIR)/util.o $(OBJ_DIR)/listener.o $(OBJ_DIR)/environment.o
 ENVIRONMENTS = $(ENVIRONMENT) $(OBJ_DIR)/spriteenvironment.o $(OBJ_DIR)/scrollenvironment.o $(OBJ_DIR)/panenvironment.o $(OBJ_DIR)/appenvironment.o
 APPS = $(OBJ_DIR)/app.o
 
 
-$(CURRENT): $(ENVIRONMENTS) $(SPRITES) $(CURRENT).cpp
-	c++ $(FLAGS) $(DEBUG) $(OPTIMIZATION) -I$(SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
-		$(ENVIRONMENTS) $(SPRITES) \
-		$(GLFLAGS) $(AUDIOFLAGS) $(GRAPHICSFLAGS) \
-		$(CURRENT).cpp -o $(CURRENT)
+libg2c.a: $(GAMES) $(ENVIRONMENTS) $(APPS)
+	ar rcs libg2c.a $(GAMES) $(ENVIRONMENTS) $(APPS)
 
 
 $(OBJ_DIR)/listener.o: $(SOURCE_DIR)/listener.cpp $(SOURCE_DIR)/listener.h
@@ -58,7 +53,6 @@ $(OBJ_DIR)/spriteenvironment.o: $(ENVIRONMENTS_DIR)/spriteenvironment.cpp $(ENVI
 $(OBJ_DIR)/appenvironment.o: $(ENVIRONMENTS_DIR)/appenvironment.cpp $(ENVIRONMENTS_DIR)/appenvironment.h
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -I$(SOURCE_DIR) -I$(ENVIRONMENTS_DIR) -c $(ENVIRONMENTS_DIR)/appenvironment.cpp -o $(OBJ_DIR)/appenvironment.o
 
-
 $(OBJ_DIR)/util.o: $(SOURCE_DIR)/util.cpp $(SOURCE_DIR)/util.h
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/util.cpp -o $(OBJ_DIR)/util.o
 
@@ -68,6 +62,9 @@ $(OBJ_DIR)/sound.o: $(SOURCE_DIR)/sound.cpp $(SOURCE_DIR)/sound.h
 $(OBJ_DIR)/rendertarget.o: $(SOURCE_DIR)/rendertarget.cpp $(SOURCE_DIR)/rendertarget.h $(SOURCE_DIR)/lin/lin.h
 	c++ $(FLAGS) $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/rendertarget.cpp -o $(OBJ_DIR)/rendertarget.o
 
+$(OBJ_DIR)/transforms.o: $(SOURCE_DIR)/transforms.cpp $(SOURCE_DIR)/transforms.h $(SOURCE_DIR)/lin/lin.h
+	c++ $(FLAGS) $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/transforms.cpp -o $(OBJ_DIR)/transforms.o
+
 $(OBJ_DIR)/graphics.o: $(SOURCE_DIR)/graphics.cpp $(SOURCE_DIR)/graphics.h $(SOURCE_DIR)/lin/lin.h
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c graphics.cpp -o $(OBJ_DIR)/graphics.o
 
@@ -76,9 +73,6 @@ $(OBJ_DIR)/texture.o: $(SOURCE_DIR)/texture.cpp $(SOURCE_DIR)/texture.h $(SOURCE
 
 $(OBJ_DIR)/app.o: $(SOURCE_DIR)/app.cpp $(SOURCE_DIR)/app.h
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/app.cpp -o $(OBJ_DIR)/app.o
-
-$(OBJ_DIR)/spriteapp.o: $(SOURCE_DIR)/spriteapp.cpp $(SOURCE_DIR)/spriteapp.h
-	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/spriteapp.cpp -o $(OBJ_DIR)/spriteapp.o
 
 $(OBJ_DIR)/renderer.o: $(SOURCE_DIR)/renderer.cpp $(SOURCE_DIR)/renderer.h
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/renderer.cpp -o $(OBJ_DIR)/renderer.o

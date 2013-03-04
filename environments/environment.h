@@ -33,21 +33,35 @@ using namespace g2c;
 class Environment : public Listener {
 friend void fdisplay();
 friend void freshape(int w, int h);
-friend void fidle();
 
 public:
 	Environment();
 	virtual ~Environment();
+	
+	/*	If true, calls display over and over*/
+	bool animate;
+	
+	/*	Accessors for modelView and porjection matrices*/
+    Mat4 getModelView() const;
+    Mat4 getProjection() const;
+    
+    /*	Accessors for window width and height */
+    int getWindowWidth() const;
+    int getWindowHeight() const;
+    
+    
+	/*  initWindow Initilaizes glut.  Sets up the gl context, sets flags etc.
+        Must be called before the mainLoop.*/
+    void initWindow(const char* windowName="Environment",
+                  	int windowSizeX=640,
+                  	int windowSizeY=480);
+    
+    /*  Call this to start the glut main loop, this hands control over to glut
+    	to handle events and draw.*/
+    void mainLoop();
+
 
 protected:
-	/*	window height and width updated in the reshape function*/
-	double windowHeight;
-	double windowWidth;
-
-    /*	valid is a flag that gets set using the function invalidate() when
-	    the scene needs to recompute.*/
-	mutable bool valid;
-	
 	/*	initted says whether the init() function has been called.  Inside display(),
 		there is a check to call init once, then */
 	mutable bool initted;
@@ -66,7 +80,7 @@ protected:
 	Vec2 flip(const Vec2& v) const;
 	
 	/*	display gets called by the glut display function.  Think twice before
-		overriding if draw() can do the job.  display calls compute() and init(),
+		overriding if draw() can do the job.  display calls step() and init(),
 		so it is not const.*/
 	virtual void display();
 	
@@ -83,48 +97,27 @@ protected:
 	/*  reshape gets called directly by the glut reshape function.*/
     virtual void reshape( int w, int h );
 	
-	/*	idle gets called by the glut idle function.*/
-	virtual void idle();
+	/*  gets called by initWindow.  Override to turn things on and off, or set the
+        clear-color blending or whathaveyou.*/
+    virtual void enables();
 	
 	/*	init() is called by display() when the initted flag is set to false.
 		then initted gets set true.*/
 	virtual void init();
 	
-	/*	compute() is called by display() when the valid flag is set false.
-	    Override compute() to do work to compute what to draw.  Call
-	    invalidate() to set the valid flag to false, so that compute calls.*/
-	virtual void compute();
+	/*	step() is called by display(), over and over with a time value measured
+		in seconds for t.  Override step() to do work to compute what to draw.*/
+	virtual void step(double t);
 	
 	/*	draw is called after a clear and inside a matrix push.  Override draw()
  	    to add graphics to the scene using ordinary gl calls like glVertex3f().*/
 	virtual void draw() const;
-	
-	/*	sets the valid flag to false to indicate that the scene should recompute
-	    (not redraw, recompute)*/
-	void invalidate() const;
-    
-    /*  gets called by initWindow.  Override to turn things on and off, or set the
-        clear-color blending or whathaveyou.*/
-    virtual void enables();
-    
-public:
-	/*	If true, calls display over and over*/
-	bool animate;
-	
-	/*	Accessors for modelView and porjection matrices*/
-    Mat4 getModelView() const;
-    Mat4 getProjection() const;
-    
-    /*  initWindow Initilaizes glut.  Sets up the gl context, sets flags etc.
-        Must be called before the mainLoop.*/
-    void initWindow(const char* windowName="Environment",
-                  	int windowSizeX=640,
-                  	int windowSizeY=480);
-    
-    /*  Call this to start the glut machine.*/
-    void mainLoop();
     
 private:
+	/*	window height and width updated in the reshape function*/
+	double windowHeight;
+	double windowWidth;
+	
 	bool glutInitted;
 };
 

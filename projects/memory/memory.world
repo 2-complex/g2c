@@ -1,0 +1,54 @@
+{
+	"type" : "World",
+	"name" : "memoryWorld",
+	
+	"children" : [
+		{"type":"Layer", "name":"gameLayer"},
+		{"type":"Layer", "name":"explosionLayer"},
+		{"type":"String",
+		 "name":"something",
+		 "s":"Something",
+		 "fontName":"helv",
+		 "color":[1,0.5,0,1]},
+	],
+	
+	"sprites" : [
+		{
+          "type" : "Sprite",
+          "name" : "card",
+          "file" : "images/card.png",
+          "numberOfColumns" : 4,
+          "numberOfRows" : 4,
+          "flipRows" : 1,
+          "center" : 1,
+        },
+        {
+          "type" : "Sprite",
+          "name" : "blink",
+          "file" : "images/blink.png",
+          "numberOfColumns" : 4,
+          "numberOfRows" : 2,
+          "flipRows" : 1,
+          "center" : 1,
+        },
+        {
+          "type" : "Sprite",
+          "name" : "explosion",
+          "file" : "images/explosion.png",
+          "numberOfColumns" : 4,
+          "numberOfRows" : 1,
+          "flipRows" : 1,
+          "center" : 1,
+        },
+        {
+          "type" : "Font",
+          "name" : "helv",
+          "file" : "images/helv.png",
+          "numberOfColumns" : 16,
+          "numberOfRows" : 6,
+          "flipRows" : 0,
+          "center" : 1,
+        },
+	]
+}
+

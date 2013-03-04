@@ -20,7 +20,7 @@ private:
 	double then;
 	
 	void init();
-	void compute();
+	void step(double t);
 	void draw() const;
 	
 	void keyDown(unsigned char c);
@@ -54,9 +54,9 @@ void ShipEnvironment::init()
 	position.set(100, 100);
 }
 
-void ShipEnvironment::compute()
+void ShipEnvironment::step(double t)
 {
-	double now = currentTime();
+	double now = t;
 	
 	if( now - then < 1.0 / 30.0 && then != 0.0 )
 		return;
