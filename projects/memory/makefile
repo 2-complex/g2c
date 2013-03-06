@@ -31,10 +31,10 @@ LIBG2C = $(G2C_SOURCE_DIR)/libg2c.a
 $(LIBG2C): force_look
 	cd $(G2C_SOURCE_DIR) && $(MAKE) libg2c.a
 
-test: $(ENVIRONMENTS) $(APPS) $(SPRITES) $(OBJ_DIR)/memoryapp.o test.cpp $(LIBG2C)
+test: $(ENVIRONMENTS) $(SPRITES) $(OBJ_DIR)/memoryapp.o test.cpp $(LIBG2C)
 	c++ $(FLAGS) $(DEBUG) $(OPTIMIZATION)\
 		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
-		$(ENVIRONMENTS) $(APPS) $(SPRITES) \
+		$(ENVIRONMENTS) $(SPRITES) \
 		$(GLFLAGS) $(AUDIOFLAGS) $(GRAPHICSFLAGS) \
 		$(LIBG2C) \
 		$(OBJ_DIR)/memoryapp.o test.cpp -o test

@@ -39,7 +39,6 @@
 #include "serializable.h"
 #include "bank.h"
 #include "texture.h"
-#include "renderer.h"
 
 #if !defined(STUB_SOUND)
 #include "sound.h"
@@ -150,6 +149,76 @@ namespace g2c {
 		float* positions;
 		short* indices;
 	};
+	
+	class Renderer {
+	public:
+		Renderer();
+		virtual ~Renderer();
+		
+		Mat4 projection;
+	
+	protected:
+		mutable GLfloat fv[16];
+		Mesh* quad;
+		
+	public:
+		virtual void init() = 0;
+		virtual void drawMesh(const Mesh* mesh,
+							  const Mat4& matrix,
+							  const Mat3& texMatrix,
+							  const Color& color,
+							  const Texture* texture) const = 0;
+		
+		virtual void drawMesh(const Mesh* m, const Node* n) const;
+	};
+	
+	class RendererGL1 : public Renderer {
+	public:
+		RendererGL1();
+		~RendererGL1();
+		
+		virtual void init();
+		virtual void drawMesh(const Mesh* mesh,
+							  const Mat4& matrix,
+							  const Mat3& texMatrix,
+							  const Color& color,
+							  const Texture* texture) const;
+	};
+	
+	class RendererGL2 : public Renderer {
+	public:
+		RendererGL2();
+		~RendererGL2();
+		
+	private:
+		GLuint buffer,
+			   indexBuffer,
+			   program,
+			   positionLocation,
+			   vertexShader,
+			   fragmentShader,
+			   matrixLocation,
+			   SpriteLocation,
+			   colorLocation,
+			   textureLocation,
+			   texMatrixLocation,
+			   polygonBuffer,
+			   polygonIndexBuffer;
+		
+		Texture2D* defaultTexture;
+		
+	public:
+		virtual void init();
+		
+	protected:
+		bool initialized;
+		virtual void drawMesh(const Mesh* m,
+							  const Mat4& matrix,
+							  const Mat3& texMatrix,
+							  const Color& color,
+							  const Texture* texture) const;
+	};
+
 	
 	class Polygon : protected std::vector<Vec2>,
 					public Node {
