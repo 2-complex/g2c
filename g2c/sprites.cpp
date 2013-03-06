@@ -16,7 +16,7 @@
      appreciated but is not required.
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
-  3. This notice may not be removed or altered from any source distribution.
+  3. This notice may not be removed or altered from any source distribution.e
 */
 
 
@@ -1508,7 +1508,7 @@ void Actor::draw() const
 	
 	if( sprite )
 	{
-		matrix = matrix * sprite->getOffsetMatrix(x, y, k);
+		matrix = matrix * sprite->getOffsetMatrix(position.x, position.y, k);
 		texMatrix = sprite->getTexMatrix(frame);
 	}
 	
@@ -1523,10 +1523,10 @@ string Actor::serializeElements(string indent) const
 	string r = Node::serializeElements(indent);
 	if( sprite )
 		r += TAB + indent + "'spriteName' : " + string("'") + sprite->name + "',\n";
-	if( x )
-		r += TAB + indent + "'x' : " + floatToString(x) + ",\n";
-	if( y )
-		r += TAB + indent + "'y' : " + floatToString(y) + ",\n";
+	if( position.x )
+		r += TAB + indent + "'x' : " + floatToString(position.x) + ",\n";
+	if( position.y )
+		r += TAB + indent + "'y' : " + floatToString(position.y) + ",\n";
 	if( k!=1.0 )
 		r += TAB + indent + "'k' : " + floatToString(k) + ",\n";
 	if( frame )
@@ -1560,10 +1560,10 @@ void Actor::handleChild(const parse::Node* n)
 	if(value)
 	{
 		if(n_name == "x")
-			x = value->data.x;
+			position.x = value->data.x;
 		
 		if(n_name == "y")
-			y = value->data.x;
+			position.y = value->data.x;
 		
 		if(n_name == "k")
 			k = value->data.x;
@@ -1585,7 +1585,7 @@ Polygon Actor::collisionPolygon() const
 	
 	if( !polygon.empty() )
 	{
-		R = k * polygon + Vec2(x, y);
+		R = k * polygon + position;
 	}
 	else if( sprite )
 	{
@@ -1594,13 +1594,13 @@ Polygon Actor::collisionPolygon() const
 		
 		if( !sprite->polygon.empty() )
 		{
-			R = k * sprite->polygon + Vec2(x,y);
+			R = k * sprite->polygon + position;
 			if( sprite->center )
 				R -= 0.5 * Vec2(w, h);
 		}
 		else
 		{	
-			double x0 = x, x1 = x+w, y0 = y, y1 = y+h;
+			double x0 = position.x, x1 = position.x+w, y0 = position.y, y1 = position.y+h;
 			
 			R.add(x0, y0).add(x1, y0).add(x1, y1).add(x0, y1);
 			
@@ -1782,7 +1782,8 @@ void String::draw() const
 	if( font )
 	{
 		string news = s+(drawPipe?"|":"");
-		font->drawString(worldMatrix, worldColor, x, y, k,
+		font->drawString(worldMatrix, worldColor,
+			position.x, position.y, k,
 			news.c_str(), justification);
 		if( Sprite::drawLines )
 			collisionPolygon().draw();
@@ -1800,10 +1801,10 @@ string String::serializeElements(string indent) const
 	string r = Node::serializeElements(indent);
 	if( font )
 		r += TAB + indent + "'fontName' : " + string("'") + font->name + "',\n";
-	if( x )
-		r += TAB + indent + "'x' : " + floatToString(x) + ",\n";
-	if( y )
-		r += TAB + indent + "'y' : " + floatToString(y) + ",\n";
+	if( position.x )
+		r += TAB + indent + "'x' : " + floatToString(position.x) + ",\n";
+	if( position.y )
+		r += TAB + indent + "'y' : " + floatToString(position.y) + ",\n";
 	if( k!=1.0 )
 		r += TAB + indent + "'k' : " + floatToString(k) + ",\n";
 	if( s != "" )
@@ -1842,11 +1843,11 @@ Polygon String::collisionPolygon() const
 	
 	if( !polygon.empty() )
 	{
-		R = polygon + Vec2(x, y);
+		R = polygon + position;
 	}
 	if( font )
 	{
-		R = worldMatrix * (font->stringRectangle(k, s.c_str(), justification) + Vec2(x, y));
+		R = worldMatrix * (font->stringRectangle(k, s.c_str(), justification) + position);
 	}
 	else
 	{
@@ -1879,7 +1880,7 @@ void Integer::draw() const
 {
 	if( ptr )
 	{
-		font->drawString(worldMatrix, worldColor, x, y, k,
+		font->drawString(worldMatrix, worldColor, position.x, position.y, k,
 			intToStringWithCommas(*ptr).c_str(), justification);
 	}
 	else

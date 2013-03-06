@@ -123,7 +123,7 @@ void SpriteEnvironment::mouseDragged(const Vec2& C)
 		Vec4 v = m.inverse()*Vec4(delta.x, delta.y, 0, 0);
 		delta.set(v.x, v.y);
 		
-		(*current) += delta;
+		current->position += delta;
 	}
 	
 	lastLoc = localC;
@@ -210,16 +210,16 @@ void SpriteEnvironment::keyboard(unsigned char inkey)
 			break;
 			
 			case 'a':
-				current->x-=0.1;
+				current->position.x-=0.1;
 				break;
 			case 'd':
-				current->x+=0.1;
+				current->position.x+=0.1;
 				break;
 			case 's':
-				current->y-=0.1;
+				current->position.y-=0.1;
 				break;
 			case 'w':
-				current->y+=0.1;
+				current->position.y+=0.1;
 				break;
 			
 			case 'r':

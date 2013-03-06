@@ -278,8 +278,7 @@ namespace g2c {
 		void triangulate() const;
 	};
 	
-	class Actor : public Vec2,
-	              public Node {
+	class Actor : public Node {
 	public:
 		Actor();
 		explicit Actor(Sprite* insprite);
@@ -290,6 +289,7 @@ namespace g2c {
 		
 		int frame;
 		double k;
+		Vec2 position;
 		
 		Polygon polygon;
 		

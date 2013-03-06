@@ -28,14 +28,10 @@ GLFLAGS = -framework GLUT -framework OpenGL
 GRAPHICSFLAGS = -framework Cocoa -framework QuartzCore
 AUDIOFLAGS = -framework AudioToolbox -framework Foundation -framework OpenAL
 
-GRAPHICS = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/bank.o $(OBJ_DIR)/macbank.o $(OBJ_DIR)/graphics.o
-SPRITES = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/sound.o $(OBJ_DIR)/bank.o $(OBJ_DIR)/macbank.o $(OBJ_DIR)/renderer.o $(OBJ_DIR)/sprites.o $(OBJ_DIR)/animations.o
-GAMES = $(SPRITES) $(WEBCLIENT) $(OBJ_DIR)/graphics.o
-
 ENVIRONMENTS =\
 	$(G2C_SOURCE_DIR)/lin/lin.h\
 	$(OBJ_DIR)/environment.o\
-	$(OBJ_DIR)/appenvironment.o
+	$(OBJ_DIR)/spriteenvironment.o
 
 LIBG2C = $(G2C_SOURCE_DIR)/libg2c.a
 
@@ -50,6 +46,17 @@ $(CURRENT): $(ENVIRONMENTS) $(SPRITES) $(CURRENT).cpp
 		$(GLFLAGS) $(AUDIOFLAGS) $(GRAPHICSFLAGS) \
 		$(LIBG2C) \
 		$(CURRENT).cpp -o $(CURRENT)
+
+$(OBJ_DIR)/environment.o: $(ENVIRONMENTS_DIR)/environment.cpp $(ENVIRONMENTS_DIR)/environment.h
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION)\
+		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR)\
+		-c $(ENVIRONMENTS_DIR)/environment.cpp -o $(OBJ_DIR)/environment.o
+
+$(OBJ_DIR)/spriteenvironment.o: $(ENVIRONMENTS_DIR)/spriteenvironment.cpp\
+		$(ENVIRONMENTS_DIR)/spriteenvironment.h
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION)\
+		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR)\
+		-c $(ENVIRONMENTS_DIR)/spriteenvironment.cpp -o $(OBJ_DIR)/spriteenvironment.o
 
 force_look:
 	true
