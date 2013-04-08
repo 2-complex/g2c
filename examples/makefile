@@ -13,8 +13,6 @@ CURRENT = $(MAKECMDGOALS)
 
 current: $(CURRENT)
 
-run: current
-	./$(CURRENT) $(CURRENTARGS)
 endif
 
 G2C_ROOT_DIR = ..
@@ -39,7 +37,7 @@ $(LIBG2C): force_look
 	cd $(G2C_SOURCE_DIR) && $(MAKE) libg2c.a
 
 
-$(CURRENT): $(ENVIRONMENTS) $(SPRITES) $(CURRENT).cpp
+$(CURRENT): $(LIBG2C) $(ENVIRONMENTS) $(SPRITES) $(CURRENT).cpp
 	c++ $(FLAGS) $(DEBUG) $(OPTIMIZATION)\
 		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		$(ENVIRONMENTS) $(APPS) $(SPRITES) \
