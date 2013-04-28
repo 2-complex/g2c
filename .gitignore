@@ -2,3 +2,6 @@
 examples/ship
 examples/triangle
 examples/sprite
+examples/serialize
+examples/worldfile
+g2c/libg2c.a
