@@ -16,9 +16,8 @@
      appreciated but is not required.
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
-  3. This notice may not be removed or altered from any source distribution.e
+  3. This notice may not be removed or altered from any source distribution.
 */
-
 
 
 #include "sprites.h"
@@ -29,8 +28,121 @@ using namespace std;
 
 namespace g2c {
 
-bool Sprite::drawLines = false;
+bool Sprite::drawLines = false; // Some time put this in the renderer, perhaps.
 Renderer* Sprite::renderer = NULL;
+
+
+Mat4Property::Mat4Property() {}
+Mat4Property::Mat4Property(const Mat4& v) : Mat4(v) {}
+
+std::string Mat4Property::serialize(std::string indent) const
+{
+	VectorProperty<DoubleProperty> v;
+	const double* p = ptr();
+	for( int i = 0; i < 16; i++ )
+		v.push_back(p[i]);
+	
+	return flattenWhitespace(v.serialize(indent).c_str());
+}
+
+void Mat4Property::initWithParseNode(const parse::Node* n)
+{
+	VectorProperty<DoubleProperty> v;
+	v.initWithParseNode(n);
+	
+	double* ptr = (double*)(&m00);
+	int size = v.size();
+	
+	for( int i = 0; i < 16; i++ )
+		if( size >= 0 )
+			ptr[i] = v[i]();
+}
+
+
+Vec2Property::Vec2Property() {}
+Vec2Property::Vec2Property(const Vec2& v) : Vec2(v) {}
+
+std::string Vec2Property::serialize(std::string indent) const
+{
+	VectorProperty<DoubleProperty> v;
+	v.push_back(x);
+	v.push_back(y);
+	return flattenWhitespace(v.serialize(indent).c_str());
+}
+
+void Vec2Property::initWithParseNode(const parse::Node* n)
+{
+	VectorProperty<DoubleProperty> v;
+	v.initWithParseNode(n);
+	
+	if( v.size() >= 0 )
+		x = v[0]();
+	
+	if( v.size() >= 1 )
+		y = v[1]();
+}
+
+
+Vec3Property::Vec3Property() {}
+Vec3Property::Vec3Property(const Vec3& v) : Vec3(v) {}
+
+std::string Vec3Property::serialize(std::string indent) const
+{
+	VectorProperty<DoubleProperty> v;
+	v.push_back(x);
+	v.push_back(y);
+	v.push_back(z);
+	return flattenWhitespace(v.serialize(indent).c_str());
+}
+
+void Vec3Property::initWithParseNode(const parse::Node* n)
+{
+	VectorProperty<DoubleProperty> v;
+	v.initWithParseNode(n);
+	
+	if( v.size() >= 0 )
+		x = v[0]();
+	
+	if( v.size() >= 1 )
+		y = v[1]();
+	
+	if( v.size() >= 2 )
+		z = v[2]();
+}
+
+
+
+ColorProperty::ColorProperty() {}
+ColorProperty::ColorProperty(const Color& c) : Color(c) {}
+
+std::string ColorProperty::serialize(std::string indent) const
+{
+	VectorProperty<DoubleProperty> v;
+	v.push_back(r);
+	v.push_back(g);
+	v.push_back(b);
+	v.push_back(a);
+	return flattenWhitespace(v.serialize(indent).c_str());
+}
+
+void ColorProperty::initWithParseNode(const parse::Node* n)
+{
+	VectorProperty<DoubleProperty> v;
+	v.initWithParseNode(n);
+	
+	if( v.size() >= 0 )
+		r = v[0]();
+	
+	if( v.size() >= 1 )
+		g = v[1]();
+	
+	if( v.size() >= 2 )
+		b = v[2]();
+	
+	if( v.size() >= 3 )
+		a = v[3]();
+}
+
 
 
 Sprite::Sprite() : numberOfRows(1),
@@ -39,6 +151,13 @@ Sprite::Sprite() : numberOfRows(1),
 				   flipRows(false)
 {
 	type = "Sprite";
+	
+	addProperty("file", file);
+	addProperty("numberOfRows", numberOfRows);
+	addProperty("numberOfColumns", numberOfColumns);
+	addProperty("center", center);
+	addProperty("flipRows", flipRows);
+	addProperty("polygon", polygon);
 }
 
 Sprite::~Sprite()
@@ -47,11 +166,11 @@ Sprite::~Sprite()
 
 Mat4 Sprite::getOffsetMatrix(double x, double y, double k) const
 {
-	double w = width / numberOfColumns,
-		   h = height / numberOfRows;
+	double w = width / numberOfColumns(),
+		   h = height / numberOfRows();
 	
 	Vec2 offset(x, y);
-	if( center )
+	if( center() )
 		offset -= 0.5 * k * Vec2(w, h);
 	
 	return Mat4(
@@ -63,14 +182,14 @@ Mat4 Sprite::getOffsetMatrix(double x, double y, double k) const
 
 Mat3 Sprite::getTexMatrix(int frame) const
 {
-	int c = numberOfColumns;
-	int r = numberOfRows;
+	int c = numberOfColumns();
+	int r = numberOfRows();
 	
 	double i = (frame % c + c) % c,
 		   j = ((frame / c) % r + r) % r;
 	
-	if( flipRows )
-		j = numberOfRows - j - 1;
+	if( flipRows() )
+		j = numberOfRows() - j - 1;
 	
 	return Mat3(1.0 / c, 0.0, 0.0,
 		 		0.0, 1.0 / r, 0.0,
@@ -82,59 +201,12 @@ void Sprite::handleChild(const parse::Node* n)
 	string n_name = n->data.s;
 	parse::Node* value = n->data.value;
 	
-	if(n_name == "file")
-		file = value->data.s;
-	
-	if(n_name == "name")
-		name = value->data.s;
-	
-	if(n_name == "numberOfColumns")
-		numberOfColumns = value->data.i;
-	
-	if(n_name == "numberOfRows")
-		numberOfRows = value->data.i;
-	
-	if(n_name == "center")
-		center = value->data.i ? true : false;
-
-	if(n_name == "flipRows")
-		flipRows = value->data.i ? true : false;
-	
-	if(n_name == "polygon")
-	{
-		vector<Vec2> pl;
-		for(vector<parse::Node*>::const_iterator itr = value->children.begin();
-			itr!=value->children.end();
-			itr++)
-		{
-			pl.push_back(Vec2((*itr)->children[0]->data.x, (*itr)->children[1]->data.x));
-		}
-		polygon.setVertices(pl);
-	}
+	Serializable::handleChild(n);
 }
 
 string Sprite::serializeElements(string indent) const
 {
 	string r = Serializable::serializeElements(indent);
-	r += TAB + indent + "'file' : " + string("'") + file + "',\n";
-	if( numberOfColumns != 1 )
-		r += TAB + indent + "'numberOfColumns' : " + intToString(numberOfColumns) + ",\n";
-	if( numberOfRows != 1 )
-		r += TAB + indent + "'numberOfRows' : " + intToString(numberOfRows) + ",\n";
-	if( center )
-		r += TAB + indent + "'center' : " + intToString(center) + ",\n";
-	if( flipRows )
-		r += TAB + indent + "'flipRows' : " + intToString(flipRows) + ",\n";
-	
-	if( !polygon.empty() )
-	{
-		vector<Vec2> vertices = polygon.getVertices();
-		r += TAB + indent + "'polygon' : " + "[";
-		for(vector<Vec2>::const_iterator itr = vertices.begin(); itr!=vertices.end(); itr++)
-			r += "[" + floatToString(itr->x) + ", " + floatToString(itr->y) + "], ";
-		r += "],\n";
-	}
-	
 	return r;
 }
 
@@ -296,7 +368,7 @@ string Font::serializeElements(string indent) const
 	s = "[";
 	for(int i = 0; i < n; i++)
 	{
-		if( i % numberOfColumns == 0 )
+		if( i % numberOfColumns() == 0 )
 			s += "\n" + TAB + TAB + TAB + indent;
 		s += floatToString(widths[i]);
 		if( i!=n-1 )
@@ -309,7 +381,7 @@ string Font::serializeElements(string indent) const
 	s = "[";
 	for(int i = 0; i < n; i++)
 	{
-		if( i % numberOfColumns == 0 )
+		if( i % numberOfColumns() == 0 )
 			s += "\n" + TAB + TAB + TAB + indent;
 		s += floatToString(lefts[i]);
 		if( i!=n-1 )
@@ -383,7 +455,14 @@ void Font::handleChild(const parse::Node* n)
 }
 
 
-Node::Node() : visible(true), parent(NULL) {type = "Node";}
+Node::Node() : visible(true), parent(NULL)
+{
+	type = "Node";
+	addProperty("visible", visible);
+	addProperty("matrix", matrix);
+	addProperty("color", color);
+	addProperty("children", children);
+}
 
 Node::~Node()
 {
@@ -468,7 +547,7 @@ void Node::draw() const
 	{
 		Node* node = *itr;
 		
-		if(node->visible)
+		if(node->visible())
 		{
 			node->worldMatrix = worldMatrix * node->matrix;
 			node->worldColor = worldColor * node->color;
@@ -477,84 +556,10 @@ void Node::draw() const
 	}
 }
 
-string Node::serializeElements(string indent) const
-{
-	string r = Serializable::serializeElements(indent);
-	
-	if( matrix != Mat4() )
-	{
-		string s = "[";
-		for(int i = 0; i < 16; i++)
-			s += floatToString(matrix.ptr()[i]) + ((i==15) ? "" : ", ");
-		s += "]";
-		r += TAB + indent + "'matrix' : " + s + string(",\n");
-	}
-		
-	if( color != Color() )
-	{
-		string s = "[";
-		s += floatToString(color.r) + ", " +
-			 floatToString(color.g) + ", " +
-			 floatToString(color.b) + ", " +
-			 floatToString(color.a);
-		s += "]";
-		r += TAB + indent + "'color' : " + s + string(",\n");
-	}
-	
-	r += TAB + indent + "'visible' : " + (visible ? "1" : "0") + string(",\n");
-	
-	return r + serializeChildren(indent);
-}
-
-string Node::serializeChildren(string indent) const
-{
-	string r;
-	if(!children.empty())
-	{
-		r += TAB + indent + "'children' : [\n";
-		for(vector<Node*>::const_iterator itr = children.begin(); itr!=children.end(); itr++)
-			r += (*itr)->serialize(TAB + TAB + TAB + indent) + ",\n";
-		r += TAB + TAB + indent + "],\n";
-	}
-	return r;
-}
-
 void Node::handleChild(const parse::Node* n)
 {
 	const parse::Node* value = n->data.value;
 	string n_name = n->data.s;
-	
-	if(n_name == "name")
-		name = value->data.s;
-	
-	if(n_name == "visible")
-		visible = value->data.i ? true : false;
-	
-	if(n_name == "matrix")
-	{
-		double v[16];
-		int i = 0;
-		for(vector<parse::Node*>::const_iterator itr = value->children.begin();
-			itr!=value->children.end() && i < 16;
-			itr++)
-		{
-			v[i++] = (*itr)->data.x;
-		}
-		matrix.set(v);
-	}
-	
-	if(n_name == "color")
-	{
-		double v[4];
-		int i = 0;
-		for(vector<parse::Node*>::const_iterator itr = value->children.begin();
-			itr!=value->children.end() && i < 4;
-			itr++)
-		{
-			v[i++] = (*itr)->data.x;
-		}
-		color.set(v[0], v[1], v[2], v[3]);
-	}
 	
 	if(n_name == "children")
 	{
@@ -589,6 +594,8 @@ void Node::handleChild(const parse::Node* n)
 			}
 		}
 	}
+	else
+		Serializable::handleChild(n);
 }
 
 void Node::clearChildren()
@@ -640,7 +647,7 @@ void Node::keyboard(unsigned char inkey)
 
 bool Node::mouseDown(const Vec2& C)
 {
-	if( !visible )
+	if( !visible() )
 		return false;
 	
 	if( delegate && vectorInside(C) )
@@ -743,7 +750,7 @@ const Color& Node::getWorldColor() const
 
 Actor* Node::actorInClick(const Vec2& C)
 {
-	if(!visible)
+	if(!visible())
 		return NULL;
 	
 	for(vector<Node*>::reverse_iterator itr = children.rbegin(); itr!=children.rend(); itr++)
@@ -1131,6 +1138,7 @@ void RendererGL2::drawMesh(const Mesh* mesh,
 Polygon::Polygon() : drawType(kSolid), valid(false), mesh(NULL)
 {
 	type = "Polygon";
+	addProperty("vertices", vertices);
 }
 
 Polygon::Polygon(const Polygon& P) : drawType(kSolid), valid(false), mesh(NULL)
@@ -1147,7 +1155,7 @@ Polygon::~Polygon()
 
 Polygon& Polygon::operator=(const Polygon& P)
 {
-	this->vector<Vec2>::operator=(P);
+	vertices = P.vertices;
 	this->Node::operator=(P);
 	this->mesh = NULL;
 	this->valid = false;	
@@ -1156,58 +1164,67 @@ Polygon& Polygon::operator=(const Polygon& P)
 
 Polygon& Polygon::add( const Vec2& V )
 {	
-	push_back(V);
+	vertices.push_back(V);
 	return *this;
 }
 
 Polygon& Polygon::add( double x, double y )
 {
-	push_back(Vec2(x,y));
+	vertices.push_back(Vec2(x,y));
 	return *this;
 }
 
 
-Polygon& Polygon::operator += (const Vec2& V) {
-	for( iterator itr=begin(); itr!=end(); itr++ )
+Polygon& Polygon::operator += (const Vec2& V)
+{
+	for( VectorProperty<Vec2Property>::iterator itr=vertices.begin(); itr!=vertices.end(); itr++ )
 		*itr+=V;
 	return *this;
 }
 
-Polygon& Polygon::operator -= (const Vec2& V) {
-	for( iterator itr=begin(); itr!=end(); itr++ )
+Polygon& Polygon::operator -= (const Vec2& V)
+{
+	for( VectorProperty<Vec2Property>::iterator itr=vertices.begin(); itr!=vertices.end(); itr++ )
 		*itr-=V;
 	return *this;
 }
 
-Polygon& Polygon::operator *= (double k) {
-	for( iterator itr=begin(); itr!=end(); itr++ )
+Polygon& Polygon::operator *= (double k)
+{
+	for( VectorProperty<Vec2Property>::iterator itr=vertices.begin(); itr!=vertices.end(); itr++ )
 		*itr*=k;
 	return *this;
 }
 
-Polygon& Polygon::operator /= (double k) {
-	for( iterator itr=begin(); itr!=end(); itr++ )
+Polygon& Polygon::operator /= (double k)
+{
+	for( VectorProperty<Vec2Property>::iterator itr=vertices.begin(); itr!=vertices.end(); itr++ )
 		*itr/=k;
 	return *this;
 }
 
-Polygon Polygon::operator+ (const Vec2& V) const {
+Polygon Polygon::operator+ (const Vec2& V) const
+{
 	return Polygon(*this)+=V;
 }
 
-Polygon Polygon::operator- (const Vec2& V) const {
+Polygon Polygon::operator- (const Vec2& V) const
+{
 	return Polygon(*this)-=V;
 }
 
-Polygon Polygon::operator* (double k) const {
+Polygon Polygon::operator* (double k) const
+{
 	return Polygon(*this)*=k;
 }
 
-Polygon Polygon::operator/ (double k) const {
+Polygon Polygon::operator/ (double k) const
+{
 	return Polygon(*this)/=k;
 }
 
-Polygon operator * (const Mat4& M, const Polygon& P) {
+Polygon operator * (const Mat4& M, const Polygon& P)
+{
 	Polygon R;
 	R.drawType = P.drawType;
 	
@@ -1217,25 +1234,12 @@ Polygon operator * (const Mat4& M, const Polygon& P) {
 	
 	for( int i = 0; i < n; i++)
 	{
-		Vec4 v = M * Vec4(P[i], 0.0, 1.0);
+		Vec4 v = M * Vec4(P.vertices[i], 0.0, 1.0);
 		r[i] = (Vec2(v.x, v.y) / v.w);
 	}
 	
 	R.setVertices(r);
 	return R;
-}
-
-void Polygon::display() const {
-	for( const_iterator itr=begin(); itr!=end(); itr++ )
-		itr->display();
-}
-
-void Polygon::print() const {
-	for( const_iterator itr=begin(); itr!=end(); itr++ )
-	{
-		itr->print();
-		g2clog( ", " );
-	}
 }
 
 void Polygon::draw() const
@@ -1256,18 +1260,18 @@ void Polygon::draw() const
 
 vector<Vec2>::size_type Polygon::size() const
 {
-	return vector<Vec2>::size();
+	return vertices.size();
 }
 
 bool Polygon::empty() const
 {
-	return vector<Vec2>::empty();
+	return vertices.empty();
 }
 
 void Polygon::rotate(double theta)
 {
 	double s = sin(theta), c = cos(theta);
-	for(iterator itr = begin(); itr!= end(); itr++)
+	for(VectorProperty<Vec2Property>::iterator itr = vertices.begin(); itr!= vertices.end(); itr++)
 		*itr = Mat2(c, s, -s, c) * (*itr);
 }
 
@@ -1285,7 +1289,7 @@ bool Polygon::vectorInside(const Vec2& V) const
 	double theta = 0;
 	int n = size();
 	for( int i=0; i<n; i++ )
-		theta += angleAToB( (*this)[i] - V, (*this)[(i+1)%n] - V );
+		theta += angleAToB( vertices[i] - V, vertices[(i+1)%n] - V );
 	return ( theta > 1 || theta < -1 );
 }
 
@@ -1318,7 +1322,7 @@ void Polygon::update() const
 	}
 	
 	int i = 0;
-	for(const_iterator itr = begin(); itr!=end(); itr++)
+	for( VectorProperty<Vec2Property>::const_iterator itr = vertices.begin(); itr!=vertices.end(); itr++ )
 	{
 		mesh->positions[i++] = (float)(itr->x);
 		mesh->positions[i++] = (float)(itr->y);
@@ -1364,7 +1368,7 @@ void Polygon::triangulate() const
 	for( i = 0; i < n && n > 2; i++ )
 	{
 		// Consider triangle i, i+1, i+2 candidate for being an ear.
-		const Vec2 &a((*this)[p[i]]), &b((*this)[p[(i+1) % n]]), &c((*this)[p[(i+2) % n]]);
+		const Vec2 &a(vertices[p[i]]), &b(vertices[p[(i+1) % n]]), &c(vertices[p[(i+2) % n]]);
 		Mat2 T(b-a, c-a);
 		
 		// If it's going clockwise, it's not an ear.
@@ -1375,7 +1379,7 @@ void Polygon::triangulate() const
 		bool empty = true;
 		for( int j = (i+3)%n; j!=i; j=(j+1)%n )
 		{
-			Vec2 v = T * (*this)[p[j]] + a;
+			Vec2 v = T * vertices[p[j]] + a;
 			if( v.x > 0.0 && v.y > 0.0 && v.y + v.x < 1.0 )
 			{
 				empty = false;
@@ -1413,7 +1417,7 @@ void Polygon::handleChild(const parse::Node* n)
 			itr!=value->children.end();
 			itr++)
 		{
-			push_back(Vec2((*itr)->children[0]->data.x, (*itr)->children[1]->data.x));
+			vertices.push_back(Vec2((*itr)->children[0]->data.x, (*itr)->children[1]->data.x));
 		}
 	}
 }
@@ -1421,15 +1425,6 @@ void Polygon::handleChild(const parse::Node* n)
 string Polygon::serializeElements(string indent) const
 {
 	string r = Node::serializeElements(indent);
-	
-	if( !empty() )
-	{
-		r += TAB + indent + "'vertices' : " + "[";
-		for(const_iterator itr = begin(); itr!=end(); itr++)
-			r += "[" + floatToString(itr->x) + ", " + floatToString(itr->y) + "], ";
-		r += "],\n";
-	}
-	
 	return r;
 }
 
@@ -1438,21 +1433,34 @@ void Polygon::reverse()
 	vector<Vec2> r;
 	
 	int n = size();
-	for( int i=0; i<n; i++ )
-		r.push_back((*this)[n-i-1]);
+	for( int i = 0; i < n; i++ )
+		r.push_back(vertices[n-i-1]);
 	
 	setVertices(r);
 }
 
 void Polygon::setVertices(const vector<Vec2>& v)
 {
-	this->vector<Vec2>::operator=(v);
+	vertices.clear();
+	for( vector<Vec2>::const_iterator itr = v.begin(); itr != v.end(); itr++ )
+	{
+		vertices.push_back(*itr);
+	}
 	valid = false;
 }
 
 vector<Vec2> Polygon::getVertices() const
 {
-	return *this;
+	vector<Vec2> r;
+	
+	for(VectorProperty<Vec2Property>::const_iterator itr = vertices.begin();
+		itr != vertices.end();
+		itr++ )
+	{
+		r.push_back(*itr);
+	}
+	
+	return r;
 }
 
 void Polygon::setDrawType(DrawType inDrawType)
@@ -1466,17 +1474,15 @@ Polygon::DrawType Polygon::getDrawType() const
 	return drawType;
 }
 
-Actor::Actor() : sprite(NULL), mesh(NULL)
+Actor::Actor() : sprite(NULL), mesh(NULL), x(position.x), y(position.y)
 {
-	type = "Actor";
-	tare();
+	init();
 }
 
-Actor::Actor(Sprite* insprite) : mesh(NULL)
+Actor::Actor(Sprite* insprite) : mesh(NULL), x(position.x), y(position.y)
 {
-	type = "Actor";
 	sprite = insprite;
-	tare();
+	init();
 }
 
 Actor::~Actor()
@@ -1484,12 +1490,19 @@ Actor::~Actor()
 	
 }
 
-void Actor::tare()
+void Actor::init()
 {
 	frame = 0;
 	k = 1.0;
 	visible = true;
 	listening = true;
+	
+	type = "Actor";
+	
+	addProperty("position", position);
+	addProperty("k", k);
+	addProperty("frame", frame);
+	addProperty("spriteName", spriteName);
 }
 
 void Actor::removeSprite(const Sprite* s)
@@ -1508,42 +1521,14 @@ void Actor::draw() const
 	
 	if( sprite )
 	{
-		matrix = matrix * sprite->getOffsetMatrix(position.x, position.y, k);
-		texMatrix = sprite->getTexMatrix(frame);
+		matrix = matrix * sprite->getOffsetMatrix(position.x, position.y, k());
+		texMatrix = sprite->getTexMatrix(frame());
 	}
 	
 	Sprite::renderer->drawMesh(mesh, matrix, texMatrix, worldColor, sprite);
 	
 	if( Sprite::drawLines )
 		collisionPolygon().draw();
-}
-
-string Actor::serializeElements(string indent) const
-{
-	string r = Node::serializeElements(indent);
-	if( sprite )
-		r += TAB + indent + "'spriteName' : " + string("'") + sprite->name + "',\n";
-	if( position.x )
-		r += TAB + indent + "'x' : " + floatToString(position.x) + ",\n";
-	if( position.y )
-		r += TAB + indent + "'y' : " + floatToString(position.y) + ",\n";
-	if( k!=1.0 )
-		r += TAB + indent + "'k' : " + floatToString(k) + ",\n";
-	if( frame )
-		r += TAB + indent + "'frame' : " + intToString(frame) + ",\n";
-	
-	if( !polygon.empty() )
-	{	
-		r += TAB + indent + "'polygon' : " + polygon.serialize();
-		r += "\n";
-	}
-	
-	return r;
-}
-
-string Actor::serialize(string indent) const
-{
-	return indent + flattenWhitespace(Node::serialize().c_str());
 }
 
 
@@ -1559,24 +1544,9 @@ void Actor::handleChild(const parse::Node* n)
 	
 	if(value)
 	{
-		if(n_name == "x")
-			position.x = value->data.x;
-		
-		if(n_name == "y")
-			position.y = value->data.x;
-		
-		if(n_name == "k")
-			k = value->data.x;
-		
-		if(n_name == "frame")
-			frame = value->data.i;
-		
 		if(n_name == "spriteName")
 			gActorToSpriteName[this] = value->data.s;
 	}
-	
-	if(n_name == "polygon")
-		polygon.initWithParseNode(value);
 }
 
 Polygon Actor::collisionPolygon() const
@@ -1585,17 +1555,17 @@ Polygon Actor::collisionPolygon() const
 	
 	if( !polygon.empty() )
 	{
-		R = k * polygon + position;
+		R = k() * polygon + position;
 	}
 	else if( sprite )
 	{
-		double w = k * sprite->width / sprite->numberOfColumns,
-			   h = k * sprite->height / sprite->numberOfRows;
+		double w = k() * sprite->width / sprite->numberOfColumns(),
+			   h = k() * sprite->height / sprite->numberOfRows();
 		
 		if( !sprite->polygon.empty() )
 		{
-			R = k * sprite->polygon + position;
-			if( sprite->center )
+			R = k() * sprite->polygon + position;
+			if( sprite->center() )
 				R -= 0.5 * Vec2(w, h);
 		}
 		else
@@ -1604,7 +1574,7 @@ Polygon Actor::collisionPolygon() const
 			
 			R.add(x0, y0).add(x1, y0).add(x1, y1).add(x0, y1);
 			
-			if( sprite->center )
+			if( sprite->center() )
 				R -= 0.5 * Vec2(w, h);
 		}
 	}
@@ -1620,7 +1590,7 @@ bool Actor::vectorInside(const Vec2& C) const
 
 Actor* Actor::actorInClick(const Vec2& C)
 {
-	if(!visible)
+	if(!visible())
 		return NULL;
 	
 	if( vectorInside(C) )
@@ -1669,14 +1639,14 @@ void Button::draw() const
 
 bool Button::mouseDown(const Vec2& C)
 {
-	if( !visible )
+	if( !visible() )
 		return false;
 	
 	frame = baseFrame;
 	
 	if( vectorInside(C) )
 	{
-		frame++;
+		frame = frame() + 1;
 		depressed = true;
 		if( handler )
 			handler->down(this);
@@ -1687,13 +1657,13 @@ bool Button::mouseDown(const Vec2& C)
 
 void Button::mouseDragged(const Vec2& C)
 {
-	if( !visible )
+	if( !visible() )
 		return;
 	
 	frame = baseFrame;
 	if( vectorInside(C) )
 	{
-		frame++;
+		frame = frame() + 1;
 	}
 	else
 	{
@@ -1708,7 +1678,7 @@ void Button::mouseDragged(const Vec2& C)
 
 void Button::mouseUp(const Vec2& C)
 {
-	if( !visible )
+	if( !visible() )
 		return;
 	
 	if( vectorInside(C) )
@@ -1783,7 +1753,7 @@ void String::draw() const
 	{
 		string news = s+(drawPipe?"|":"");
 		font->drawString(worldMatrix, worldColor,
-			position.x, position.y, k,
+			position.x, position.y, k(),
 			news.c_str(), justification);
 		if( Sprite::drawLines )
 			collisionPolygon().draw();
@@ -1798,15 +1768,10 @@ void String::draw() const
 
 string String::serializeElements(string indent) const
 {
-	string r = Node::serializeElements(indent);
+	string r = Actor::serializeElements(indent);
+	
 	if( font )
 		r += TAB + indent + "'fontName' : " + string("'") + font->name + "',\n";
-	if( position.x )
-		r += TAB + indent + "'x' : " + floatToString(position.x) + ",\n";
-	if( position.y )
-		r += TAB + indent + "'y' : " + floatToString(position.y) + ",\n";
-	if( k!=1.0 )
-		r += TAB + indent + "'k' : " + floatToString(k) + ",\n";
 	if( s != "" )
 		r += TAB + indent + "'s' : '" + s + "',\n";
 	if( justification != "left" )
@@ -1907,6 +1872,11 @@ World::World() : bank(NULL)
 	destroySoundQueue();
 #endif
 	type = "World";
+	
+	addProperty("sprites", sprites);
+#if !defined(STUB_SOUND)
+	addProperty("sounds", sounds);
+#endif
 }
 
 World::~World()
@@ -1914,7 +1884,7 @@ World::~World()
 #if !defined(STUB_SOUND)
 	delete context;
 #endif
-	
+
 	for(vector<Sprite*>::iterator itr = sprites.begin(); itr!=sprites.end(); itr++)
 		delete *itr;
 
@@ -2093,10 +2063,10 @@ void World::updateNodeMap(Node* node)
 
 void World::handleChild(const parse::Node* n)
 {
-	Node::handleChild(n);
-	
 	string n_name = n->data.s;
 	parse::Node* value = n->data.value;
+	
+	bool handled = false;
 	
 	if( value )
 	{
@@ -2128,6 +2098,8 @@ void World::handleChild(const parse::Node* n)
 					bank->initTextureWithPath(sprite, sprite->file.c_str());
 				}
 			}
+			
+			handled = true;
 		}
 		
 #if !defined(STUB_SOUND)
@@ -2157,8 +2129,15 @@ void World::handleChild(const parse::Node* n)
 					bank->initSoundWithPath(sound, sound->file.c_str());
 				}
 			}
+			
+			handled = true;
 		}
 #endif
+	}
+	
+	if( !handled )
+	{
+		Node::handleChild(n);
 	}
 }
 
@@ -2179,25 +2158,6 @@ void World::clear()
 	}
 	
 	deleteResources.clear();
-}
-
-string World::serializeElements(string indent) const
-{
-	string r = Node::serializeElements(indent);
-	
-	r += TAB + indent + "'sprites' : [\n";
-	for(vector<Sprite*>::const_iterator itr = sprites.begin(); itr!=sprites.end(); itr++)
-		r += (*itr)->serialize(TAB + TAB + TAB + TAB + indent) + ",\n";
-	r += TAB + TAB + indent + "],\n";
-	
-#if !defined(STUB_SOUND)
-	r += TAB + indent + "'sounds' : [\n";
-	for(vector<Sound*>::const_iterator itr = sounds.begin(); itr!=sounds.end(); itr++)
-		r += (*itr)->serialize(TAB + TAB + TAB + TAB + indent) + ",\n";
-	r += TAB + TAB + indent + "],\n";
-#endif
-
-	return r;
 }
 
 
@@ -2335,7 +2295,7 @@ void Animator::remove(Animation* a)
 			
 			if(eventStoppedCounter < 0)
 			{
-				g2cerror( "Animator event stopped counter dropped below 0.\n" );	
+				g2cerror( "Animator event stopped counter dropped below 0.\n" );
 				exit(0);
 			}
 		}

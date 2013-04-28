@@ -20,7 +20,6 @@
 */
 
 
-
 #ifndef _SERIALIZABLE_
 #define _SERIALIZABLE_
 
@@ -68,13 +67,14 @@ protected:
 	virtual std::string serializeElements(std::string indent = "") const;
 	virtual std::string serializeEnd(std::string indent = "") const;
 	
-	void addProperty(const std::string& name, std::string& element);
-	void addProperty(const std::string& name, double& element);
-	void addProperty(const std::string& name, int& element);
 	void addProperty(const std::string& name, Serializable& element);
-	void addProperty(const std::string& name, std::vector<double>& element);
-	void addProperty(const std::string& name, std::vector<int>& element);
-	void addProperty(const std::string& name, std::vector<std::string>& element);
+	
+	void addMemberProperty(const std::string& name, std::string& element);
+	void addMemberProperty(const std::string& name, double& element);
+	void addMemberProperty(const std::string& name, int& element);
+	void addMemberProperty(const std::string& name, std::vector<double>& element);
+	void addMemberProperty(const std::string& name, std::vector<int>& element);
+	void addMemberProperty(const std::string& name, std::vector<std::string>& element);
 	
 private:
 	std::vector<Property> properties;
@@ -90,7 +90,12 @@ public:
 	
 	int operator()() const;
 	void operator()(int i);
-
+	
+	bool operator==(int i) const;
+	bool operator!=(int i) const;
+	operator int&();
+	operator int const&() const;
+	
 private:
 	int value;
 };
@@ -105,6 +110,7 @@ public:
 	
 	bool operator()() const;
 	void operator()(bool b);
+	operator bool() const;
 
 private:
 	bool value;
@@ -113,19 +119,24 @@ private:
 class DoubleProperty : public Serializable {
 public:
 	DoubleProperty();
-	DoubleProperty(double i);
+	DoubleProperty(double x);
 	
 	virtual std::string serialize(std::string indent = "") const;
 	virtual void initWithParseNode(const parse::Node* n);
 	
+	bool operator==(double t) const;
+	bool operator!=(double t) const;
 	double operator()() const;
 	void operator()(double x);
+	operator double&();
+	operator double const&() const;
 
 private:
 	double value;
 };
 
-class StringProperty : public Serializable {
+class StringProperty : public Serializable,
+					   public std::string {
 public:
 	StringProperty();
 	StringProperty(const std::string& s);
@@ -136,9 +147,6 @@ public:
 	
 	const std::string&  operator()() const;
 	void operator()(const std::string& s);
-
-private:
-	std::string value;
 };
 
 template<class T>
@@ -176,6 +184,36 @@ public:
 			t.initWithParseNode(*itr);
 			std::vector<T>::push_back(t);
 		}
+	}
+};
+
+
+template<class T>
+class PointerVectorProperty : public Serializable,
+					          public std::vector<T> {
+public:
+	PointerVectorProperty<T>() {}
+	PointerVectorProperty<T>(const std::vector<T>& v) : std::vector<T>(v) {}
+	
+	virtual std::string serialize(std::string indent = "") const
+	{
+		std::string r = "[\n";
+		
+		int n = std::vector<T>::size();
+		
+		for(int i = 0; i < n; i++)
+		{	
+			r += TAB + indent + std::vector<T>::at(i)->serialize(indent + TAB) +
+				std::string((i==n-1)?"":",") + "\n";
+		}
+		
+		r += indent + "]";
+		
+		return r;
+	}
+	
+	void initWithParseNode(const parse::Node* n)
+	{
 	}
 };
 

@@ -61,6 +61,37 @@ namespace g2c {
 	class Mesh;
 	class Polygon;
 	
+	
+	class Mat4Property : public Mat4,
+						 public Serializable {
+	public:
+		Mat4Property();
+		Mat4Property(const Mat4& m);
+		
+		virtual std::string serialize(std::string indent) const;
+		void initWithParseNode(const parse::Node* n);
+	};
+
+	class Vec2Property : public Vec2,
+						 public Serializable {
+	public:
+		Vec2Property();
+		Vec2Property(const Vec2& v);
+		
+		virtual std::string serialize(std::string indent) const;
+		void initWithParseNode(const parse::Node* n);
+	};
+	
+	class Vec3Property : public Vec3,
+						 public Serializable {
+	public:
+		Vec3Property();
+		Vec3Property(const Vec3& v);
+		
+		virtual std::string serialize(std::string indent) const;
+		void initWithParseNode(const parse::Node* n);
+	};
+	
 	class Color : public Vec4 {
 	public:
 		Color() : Vec4(), r(x), g(y), b(z), a(w) { r = g = b = a = 1.0; }
@@ -72,19 +103,30 @@ namespace g2c {
 		double &r, &g, &b, &a;
 	};
 	
+	class ColorProperty : public Color,
+						  public Serializable {
+	public:
+		ColorProperty();
+		ColorProperty(const Color& c);
+		
+		virtual std::string serialize(std::string indent) const;
+		void initWithParseNode(const parse::Node* n);
+	};
+	
+	
 	class Node : public Serializable,
 				 public Listener {
 	public:
 		Node();
 		virtual ~Node();
 		
-		Mat4 matrix;
-		Color color;
+		BoolProperty visible;
 		
-		bool visible;
+		Mat4Property matrix;
+		ColorProperty color;
 		
 		Node* parent;
-		std::vector<Node*> children;
+		PointerVectorProperty<Node*> children;
 		
 		Node* findChild(const std::string& name) const;
 		void add(Node* t);
@@ -118,10 +160,7 @@ namespace g2c {
 		mutable Color worldColor;
 		
 		std::vector<Serializable*> deleteMe;
-		
-		virtual std::string serializeElements(std::string indent = "") const;
-		virtual std::string serializeChildren(std::string indent = "") const;
-		
+				
 		bool tookMouseDown;
 		void clearTookMouseDown();
 	};
@@ -220,8 +259,7 @@ namespace g2c {
 	};
 
 	
-	class Polygon : protected std::vector<Vec2>,
-					public Node {
+	class Polygon : public Node {
 	public:
 		Polygon();
 		virtual ~Polygon();
@@ -250,11 +288,9 @@ namespace g2c {
 		inline friend class Polygon operator + (const Vec2& V, const Polygon& P) {return P+V;}
 		void rotate(double theta);
 		
-		void display() const;
-		void print() const;
 		virtual void draw() const;
 		
-		size_type size() const;
+		std::vector<Vec2>::size_type size() const;
 		bool empty() const;
 		
 		bool vectorInside( const Vec2& V ) const;
@@ -268,6 +304,8 @@ namespace g2c {
 						
 		virtual void handleChild(const parse::Node* n);
 		virtual std::string serializeElements(std::string indent = "") const;
+		
+		VectorProperty<Vec2Property> vertices;
 		
 	private:
 		mutable Mesh* mesh;
@@ -287,17 +325,16 @@ namespace g2c {
 		Sprite* sprite;
 		Mesh* mesh;
 		
-		int frame;
-		double k;
-		Vec2 position;
+		double& x;
+		double& y;
+		DoubleProperty k;
+		
+		IntProperty frame;
+		Vec2Property position;
 		
 		Polygon polygon;
 		
-		void tare();
-		
 		virtual void draw() const;
-		std::string serializeElements(std::string indent = "") const;
-		virtual std::string serialize(std::string indent = "") const;
 		virtual void handleChild(const parse::Node* n);
 		virtual Polygon collisionPolygon() const;
 		bool vectorInside(const Vec2& C) const;
@@ -305,7 +342,9 @@ namespace g2c {
 		virtual void removeSprite(const Sprite* sprite);
 		
 	private:
-		std::string spriteName;
+		void init();
+		
+		StringProperty spriteName;
 	};
 	
 	class String : public Actor {
@@ -349,11 +388,12 @@ namespace g2c {
 		Sprite();
 		virtual ~Sprite();
 		
-		int numberOfColumns;
-		int numberOfRows;
+		StringProperty file;
+		IntProperty numberOfColumns;
+		IntProperty numberOfRows;
 		
-		bool center;
-		bool flipRows;
+		BoolProperty center;
+		BoolProperty flipRows;
 		
 		Polygon polygon;
 		
@@ -445,9 +485,9 @@ namespace g2c {
 		
 		Bank* bank;
 		
-		std::vector<Sprite*> sprites;
+		PointerVectorProperty<Sprite*> sprites;
 #if !defined(STUB_SOUND)
-		std::vector<Sound*> sounds;
+		PointerVectorProperty<Sound*> sounds;
 #endif
 		
 		virtual void draw() const;
@@ -469,7 +509,6 @@ namespace g2c {
 		virtual void initWithParseNode(const parse::Node* n);
 		virtual void handleChild(const parse::Node* n);
 		
-		virtual std::string serializeElements(std::string indent = "") const;
 		std::string serializeSprites(std::string indent = "") const;
 		
 		virtual void playSound(const std::string& name) const;
@@ -494,7 +533,7 @@ namespace g2c {
 		// by playSound (which really should be const).
 		void initSoundQueue() const;
 		void destroySoundQueue() const;
-
+		
 #if !defined(STUB_SOUND)
 		mutable Context* context;
 		mutable std::vector<Source*> sources;

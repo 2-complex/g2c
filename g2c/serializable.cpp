@@ -20,7 +20,6 @@
 */
 
 
-
 #include "serializable.h"
 #include "util.h"
 
@@ -256,37 +255,37 @@ string Serializable::serializeEnd(string indent) const
 	return indent + "}";
 }
 
-void Serializable::addProperty(const std::string& name, std::string& element)
-{
-	properties.push_back(Property(kString, name, (char*)(&element) - (char*)(this) ));
-}
-
-void Serializable::addProperty(const std::string& name, double& element)
-{
-	properties.push_back(Property(kDouble, name, (char*)(&element) - (char*)(this) ));
-}
-
-void Serializable::addProperty(const std::string& name, int& element)
-{
-	properties.push_back(Property(kInt, name, (char*)(&element) - (char*)(this) ));
-}
-
 void Serializable::addProperty(const std::string& name, Serializable& element)
 {
 	properties.push_back(Property(kObject, name, (char*)(&element) - (char*)(this) ));
 }
 
-void Serializable::addProperty(const std::string& name, vector<double>& element)
+void Serializable::addMemberProperty(const std::string& name, std::string& element)
+{
+	properties.push_back(Property(kString, name, (char*)(&element) - (char*)(this) ));
+}
+
+void Serializable::addMemberProperty(const std::string& name, double& element)
+{
+	properties.push_back(Property(kDouble, name, (char*)(&element) - (char*)(this) ));
+}
+
+void Serializable::addMemberProperty(const std::string& name, int& element)
+{
+	properties.push_back(Property(kInt, name, (char*)(&element) - (char*)(this) ));
+}
+
+void Serializable::addMemberProperty(const std::string& name, vector<double>& element)
 {
 	properties.push_back(Property(kVectorDouble, name, (char*)(&element) - (char*)(this) ));
 }
 
-void Serializable::addProperty(const std::string& name, vector<int>& element)
+void Serializable::addMemberProperty(const std::string& name, vector<int>& element)
 {
 	properties.push_back(Property(kVectorInt, name, (char*)(&element) - (char*)(this) ));
 }
 
-void Serializable::addProperty(const std::string& name, vector<string>& element)
+void Serializable::addMemberProperty(const std::string& name, vector<string>& element)
 {
 	properties.push_back(Property(kVectorString, name, (char*)(&element) - (char*)(this) ));
 }
@@ -303,6 +302,26 @@ int IntProperty::operator()() const
 void IntProperty::operator()(int i)
 {
 	value = i;
+}
+
+bool IntProperty::operator==(int i) const
+{
+	return value == i;
+}
+
+bool IntProperty::operator!=(int i) const
+{
+	return value != i;
+}
+
+IntProperty::operator int&()
+{
+	return value;
+}
+
+IntProperty::operator int const&() const
+{
+	return value;
 }
 
 string IntProperty::serialize(string indent) const
@@ -353,6 +372,26 @@ void DoubleProperty::operator()(double x)
 	value = x;
 }
 
+bool DoubleProperty::operator==(double t) const
+{
+	return value == t;
+}
+
+bool DoubleProperty::operator!=(double t) const
+{
+	return value != t;
+}
+
+DoubleProperty::operator double&()
+{
+	return value;
+}
+
+DoubleProperty::operator double const&() const
+{
+	return value;
+}
+
 string DoubleProperty::serialize(string indent) const
 {
 	return floatToString(value);
@@ -364,34 +403,33 @@ void DoubleProperty::initWithParseNode(const parse::Node* n)
 }
 
 
-StringProperty::StringProperty() : value("") {}
-StringProperty::StringProperty(const string& s) : value(s) {}
+StringProperty::StringProperty() {}
+StringProperty::StringProperty(const string& s) : string(s) {}
 
 StringProperty::StringProperty(const char* s)
 {
-	value = s;
+	string::operator=(s);
 }
 
 const string& StringProperty::operator()() const
 {
-	return value;
+	return *this;
 }
 
 void StringProperty::operator()(const string& s)
 {
-	value = s;
+	string::operator=(s);
 }
 
 string StringProperty::serialize(string indent) const
 {
-	return stringRepr(value);
+	return stringRepr(*this);
 }
 
 void StringProperty::initWithParseNode(const parse::Node* n)
 {
-	value = n->data.s;
+	string::operator=(n->data.s);
 }
-
 
 void Serializable::display() const
 {
