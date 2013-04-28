@@ -16,7 +16,8 @@ void ShipEnvironment::init()
 	ship.numberOfColumns = 32;
 	
 	enterprise.sprite = &ship;
-	enterprise.position.set(100, 200);
+	enterprise.x = 100;
+	enterprise.y = 200;
 	enterprise.frame = 7;
 }
 

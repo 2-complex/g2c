@@ -1,39 +1,75 @@
 {
-  'type' : 'World',
-  'name' : 'bug world',
-  'visible' : 1,
-  'children' : [
-      {
-        'type' : 'Layer',
-        'name' : 'bug layer',
-        'matrix' : [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-        'visible' : 1,
-        'children' : [
-            {
-              'type' : 'Actor',
-              'name' : 'jake',
-              'visible' : 1,
-              'spriteName' : 'ladybug',
-              'position' : [100, 45],
-              'k' : 0.7,
-            },
-          ],
-      },
-      {
-        'type' : 'Polygon',
-        'name' : 'sully',
-        'matrix' : [2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 30, 20, 0, 1],
-        'visible' : 1,
-        'vertices' : [[0, 0], [100, 0], [100, 100], [50, 150], [0, 100], ],
-      },
-    ],
-  'sprites' : [
+  "type" : "World",
+  "name" : "bug world",
+  "visible" : 1,
+  "matrix" : [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ],
+  "color" : [ 1, 1, 1, 1 ],
+  "children" : [
+    {
+      "type" : "Layer",
+      "name" : "bug layer",
+      "visible" : 1,
+      "matrix" : [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ],
+      "color" : [ 1, 1, 1, 1 ],
+      "children" : [
         {
-          'type' : 'Sprite',
-          'name' : 'ladybug',
-          'file' : 'ladybug.png',
-        },
-    ],
-  'sounds' : [
-    ],
+          "type" : "Actor",
+          "name" : "jake",
+          "visible" : 1,
+          "matrix" : [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ],
+          "color" : [ 1, 1, 1, 1 ],
+          "children" : [
+          ],
+          "position" : [ 100, 45 ],
+          "k" : 0.7,
+          "frame" : 0,
+          "spriteName" : "ladybug"
+        }
+      ]
+    },
+    {
+      "type" : "Polygon",
+      "name" : "sully",
+      "visible" : 1,
+      "matrix" : [ 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 30, 20, 0, 1 ],
+      "color" : [ 1, 1, 1, 1 ],
+      "children" : [
+      ],
+      "vertices" : [
+        [ 0, 0 ],
+        [ 100, 0 ],
+        [ 100, 100 ],
+        [ 50, 150 ],
+        [ 0, 100 ],
+        [ 0, 0 ],
+        [ 100, 0 ],
+        [ 100, 100 ],
+        [ 50, 150 ],
+        [ 0, 100 ]
+      ]
+    }
+  ],
+  "sprites" : [
+    {
+      "type" : "Sprite",
+      "name" : "ladybug",
+      "file" : "ladybug.png",
+      "numberOfRows" : 1,
+      "numberOfColumns" : 1,
+      "center" : 0,
+      "flipRows" : 0,
+      "polygon" : {
+        "type" : "Polygon",
+        "visible" : 1,
+        "matrix" : [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ],
+        "color" : [ 1, 1, 1, 1 ],
+        "children" : [
+        ],
+        "vertices" : [
+        ]
+      }
+    }
+  ],
+  "sounds" : [
+  ]
 }

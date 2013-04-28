@@ -51,7 +51,7 @@ void ShipEnvironment::init()
 	
 	enterprise.sprite = &ship;
 	
-	position.set(100, 100);
+	enterprise.position.set(100, 100);
 }
 
 void ShipEnvironment::step(double t)
@@ -74,11 +74,7 @@ void ShipEnvironment::step(double t)
 		velocity += Vec2(cos(theta), sin(theta));
 	}
 	
-	position += velocity;
-	
-	enterprise.x = position.x;
-	enterprise.y = position.y;
-	
+	enterprise.position += velocity;
 	enterprise.frame = (((int)(32.0 * (theta / (2.0 * M_PI)) + 0.5)) % 32 + 32) % 32;
 	
 	if( thrust )
