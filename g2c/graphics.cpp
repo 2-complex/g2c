@@ -432,7 +432,7 @@ void Effect::disableEnabledAttributes() const
 		itr!=enabledAttributes.end();
 		itr++)
 	{
-		glEnableVertexAttribArray(*itr);
+		glDisableVertexAttribArray(*itr);
 	}
 	enabledAttributes.clear();
 }
