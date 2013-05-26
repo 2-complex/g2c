@@ -69,12 +69,12 @@ protected:
 	
 	void addProperty(const std::string& name, Serializable& element);
 	
-	void addMemberProperty(const std::string& name, std::string& element);
-	void addMemberProperty(const std::string& name, double& element);
-	void addMemberProperty(const std::string& name, int& element);
-	void addMemberProperty(const std::string& name, std::vector<double>& element);
-	void addMemberProperty(const std::string& name, std::vector<int>& element);
-	void addMemberProperty(const std::string& name, std::vector<std::string>& element);
+	void addMember(const std::string& name, std::string& element);
+	void addMember(const std::string& name, double& element);
+	void addMember(const std::string& name, int& element);
+	void addMember(const std::string& name, std::vector<double>& element);
+	void addMember(const std::string& name, std::vector<int>& element);
+	void addMember(const std::string& name, std::vector<std::string>& element);
 	
 private:
 	std::vector<Property> properties;

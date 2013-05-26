@@ -203,8 +203,19 @@ string Serializable::serializeElements(string indent) const
 					r += TAB + indent + "\"" + itr->name + "\" : [\n";
 					vector<double>* vptr = (vector<double>*)ptr;
 					
-					for(vector<double>::iterator itr = vptr->begin(); itr != vptr->end(); itr++)
-						r += TAB + TAB + indent + floatToString(*itr) + ",\n";
+					vector<double>::iterator itr = vptr->begin();
+					if( itr != vptr->end() )
+					while(true)
+					{
+						r += TAB + TAB + indent + floatToString(*itr);
+						itr++;
+						if( itr==vptr->end() )
+						{
+							r += "\n";
+							break;
+						}
+						r += ",\n";
+					}
 					
 					r += TAB + indent + "]";
 				}
@@ -215,8 +226,19 @@ string Serializable::serializeElements(string indent) const
 					r += TAB + indent + "\"" + itr->name + "\" : [\n";
 					vector<int>* vptr = (vector<int>*)ptr;
 					
-					for(vector<int>::iterator itr = vptr->begin(); itr != vptr->end(); itr++)
-						r += TAB + TAB + indent + intToString(*itr) + ",\n";
+					vector<int>::iterator itr = vptr->begin();
+					if( itr != vptr->end() )
+					while(true)
+					{
+						r += TAB + TAB + indent + intToString(*itr);
+						itr++;
+						if( itr==vptr->end() )
+						{
+							r += "\n";
+							break;
+						}
+						r += ",\n";
+					}
 					
 					r += TAB + indent + "]";
 				}
@@ -227,9 +249,20 @@ string Serializable::serializeElements(string indent) const
 					r += TAB + indent + "\"" + itr->name + "\" : [\n";
 					vector<string>* vptr = (vector<string>*)ptr;
 					
-					for(vector<string>::iterator itr = vptr->begin(); itr != vptr->end(); itr++)
-						r += TAB + TAB + indent + stringRepr(*itr) + ",\n";
-					
+					vector<string>::iterator itr = vptr->begin();
+					if( itr != vptr->end() )
+					while(true)
+					{
+						r += TAB + TAB + indent + stringRepr(*itr);
+						itr++;
+						if( itr==vptr->end() )
+						{
+							r += "\n";
+							break;
+						}
+						r += ",\n";
+					}
+										
 					r += TAB + indent + "]";
 				}
 			break;
@@ -260,32 +293,32 @@ void Serializable::addProperty(const std::string& name, Serializable& element)
 	properties.push_back(Property(kObject, name, (char*)(&element) - (char*)(this) ));
 }
 
-void Serializable::addMemberProperty(const std::string& name, std::string& element)
+void Serializable::addMember(const std::string& name, std::string& element)
 {
 	properties.push_back(Property(kString, name, (char*)(&element) - (char*)(this) ));
 }
 
-void Serializable::addMemberProperty(const std::string& name, double& element)
+void Serializable::addMember(const std::string& name, double& element)
 {
 	properties.push_back(Property(kDouble, name, (char*)(&element) - (char*)(this) ));
 }
 
-void Serializable::addMemberProperty(const std::string& name, int& element)
+void Serializable::addMember(const std::string& name, int& element)
 {
 	properties.push_back(Property(kInt, name, (char*)(&element) - (char*)(this) ));
 }
 
-void Serializable::addMemberProperty(const std::string& name, vector<double>& element)
+void Serializable::addMember(const std::string& name, vector<double>& element)
 {
 	properties.push_back(Property(kVectorDouble, name, (char*)(&element) - (char*)(this) ));
 }
 
-void Serializable::addMemberProperty(const std::string& name, vector<int>& element)
+void Serializable::addMember(const std::string& name, vector<int>& element)
 {
 	properties.push_back(Property(kVectorInt, name, (char*)(&element) - (char*)(this) ));
 }
 
-void Serializable::addMemberProperty(const std::string& name, vector<string>& element)
+void Serializable::addMember(const std::string& name, vector<string>& element)
 {
 	properties.push_back(Property(kVectorString, name, (char*)(&element) - (char*)(this) ));
 }
