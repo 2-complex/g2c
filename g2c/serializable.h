@@ -135,8 +135,7 @@ private:
 	double value;
 };
 
-class StringProperty : public Serializable,
-					   public std::string {
+class StringProperty : public Serializable {
 public:
 	StringProperty();
 	StringProperty(const std::string& s);
@@ -147,6 +146,9 @@ public:
 	
 	const std::string&  operator()() const;
 	void operator()(const std::string& s);
+
+private:
+	std::string value;
 };
 
 template<class T>

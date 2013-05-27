@@ -67,7 +67,7 @@ void Node::parse()
 	{
 		int level = q.size();
 		char c = s[i];
-
+		
 		char open_char = 0;
 		if( level )
 			open_char = q.top();
@@ -107,7 +107,7 @@ void Node::parse()
 	}
 	
 	separators.push_back(end);
-		
+	
 	int n = separators.size();
 	if( n==2 )
 	{
@@ -195,7 +195,7 @@ void Node::parse()
 				if(is_float)
 				{
 					data.x = atof(r.c_str());
-					data.i = (int)(data.x);
+					data.i = data.x;
 					type = kFloat;
 				}
 				else
@@ -249,8 +249,8 @@ void Node::parse()
 			bool second_of_pair = lastNode && s[a-1]==':';
 			
 			// Strip whitespace.
-			while(a < b && (charInString(s[a], " \r\t\n"))) a++;
-			while(a < b && (charInString(s[b-1], " \r\t\n"))) b--;
+			while(a < b && charInString(s[a], " \r\n\t")) a++;
+			while(a < b && charInString(s[b-1], " \r\n\t")) b--;
 			
 			if(b-a > 0)
 			{

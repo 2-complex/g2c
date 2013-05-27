@@ -37,7 +37,6 @@ Serializable::Property::Property(PropertyType type, const std::string& name, lon
 void Serializable::deserialize(const std::string& s)
 {
 	parse::Node* n = new parse::Node(s.c_str());
-
 	initWithParseNode(n);
 	delete n;
 }
@@ -436,33 +435,34 @@ void DoubleProperty::initWithParseNode(const parse::Node* n)
 }
 
 
-StringProperty::StringProperty() {}
-StringProperty::StringProperty(const string& s) : string(s) {}
+StringProperty::StringProperty() : value("") {}
+StringProperty::StringProperty(const string& s) : value(s) {}
 
 StringProperty::StringProperty(const char* s)
 {
-	string::operator=(s);
+	value = s;
 }
 
 const string& StringProperty::operator()() const
 {
-	return *this;
+	return value;
 }
 
 void StringProperty::operator()(const string& s)
 {
-	string::operator=(s);
+	value = s;
 }
 
 string StringProperty::serialize(string indent) const
 {
-	return stringRepr(*this);
+	return stringRepr(value);
 }
 
 void StringProperty::initWithParseNode(const parse::Node* n)
 {
-	string::operator=(n->data.s);
+	value = n->data.s;
 }
+
 
 void Serializable::display() const
 {
