@@ -3,7 +3,7 @@
   'name' : 'bug world',
   'visible' : 1,
   'children' : [
-      { 'type' : 'String', 'name' : 'lorem ipsum', 'visible' : 1, 'fontName' : 'helvetica',
+      { 'type' : 'Text', 'name' : 'lorem ipsum', 'visible' : 1, 'fontName' : 'helvetica',
         'position' : [300, 205], 'k' : 0.5, 's' : 'Lorem ipsum dolor sit amet, consectetur
 adipisicing elit, sed do eiusmod tempor
 incididunt ut labore et dolore magna

@@ -5,7 +5,7 @@
 	"children" : [
 		{"type":"Layer", "name":"gameLayer"},
 		{"type":"Layer", "name":"explosionLayer"},
-		{"type":"String",
+		{"type":"Text",
 		 "name":"something",
 		 "s":"Something",
 		 "fontName":"helv",

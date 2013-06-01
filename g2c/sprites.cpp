@@ -579,8 +579,8 @@ void Node::handleChild(const parse::Node* n)
 				newNode = new Actor();
 			else if(type == "Button")
 				newNode = new Button();
-			else if(type == "String")
-				newNode = new String();
+			else if(type == "String" || type == "Text") // String is deprecated.
+				newNode = new Text();
 			else if(type == "Integer")
 				newNode = new Integer();
 			else if(type == "Polygon")
@@ -1533,7 +1533,7 @@ void Actor::draw() const
 
 
 map<Actor*, string> gActorToSpriteName;
-map<String*, string> gStringToFontName;
+map<Text*, string> gTextToFontName;
 
 void Actor::handleChild(const parse::Node* n)
 {
@@ -1727,27 +1727,22 @@ void ButtonHandler::down(Button* /*button*/) {}
 void ButtonHandler::up(Button* /*button*/) {}
 
 
-String::String() : font(NULL),
-				   justification("left"),
-				   drawPipe(false)
+Text::Text() : font(NULL),
+			   justification("left"),
+			   drawPipe(false)
 {
-	type = "String";
+	type = "Text";
 }
 
-String::String(Font* infont) : Actor(infont),
-							   font(infont),
-							   justification("left"),
-							   drawPipe(false)
+Text::Text(Font* infont) : Actor(infont),
+						   font(infont),
+					       justification("left"),
+                           drawPipe(false)
 {
-	type = "String";
+	type = "Text";
 }
 
-void String::setString(const std::string& ins)
-{
-	s = ins;
-}
-
-void String::draw() const
+void Text::draw() const
 {
 	if( font )
 	{
@@ -1766,7 +1761,7 @@ void String::draw() const
 	}
 }
 
-string String::serializeElements(string indent) const
+string Text::serializeElements(string indent) const
 {
 	string r = Actor::serializeElements(indent);
 	
@@ -1779,7 +1774,7 @@ string String::serializeElements(string indent) const
 	return r;
 }
 
-void String::handleChild(const parse::Node* n)
+void Text::handleChild(const parse::Node* n)
 {
 	Actor::handleChild(n);
 	
@@ -1791,7 +1786,7 @@ void String::handleChild(const parse::Node* n)
 		if(n_name == "fontName")
 		{
 			fontName = value->data.s;
-			gStringToFontName[this] = value->data.s;
+			gTextToFontName[this] = value->data.s;
 		}
 		
 		if(n_name == "s")
@@ -1802,7 +1797,7 @@ void String::handleChild(const parse::Node* n)
 	}
 }
 
-Polygon String::collisionPolygon() const
+Polygon Text::collisionPolygon() const
 {
 	Polygon R;
 	
@@ -1824,7 +1819,7 @@ Polygon String::collisionPolygon() const
 	return R;
 }
 
-void String::keyboard(unsigned char inkey)
+void Text::keyboard(unsigned char inkey)
 {
 	if( delegate )
 		delegate->keyboard(inkey);
@@ -1835,7 +1830,7 @@ Integer::Integer() : ptr(NULL)
 	type = "Integer";
 }
 
-Integer::Integer(Font* infont, int* inptr) : String(infont),
+Integer::Integer(Font* infont, int* inptr) : Text(infont),
 											 ptr(inptr)
 {
 	type = "Integer";
@@ -1849,17 +1844,7 @@ void Integer::draw() const
 			intToStringWithCommas(*ptr).c_str(), justification);
 	}
 	else
-		String::draw();
-}
-
-void Integer::handleChild(const parse::Node* node)
-{
-	String::handleChild(node);
-}
-
-string Integer::serializeElements(std::string indent) const
-{
-	return String::serializeElements(indent);
+		Text::draw();
 }
 
 
@@ -1985,7 +1970,7 @@ void World::initWithPath(const char* path)
 void World::initWithParseNode(const parse::Node* n)
 {
 	gActorToSpriteName.clear();
-	gStringToFontName.clear();
+	gTextToFontName.clear();
 	
 	Node::initWithParseNode(n);
 	
@@ -2013,8 +1998,8 @@ void World::initWithParseNode(const parse::Node* n)
 		}
 	}
 	
-	for(map<String*, string>::iterator itr = gStringToFontName.begin();
-		itr != gStringToFontName.end();
+	for(map<Text*, string>::iterator itr = gTextToFontName.begin();
+		itr != gTextToFontName.end();
 		itr++)
 	{
 		const string& fontName(itr->second);
@@ -2095,7 +2080,7 @@ void World::handleChild(const parse::Node* n)
 					sprites.push_back(sprite);
 					deleteResources.push_back(sprite);
 					
-					bank->initTextureWithPath(sprite, sprite->file.c_str());
+					bank->initTextureWithPath(sprite, sprite->file().c_str());
 				}
 			}
 			

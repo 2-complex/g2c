@@ -347,10 +347,10 @@ namespace g2c {
 		StringProperty spriteName;
 	};
 	
-	class String : public Actor {
+	class Text : public Actor {
 	public:
-		String();
-		String(Font* infont);
+		Text();
+		Text(Font* infont);
 		
 		std::string justification;
 		std::string s;
@@ -370,7 +370,7 @@ namespace g2c {
 		void keyboard(unsigned char inkey);
 	};
 	
-	class Integer : public String {
+	class Integer : public Text {
 	public:
 		Integer();
 		Integer(Font* infont, int* inptr);
@@ -378,9 +378,6 @@ namespace g2c {
 		int* ptr;
 		
 		virtual void draw() const;
-		
-		void handleChild(const parse::Node* node);
-		virtual std::string serializeElements(std::string indent) const;
 	};
 	
 	class Sprite : public Texture2D {
