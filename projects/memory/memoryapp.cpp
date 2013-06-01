@@ -18,18 +18,18 @@ ZipAnimation::~ZipAnimation()
 
 void ZipAnimation::begin()
 {
-	actor->Vec2::operator=(source);
+	actor->position=source;
 }
 
 void ZipAnimation::step(double t)
 {
 	position = source + t*t*direction;
-	actor->Vec2::operator=(position);
+	actor->position=position;
 }
 
 void ZipAnimation::end()
 {
-	actor->Vec2::operator=(target);
+	actor->position=(target);
 }
 
 
@@ -132,7 +132,7 @@ void ExplosionAnimation::begin()
 	
 	Vec2 p = position;
 	
-	actor->set(p.x, p.y);
+	actor->position.set(p.x, p.y);
 	actor->k = 1.2;
 	actor->color = Color(1,1,1,1.0);
 }
@@ -140,7 +140,7 @@ void ExplosionAnimation::begin()
 void ExplosionAnimation::step(double t)
 {
 	Vec2 p = position + t * direction;
-	actor->set(p.x, p.y);
+	actor->position.set(p.x, p.y);
 	actor->k = 1.2*(1.0 - t);
 	actor->color = Color(2,2,2,1.0 - t);
 }
@@ -148,7 +148,7 @@ void ExplosionAnimation::step(double t)
 void ExplosionAnimation::end()
 {
 	Vec2 p = position + direction;
-	actor->set(p.x, p.y);
+	actor->position.set(p.x, p.y);
 }
 
 

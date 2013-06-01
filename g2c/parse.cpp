@@ -62,7 +62,7 @@ void Node::parse()
 	separators.push_back(begin-1);
 	
 	bool escaped = false;
-	
+
 	for(int i=begin; i<end; i++)
 	{
 		int level = q.size();
