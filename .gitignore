@@ -5,3 +5,10 @@ examples/sprite
 examples/serialize
 examples/worldfile
 g2c/libg2c.a
+
+*.o
+*/obj
+projects/memory/test
+
+.DS_Store
+*/.DS_Store
