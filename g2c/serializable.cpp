@@ -29,6 +29,11 @@
 
 using namespace std;
 
+namespace g2c {
+
+
+
+
 Serializable::Property::Property(PropertyType type, const std::string& name, long offset) :
 	type(type),
 	name(name),
@@ -468,3 +473,6 @@ void Serializable::display() const
 {
 	g2clog( "%s\n", serialize().c_str() );
 }
+
+
+} // end namespace

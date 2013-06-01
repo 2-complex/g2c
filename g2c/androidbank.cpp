@@ -33,6 +33,9 @@ using namespace std;
 
 namespace g2c {
 
+
+
+
 void AndroidBank::setEnvAndLoader(JNIEnv* env, jobject loader)
 {
 	this->env = env;
@@ -162,6 +165,7 @@ void* AndroidBank::getOpenALAudioData(CFURLRef inFileURL,
 }
 
 } // end namespace
+
 
 #endif
 

@@ -40,6 +40,9 @@
 
 namespace g2c {
 
+
+
+
 class Model;
 class Effect;
 class Assumption;
@@ -310,5 +313,6 @@ protected:
 };
 
 } // end namespace
+
 
 #endif

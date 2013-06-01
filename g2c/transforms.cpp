@@ -24,6 +24,7 @@
 
 namespace g2c {
 
+
 /*	Computes a perspective transformation matrix given the angular height
 	of the frustum, the aspect ratio, and the near and far clipping planes.*/
 Mat4 perspective(double angle, double aspect, double near, double far)
@@ -167,4 +168,4 @@ Mat3 upper3x3(const Mat4& m)
 				m.m20, m.m21, m.m22);
 }
 
-} //end namespace
+} // end namespace

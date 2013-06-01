@@ -33,6 +33,10 @@
 using namespace std;
 #include <gdiplus.h>
 
+namespace g2c {
+
+
+
 
 void WindowsBank::initPersistentSerializableWithKey(Serializable* s, const char* key)
 {
@@ -149,4 +153,7 @@ void* WindowsBank::getOpenALAudioData(CFURLRef inFileURL,
 {
 	
 }
+
+} // end namespace
+
 #endif

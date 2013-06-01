@@ -46,6 +46,9 @@
 
 
 namespace g2c {
+
+
+
 	class Color;
 	class Node;
 	class Animator;
@@ -593,5 +596,6 @@ namespace g2c {
 	void setDebugString(std::string* inDebugString);
 	
 } // end namespace
+
 
 #endif

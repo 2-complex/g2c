@@ -28,6 +28,11 @@
 
 @class EAGLView;
 
+namespace g2c {
+
+
+
+
 class IOSResourceBank : public MacBank {
 public:
 	IOSResourceBank() {}
@@ -44,5 +49,8 @@ public:
 	virtual void initSoundWithPath(Sound* sound, const char* path);
 	virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
 };
+
+} // end namespace
+
 
 #endif

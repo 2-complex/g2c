@@ -26,6 +26,8 @@
 #include "environment.h"
 #include "lin/lin.h"
 
+using namespace g2c;
+
 class PanEnvironment : public Environment {
 public:
 	PanEnvironment();

@@ -25,6 +25,11 @@
 
 #include "lin/lin.h"
 
+namespace g2c {
+
+
+
+
 class App {
 public:
 	App();
@@ -43,6 +48,9 @@ public:
 	virtual void mouseDragged(const Vec2& C);
 	virtual void mouseUp(const Vec2& C);
 };
+
+} // end namespace
+
 
 #endif
 

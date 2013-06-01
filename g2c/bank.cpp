@@ -25,6 +25,10 @@
 
 using namespace std;
 
+namespace g2c {
+
+
+
 
 void AsynchronousBank::initPersistentSerializableWithKey(Serializable* s, const char* key)
 {
@@ -100,4 +104,7 @@ int AsynchronousBank::percent() const
 		biggestSize = size;
 	return (int)(100 * (1.0 - (1.0 * size / biggestSize)));
 }
+
+} // end namespace
+
 

@@ -150,7 +150,7 @@ void SpriteEnvironment::keyboard(unsigned char inkey)
 			if( fp )
 			{
 				printf( "writing to file: %s\n", filename.c_str() );
-				string s = world.serialize("");
+				string s = world.serialize();
 				fwrite(s.c_str(), 1, s.size(), fp);
 				fclose(fp);
 			}
@@ -161,7 +161,7 @@ void SpriteEnvironment::keyboard(unsigned char inkey)
 		
 		case 'p':
 		{
-			string s = world.serialize("");
+			string s = world.serialize();
 			printf("%s\n", s.c_str());
 		}
 		break;

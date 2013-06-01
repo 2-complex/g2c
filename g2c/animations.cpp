@@ -24,6 +24,9 @@
 
 namespace g2c {
 
+
+
+
 StopEvents::StopEvents(double instart, double induration) :
 	Animation(instart, induration)
 {
@@ -111,7 +114,7 @@ void WalkInt::end()
 
 
 
-Transition::Transition(double instart, double induration, Node* outgoing, g2c::Node* incoming) :
+Transition::Transition(double instart, double induration, Node* outgoing, Node* incoming) :
 	StopEvents(instart, induration), outgoing(outgoing), incoming(incoming)
 {
 	
@@ -171,7 +174,7 @@ void Transition::end()
 
 FadeIn::FadeIn(double start,
 			   double duration,
-			   g2c::Node* node,
+			   Node* node,
 			   bool inStopsEvents) :
 	Animation(start, duration),
 	node(node)	
@@ -198,7 +201,7 @@ void FadeIn::end()
 
 FadeOut::FadeOut(double instart,
 				 double induration,
-				 g2c::Node* node,
+				 Node* node,
 				 bool inStopsEvents) :
 	Animation(instart, induration),
 	node(node)
@@ -223,4 +226,4 @@ void FadeOut::end()
 	node->color.a = 0.0;
 }
 
-}
+} // end namespace

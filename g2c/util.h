@@ -27,6 +27,10 @@
 #include <string>
 #include <vector>
 
+namespace g2c {
+
+
+
 double currentTime();
 double clamp(double x, double m, double M);
 double min(double x, double y);
@@ -48,6 +52,8 @@ std::string directoryOfPath(const std::string& path);
 std::string fileOfPath(const std::string& path);
 std::string relativePath(const std::string& source, const std::string& target);
 std::vector<std::string> components(const std::string& path);
+
+} // end namespace
 
 #endif
 

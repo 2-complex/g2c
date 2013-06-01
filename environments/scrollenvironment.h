@@ -25,6 +25,8 @@
 
 #include "environment.h"
 
+using namespace g2c;
+
 class ScrollEnvironment : public Environment {
 public:
 	ScrollEnvironment();

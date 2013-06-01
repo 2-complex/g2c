@@ -26,6 +26,10 @@
 
 using namespace std;
 
+namespace g2c {
+
+
+
 
 Bitmap::Bitmap() : data(NULL), width(0), height(0), bitsPerPixel(32)
 {
@@ -455,4 +459,6 @@ void CubeMap::handleChild(const parse::Node* n)
 	if( n_name == "negativeZFile" )
 		negativeZFile = value->data.s;
 }
+
+} // end namespace
 

@@ -33,11 +33,14 @@ ENVIRONMENTS = $(ENVIRONMENT) $(OBJ_DIR)/spriteenvironment.o $(OBJ_DIR)/scrollen
 APPS = $(OBJ_DIR)/app.o
 
 
-$(CURRENT): $(ENVIRONMENTS) $(SPRITES) $(CURRENT).cpp $(OBJ_DIR)
+$(OBJ_DIR)/usenamespace.h:
+	echo "namespace g2c {} using namespace g2c;" >> $(OBJ_DIR)/usenamespace.h
+
+$(CURRENT): $(ENVIRONMENTS) $(SPRITES) $(CURRENT).cpp $(OBJ_DIR) $(OBJ_DIR)/usenamespace.h
 	c++ $(FLAGS) $(DEBUG) $(OPTIMIZATION) -I$(SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		$(ENVIRONMENTS) $(SPRITES) \
 		$(GLFLAGS) $(AUDIOFLAGS) $(GRAPHICSFLAGS) \
-		$(CURRENT).cpp -o $(CURRENT)
+		$(CURRENT).cpp -include $(OBJ_DIR)/usenamespace.h -o $(CURRENT)
 
 
 $(OBJ_DIR)/listener.o: $(SOURCE_DIR)/listener.cpp $(SOURCE_DIR)/listener.h

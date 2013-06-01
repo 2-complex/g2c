@@ -30,6 +30,10 @@
 
 #include <queue>
 
+namespace g2c {
+
+
+
 
 class MacBank : public Bank {
 public:
@@ -67,5 +71,8 @@ public:
 	virtual ~MacFileSystemBank() {}
 	virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
 };
+
+} // end namespace
+
 
 #endif

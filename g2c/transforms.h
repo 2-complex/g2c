@@ -24,6 +24,9 @@
 
 namespace g2c {
 
+
+
+
 /*	Computes a perspective transformation matrix given the angular height
 	of the frustum, the aspect ratio, and the near and far clipping planes.*/
 Mat4 perspective(double angle, double aspect, double near, double far);
@@ -61,5 +64,6 @@ Mat4 axisRotate(const Vec3& axis, double theta);
 /*	Retrieves the upper 3x3 matrix of a 4x4 transformation matrix.*/
 Mat3 upper3x3(const Mat4& m);
 
-}
+} // end namespace
+
 

@@ -26,6 +26,9 @@ using namespace std;
 
 namespace g2c {
 
+
+
+
 Value::Value() : type(NONE)
 {
 	data.ptr = NULL;
@@ -1426,3 +1429,4 @@ void Model::handleChild(const parse::Node* n)
 }
 
 } // end namespace
+

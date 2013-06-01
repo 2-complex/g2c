@@ -33,6 +33,10 @@
 class Bank;
 class Model;
 
+namespace g2c {
+
+
+
 
 class Bitmap;
 
@@ -149,6 +153,8 @@ protected:
 	virtual std::string serializeElements(std::string indent = "") const;
 	virtual void handleChild(const parse::Node* n);
 };
+
+} // end namespace
 
 
 #endif

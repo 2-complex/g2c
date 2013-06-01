@@ -22,6 +22,11 @@
 
 #include "app.h"
 
+namespace g2c {
+
+
+
+
 App::App()
 {
 }
@@ -66,4 +71,6 @@ void App::mouseDragged(const Vec2& /*C*/)
 void App::mouseUp(const Vec2& /*C*/)
 {
 }
+
+} // end namespace
 

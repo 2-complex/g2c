@@ -27,6 +27,10 @@
 
 using namespace std;
 
+namespace g2c {
+
+
+
 
 void IOSResourceBank::initPersistentSerializableWithKey(Serializable* s, const char* key)
 {
@@ -82,4 +86,5 @@ void IOSResourceBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
 	MacBank::initBitmapWithCGImage(bitmap, image);
 }
 
+} // end namespace
 

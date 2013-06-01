@@ -1,6 +1,8 @@
 
 #include "serializable.h"
 
+using namespace g2c;
+
 class Vec : public Serializable {
 public:
 	Vec();

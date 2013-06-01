@@ -31,6 +31,11 @@
 
 #include <queue>
 
+namespace g2c {
+
+
+
+
 class Bank {
 public:
 	Bank() {}
@@ -80,5 +85,8 @@ private:
 	mutable int biggestSize;
 	std::queue<LoadInstruction> q;
 };
+
+} // end namespace
+
 
 #endif

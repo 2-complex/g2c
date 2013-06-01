@@ -30,6 +30,9 @@
 
 namespace g2c {
 
+
+
+
 class AndroidBank : public Bank {
 public:
 	AndroidBank() : env(NULL), loader(NULL) {}

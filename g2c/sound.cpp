@@ -26,11 +26,16 @@
 
 #include "log.h"
 
+using namespace std;
+
+
+namespace g2c {
+
+
+
+
 int Context::alcDeviceRefCounter = 0;
 ALCdevice* Context::alcDevice = NULL;
-
-
-using namespace std;
 
 Context::Context() : device(NULL), context(NULL)
 {
@@ -134,3 +139,6 @@ void Sound::handleChild(const parse::Node* n)
 	if(n_name == "loop")
 		loop = value->data.i;
 }
+
+} // end namespace
+

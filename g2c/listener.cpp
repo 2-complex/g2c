@@ -27,6 +27,9 @@
 
 namespace g2c {
 
+
+
+
 Listener* gListener = NULL;
 
 Listener::Listener() : listening(true), delegate(NULL) {}
@@ -141,5 +144,6 @@ void initListenerGlut()
 }
 
 } // end namespace
+
 
 #endif

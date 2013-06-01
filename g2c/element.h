@@ -26,9 +26,17 @@
 
 #include "serializable.h"
 
+namespace g2c {
+
+
+
+
 class Element : public Serializable {
 public:
 };
+
+} // end namespace
+
 
 #endif
 

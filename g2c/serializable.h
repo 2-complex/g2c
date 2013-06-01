@@ -30,6 +30,11 @@
 
 const std::string TAB("  ");
 
+namespace g2c {
+
+
+
+
 class Serializable {
 	enum PropertyType {
 		kInt,
@@ -219,6 +224,7 @@ public:
 	}
 };
 
+} // end namespace
 
 
 #endif

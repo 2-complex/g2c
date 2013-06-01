@@ -27,6 +27,10 @@
 
 using namespace std;
 
+namespace g2c {
+
+
+
 
 void MacBank::initPersistentSerializableWithKey(Serializable* s, const char* key)
 {
@@ -316,4 +320,6 @@ void* MacBank::getOpenALAudioData(CFURLRef inFileURL,
 	if (extRef) ExtAudioFileDispose(extRef);
 	return theData;
 }
+
+} // end namespace
 

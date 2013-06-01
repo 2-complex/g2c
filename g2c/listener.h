@@ -30,6 +30,9 @@
 
 namespace g2c {
 
+
+
+
 class Listener;
 
 class Listener {
@@ -90,5 +93,6 @@ void setGlobalListener(Listener* listener);
 void initListenerGlut();
 
 } // end namespace
+
 
 #endif

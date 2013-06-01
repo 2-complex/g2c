@@ -30,6 +30,11 @@
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
 
+namespace g2c {
+
+
+
+
 class Context {
 public:
 	Context();
@@ -77,5 +82,8 @@ private:
 							 ALenum* outDataFormat,
 							 ALsizei* outSampleRate);
 };
+
+} // end namespace
+
 
 #endif

@@ -26,6 +26,11 @@
 
 #include "bank.h"
 
+namespace g2c {
+
+
+
+
 class WindowsBank : public Bank {
 public:
 	WindowsBank() {}
@@ -52,5 +57,8 @@ public:
 protected:
 	std::string directory;
 };
+
+} // end namespace
+
 
 #endif

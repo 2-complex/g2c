@@ -32,6 +32,10 @@
 
 #include "util.h"
 
+namespace g2c {
+
+
+
 
 double currentTime()
 {
@@ -304,4 +308,6 @@ std::string relativePath(const std::string& source, const std::string& target)
 	
 	return result;
 }
+
+} // end namespace
 
