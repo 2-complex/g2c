@@ -37,110 +37,110 @@ Listener::~Listener() {}
 
 void Listener::button(int b, int state, int x, int y)
 {
-	if( delegate )
-		delegate->button(b, state, x, y);
+    if( delegate )
+        delegate->button(b, state, x, y);
 }
 
 void Listener::motion(int x, int y)
 {
-	if( delegate )
-		delegate->motion(x, y);
+    if( delegate )
+        delegate->motion(x, y);
 }
 
 void Listener::keyboard(unsigned char inkey)
 {
-	if( delegate )
-		delegate->keyboard(inkey);
+    if( delegate )
+        delegate->keyboard(inkey);
 }
 
 void Listener::keyDown(unsigned char inkey)
 {
-	if( delegate )
-		delegate->keyDown(inkey);
+    if( delegate )
+        delegate->keyDown(inkey);
 }
 
 void Listener::keyUp(unsigned char inkey)
 {
-	if( delegate )
-		delegate->keyUp(inkey);
+    if( delegate )
+        delegate->keyUp(inkey);
 }
 
 void Listener::special(int inkey)
 {
-	if( delegate )
-		delegate->special(inkey);
+    if( delegate )
+        delegate->special(inkey);
 }
 
 bool Listener::mouseDown(const Vec2& C)
 {
-	if( delegate )
-		return delegate->mouseDown(C);
-	return false;
+    if( delegate )
+        return delegate->mouseDown(C);
+    return false;
 }
 
 void Listener::mouseDragged(const Vec2& C)
 {
-	if( delegate )
-		delegate->mouseDragged(C);
+    if( delegate )
+        delegate->mouseDragged(C);
 }
 
 void Listener::mouseUp(const Vec2& C)
 {
-	if( delegate )
-		delegate->mouseUp(C);
+    if( delegate )
+        delegate->mouseUp(C);
 }
 
 #if defined( GLUT )
 void fbutton( int b, int state, int x, int y )
 {
-	gListener->button(b, state, x, y);
-	glutPostRedisplay();
+    gListener->button(b, state, x, y);
+    glutPostRedisplay();
 }
 
 void fkeyboard(unsigned char inkey, int x, int y)
 {
-	if( gListener->keys.find(inkey)==gListener->keys.end() )
-	{
-		gListener->keyDown(inkey);
-		gListener->keys.insert(inkey);
-	}
-	
-	gListener->keyboard(inkey);
-	glutPostRedisplay();
+    if( gListener->keys.find(inkey)==gListener->keys.end() )
+    {
+        gListener->keyDown(inkey);
+        gListener->keys.insert(inkey);
+    }
+    
+    gListener->keyboard(inkey);
+    glutPostRedisplay();
 }
 
 void fkeyboardUp(unsigned char inkey, int x, int y)
 {
-	gListener->keys.erase(inkey);
-	
-	gListener->keyUp(inkey);
-	glutPostRedisplay();
+    gListener->keys.erase(inkey);
+    
+    gListener->keyUp(inkey);
+    glutPostRedisplay();
 }
 
 void fspecial(int inkey, int x, int y)
 {
-	gListener->special(inkey);
-	glutPostRedisplay();
+    gListener->special(inkey);
+    glutPostRedisplay();
 }
 
 void fmotion(int x, int y)
 {
-	gListener->motion(x,y);
-	glutPostRedisplay();
+    gListener->motion(x,y);
+    glutPostRedisplay();
 }
 
 void setGlobalListener(Listener* listener)
 {
-	gListener = listener;
+    gListener = listener;
 }
 
 void initListenerGlut()
 {
     glutMotionFunc(fmotion);
     glutMouseFunc(fbutton);
-	glutKeyboardFunc(fkeyboard);
-	glutKeyboardUpFunc(fkeyboardUp);
-	glutSpecialFunc(fspecial);
+    glutKeyboardFunc(fkeyboard);
+    glutKeyboardUpFunc(fkeyboardUp);
+    glutSpecialFunc(fspecial);
 }
 
 } // end namespace

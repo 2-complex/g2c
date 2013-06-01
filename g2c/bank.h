@@ -38,52 +38,52 @@ namespace g2c {
 
 class Bank {
 public:
-	Bank() {}
-	virtual ~Bank() {}
-	
-	virtual void initPersistentSerializableWithKey(Serializable* s, const char* key) = 0;
-	virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key) = 0;
-	
-	virtual void initSerializableWithPath(Serializable* s, const char* path) = 0;
-	virtual void writeSerializableToPath(const Serializable* s, const char* path) = 0;
+    Bank() {}
+    virtual ~Bank() {}
+    
+    virtual void initPersistentSerializableWithKey(Serializable* s, const char* key) = 0;
+    virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key) = 0;
+    
+    virtual void initSerializableWithPath(Serializable* s, const char* path) = 0;
+    virtual void writeSerializableToPath(const Serializable* s, const char* path) = 0;
 #if !defined(STUB_SOUND)
-	virtual void initSoundWithPath(Sound* sound, const char* path) = 0;
+    virtual void initSoundWithPath(Sound* sound, const char* path) = 0;
 #endif
-	virtual void initTextureWithPath(Texture2D* texture, const char* path) = 0;
-	virtual void initBitmapWithPath(Bitmap* bitmap, const char* path) = 0;
+    virtual void initTextureWithPath(Texture2D* texture, const char* path) = 0;
+    virtual void initBitmapWithPath(Bitmap* bitmap, const char* path) = 0;
 };
 
 class AsynchronousBank : public Bank {
 public:
-	AsynchronousBank() : bank(NULL), biggestSize(1) {}
-	virtual ~AsynchronousBank() {}
-	
-	Bank* bank;
-	
-	struct LoadInstruction {
-		LoadInstruction(Serializable* resource, const std::string& path) :
-			resource(resource), path(path) {}
-		Serializable* resource;
-		std::string path;
-	};
-	
-	virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
-	virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);
-	
-	virtual void initSerializableWithPath(Serializable* s, const char* path);
-	virtual void writeSerializableToPath(const Serializable* s, const char* path);
+    AsynchronousBank() : bank(NULL), biggestSize(1) {}
+    virtual ~AsynchronousBank() {}
+    
+    Bank* bank;
+    
+    struct LoadInstruction {
+        LoadInstruction(Serializable* resource, const std::string& path) :
+            resource(resource), path(path) {}
+        Serializable* resource;
+        std::string path;
+    };
+    
+    virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
+    virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);
+    
+    virtual void initSerializableWithPath(Serializable* s, const char* path);
+    virtual void writeSerializableToPath(const Serializable* s, const char* path);
 
 #if !defined(STUB_SOUND)
-	virtual void initSoundWithPath(Sound* sound, const char* path);
+    virtual void initSoundWithPath(Sound* sound, const char* path);
 #endif
-	virtual void initTextureWithPath(Texture2D* texture, const char* path);
-	
-	bool step();
-	int percent() const;
+    virtual void initTextureWithPath(Texture2D* texture, const char* path);
+    
+    bool step();
+    int percent() const;
 
 private:
-	mutable int biggestSize;
-	std::queue<LoadInstruction> q;
+    mutable int biggestSize;
+    std::queue<LoadInstruction> q;
 };
 
 } // end namespace

@@ -21,13 +21,13 @@
 
 
 #if defined(ANDROID)
-	#include <android/log.h>
-	#define g2clog(...)  __android_log_print(ANDROID_LOG_INFO, "g2c", __VA_ARGS__)
-	#define g2cerror(...)  __android_log_print(ANDROID_LOG_ERROR, "g2c", __VA_ARGS__)
-	#define
+    #include <android/log.h>
+    #define g2clog(...)  __android_log_print(ANDROID_LOG_INFO, "g2c", __VA_ARGS__)
+    #define g2cerror(...)  __android_log_print(ANDROID_LOG_ERROR, "g2c", __VA_ARGS__)
+    #define
 #else
-	#include <stdio.h>
-	#define g2clog(...) printf(__VA_ARGS__)
-	#define g2cerror(...) fprintf(stderr,__VA_ARGS__)
+    #include <stdio.h>
+    #define g2clog(...) printf(__VA_ARGS__)
+    #define g2cerror(...) fprintf(stderr,__VA_ARGS__)
 #endif
 

@@ -37,39 +37,39 @@ namespace g2c {
 
 class MacBank : public Bank {
 public:
-	MacBank() {}
-	virtual ~MacBank() {}
-	
-	std::string base_path;
-	
-	virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
-	virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);
-	
-	virtual void initSerializableWithPath(Serializable* s, const char* path);
-	virtual void writeSerializableToPath(const Serializable* s, const char* path);
-	virtual void initTextureWithPath(Texture2D* texture, const char* path);
+    MacBank() {}
+    virtual ~MacBank() {}
+    
+    std::string base_path;
+    
+    virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
+    virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);
+    
+    virtual void initSerializableWithPath(Serializable* s, const char* path);
+    virtual void writeSerializableToPath(const Serializable* s, const char* path);
+    virtual void initTextureWithPath(Texture2D* texture, const char* path);
 
 #if !defined(STUB_SOUND)
-	virtual void initSoundWithPath(Sound* sound, const char* path);
-#endif	
+    virtual void initSoundWithPath(Sound* sound, const char* path);
+#endif    
 
-	void* getOpenALAudioData(CFURLRef inFileURL,
-					 ALsizei* outDataSize,
-					 ALenum* outDataFormat,
-					 ALsizei* outSampleRate) const;
-	
+    void* getOpenALAudioData(CFURLRef inFileURL,
+                     ALsizei* outDataSize,
+                     ALenum* outDataFormat,
+                     ALsizei* outSampleRate) const;
+    
 protected:
-	std::string directory;
-	
-	void initTextureWithCGImage(Texture2D* texture, CGImageRef image);
-	void initBitmapWithCGImage(Bitmap* bitmap, CGImageRef image);
+    std::string directory;
+    
+    void initTextureWithCGImage(Texture2D* texture, CGImageRef image);
+    void initBitmapWithCGImage(Bitmap* bitmap, CGImageRef image);
 };
 
 class MacFileSystemBank : public MacBank {
 public:
-	MacFileSystemBank() {}
-	virtual ~MacFileSystemBank() {}
-	virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
+    MacFileSystemBank() {}
+    virtual ~MacFileSystemBank() {}
+    virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
 };
 
 } // end namespace

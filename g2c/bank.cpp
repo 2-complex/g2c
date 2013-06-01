@@ -32,77 +32,77 @@ namespace g2c {
 
 void AsynchronousBank::initPersistentSerializableWithKey(Serializable* s, const char* key)
 {
-	bank->initPersistentSerializableWithKey(s, key);
+    bank->initPersistentSerializableWithKey(s, key);
 }
 
 void AsynchronousBank::writePersistentSerializableWithKey(const Serializable* s, const char* key)
 {
-	bank->writePersistentSerializableWithKey(s, key);
+    bank->writePersistentSerializableWithKey(s, key);
 }
 
 void AsynchronousBank::initSerializableWithPath(Serializable* s, const char* path)
 {
-	q.push(LoadInstruction(s, path));
+    q.push(LoadInstruction(s, path));
 }
 
 void AsynchronousBank::writeSerializableToPath(const Serializable* s, const char* path)
 {
-	bank->writeSerializableToPath(s, path);
+    bank->writeSerializableToPath(s, path);
 }
 
 #if !defined(STUB_SOUND)
 void AsynchronousBank::initSoundWithPath(Sound* sound, const char* path)
 {
-	q.push(LoadInstruction(sound, path));
+    q.push(LoadInstruction(sound, path));
 }
 #endif
 
 void AsynchronousBank::initTextureWithPath(Texture2D* texture, const char* path)
 {
-	q.push(LoadInstruction(texture, path));
+    q.push(LoadInstruction(texture, path));
 }
 
 bool AsynchronousBank::step()
 {
-	if(!bank)
-	{
-		g2cerror( "AsynchronousBank used with no bank set.\n" );
-		exit(0);
-	}
-	
-	if( q.empty() )
-		return false;
-	
-	LoadInstruction inst = q.front();
-	
-	if( inst.resource->type == "Texture" ||
-		inst.resource->type == "Texture2D" ||
-	    inst.resource->type == "Sprite" ||
-		inst.resource->type == "Font" )
-	{
-		bank->initTextureWithPath((Texture2D*)inst.resource, inst.path.c_str());
-	}
+    if(!bank)
+    {
+        g2cerror( "AsynchronousBank used with no bank set.\n" );
+        exit(0);
+    }
+    
+    if( q.empty() )
+        return false;
+    
+    LoadInstruction inst = q.front();
+    
+    if( inst.resource->type == "Texture" ||
+        inst.resource->type == "Texture2D" ||
+        inst.resource->type == "Sprite" ||
+        inst.resource->type == "Font" )
+    {
+        bank->initTextureWithPath((Texture2D*)inst.resource, inst.path.c_str());
+    }
 #if !defined(STUB_SOUND)
-	else if( inst.resource->type == "Sound" )
-	{
-		bank->initSoundWithPath((Sound*)inst.resource, inst.path.c_str());
-	}
+    else if( inst.resource->type == "Sound" )
+    {
+        bank->initSoundWithPath((Sound*)inst.resource, inst.path.c_str());
+    }
 #endif
-	else
-	{   // Assume if it's anything else it's a generic serializable.
-		bank->initSerializableWithPath(inst.resource, inst.path.c_str());
-	}
-	q.pop();
-	
-	return q.empty();
+    else
+    {   // Assume if it's anything else it's a generic serializable.
+        bank->initSerializableWithPath(inst.resource, inst.path.c_str());
+    }
+    q.pop();
+    
+    return q.empty();
 }
 
 int AsynchronousBank::percent() const
 {
-	int size = q.size();
-	if(size > biggestSize)
-		biggestSize = size;
-	return (int)(100 * (1.0 - (1.0 * size / biggestSize)));
+    int size = q.size();
+    if(size > biggestSize)
+        biggestSize = size;
+    return (int)(100 * (1.0 - (1.0 * size / biggestSize)));
 }
 
 } // end namespace

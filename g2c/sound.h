@@ -37,50 +37,50 @@ namespace g2c {
 
 class Context {
 public:
-	Context();
-	virtual ~Context();
-	
-	void makeCurrent();
-	
-	ALCdevice* device;
-	ALCcontext* context;
-	
-	static int alcDeviceRefCounter;
-	static ALCdevice* alcDevice;
+    Context();
+    virtual ~Context();
+    
+    void makeCurrent();
+    
+    ALCdevice* device;
+    ALCcontext* context;
+    
+    static int alcDeviceRefCounter;
+    static ALCdevice* alcDevice;
 };
 
 class Source {
 public:
-	Source();
-	virtual ~Source();
-	
-	ALuint source;
-	
-	bool isPlaying() const;
+    Source();
+    virtual ~Source();
+    
+    ALuint source;
+    
+    bool isPlaying() const;
 };
 
 class Sound : public Serializable {
 public:
-	Sound();
-	virtual ~Sound();
-	
-	std::string file;
-	
-	ALuint buffer;
-	bool loop;
-	
-	void useSource(Source* inSource) const;
-	void play() const;
-	
-	virtual std::string serializeElements(std::string indent = "") const;
-	virtual void handleChild(const parse::Node* n);
-	
+    Sound();
+    virtual ~Sound();
+    
+    std::string file;
+    
+    ALuint buffer;
+    bool loop;
+    
+    void useSource(Source* inSource) const;
+    void play() const;
+    
+    virtual std::string serializeElements(std::string indent = "") const;
+    virtual void handleChild(const parse::Node* n);
+    
 private:
-	mutable Source* source;
-	void* getOpenALAudioData(CFURLRef inFileURL,
-							 ALsizei* outDataSize,
-							 ALenum* outDataFormat,
-							 ALsizei* outSampleRate);
+    mutable Source* source;
+    void* getOpenALAudioData(CFURLRef inFileURL,
+                             ALsizei* outDataSize,
+                             ALenum* outDataFormat,
+                             ALsizei* outSampleRate);
 };
 
 } // end namespace

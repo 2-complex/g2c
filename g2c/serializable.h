@@ -36,192 +36,192 @@ namespace g2c {
 
 
 class Serializable {
-	enum PropertyType {
-		kInt,
-		kDouble,
-		kString,
-		kObject,
-		kVectorDouble,
-		kVectorInt,
-		kVectorString
-	};
-	
-	class Property {
-	public:
-		Property(PropertyType type, const std::string& name, long offset);
-		PropertyType type;
-		std::string name;
-		long offset;
-	};
-	
+    enum PropertyType {
+        kInt,
+        kDouble,
+        kString,
+        kObject,
+        kVectorDouble,
+        kVectorInt,
+        kVectorString
+    };
+    
+    class Property {
+    public:
+        Property(PropertyType type, const std::string& name, long offset);
+        PropertyType type;
+        std::string name;
+        long offset;
+    };
+    
 public:
-	std::string type;
-	std::string name;
-	
-	virtual std::string serialize(std::string indent = "") const;
-	virtual void deserialize(const std::string& s);
-	virtual void initWithParseNode(const parse::Node* n);
-	
-	std::string getType(const parse::Node* n) const;
-	virtual void handleChild(const parse::Node* n);
-	
-	virtual void display() const;
-	
+    std::string type;
+    std::string name;
+    
+    virtual std::string serialize(std::string indent = "") const;
+    virtual void deserialize(const std::string& s);
+    virtual void initWithParseNode(const parse::Node* n);
+    
+    std::string getType(const parse::Node* n) const;
+    virtual void handleChild(const parse::Node* n);
+    
+    virtual void display() const;
+    
 protected:
-	virtual std::string serializeBegin(std::string indent = "") const;
-	virtual std::string serializeElements(std::string indent = "") const;
-	virtual std::string serializeEnd(std::string indent = "") const;
-	
-	void addProperty(const std::string& name, Serializable& element);
-	
-	void addMember(const std::string& name, std::string& element);
-	void addMember(const std::string& name, double& element);
-	void addMember(const std::string& name, int& element);
-	void addMember(const std::string& name, std::vector<double>& element);
-	void addMember(const std::string& name, std::vector<int>& element);
-	void addMember(const std::string& name, std::vector<std::string>& element);
-	
+    virtual std::string serializeBegin(std::string indent = "") const;
+    virtual std::string serializeElements(std::string indent = "") const;
+    virtual std::string serializeEnd(std::string indent = "") const;
+    
+    void addProperty(const std::string& name, Serializable& element);
+    
+    void addMember(const std::string& name, std::string& element);
+    void addMember(const std::string& name, double& element);
+    void addMember(const std::string& name, int& element);
+    void addMember(const std::string& name, std::vector<double>& element);
+    void addMember(const std::string& name, std::vector<int>& element);
+    void addMember(const std::string& name, std::vector<std::string>& element);
+    
 private:
-	std::vector<Property> properties;
+    std::vector<Property> properties;
 };
 
 class IntProperty : public Serializable {
 public:
-	IntProperty();
-	IntProperty(int i);
-	
-	virtual std::string serialize(std::string indent = "") const;
-	virtual void initWithParseNode(const parse::Node* n);
-	
-	int operator()() const;
-	void operator()(int i);
-	
-	bool operator==(int i) const;
-	bool operator!=(int i) const;
-	operator int&();
-	operator int const&() const;
-	
+    IntProperty();
+    IntProperty(int i);
+    
+    virtual std::string serialize(std::string indent = "") const;
+    virtual void initWithParseNode(const parse::Node* n);
+    
+    int operator()() const;
+    void operator()(int i);
+    
+    bool operator==(int i) const;
+    bool operator!=(int i) const;
+    operator int&();
+    operator int const&() const;
+    
 private:
-	int value;
+    int value;
 };
 
 class BoolProperty : public Serializable {
 public:
-	BoolProperty();
-	BoolProperty(bool b);
-	
-	virtual std::string serialize(std::string indent = "") const;
-	virtual void initWithParseNode(const parse::Node* n);
-	
-	bool operator()() const;
-	void operator()(bool b);
-	operator bool() const;
+    BoolProperty();
+    BoolProperty(bool b);
+    
+    virtual std::string serialize(std::string indent = "") const;
+    virtual void initWithParseNode(const parse::Node* n);
+    
+    bool operator()() const;
+    void operator()(bool b);
+    operator bool() const;
 
 private:
-	bool value;
+    bool value;
 };
 
 class DoubleProperty : public Serializable {
 public:
-	DoubleProperty();
-	DoubleProperty(double x);
-	
-	virtual std::string serialize(std::string indent = "") const;
-	virtual void initWithParseNode(const parse::Node* n);
-	
-	bool operator==(double t) const;
-	bool operator!=(double t) const;
-	double operator()() const;
-	void operator()(double x);
-	operator double&();
-	operator double const&() const;
+    DoubleProperty();
+    DoubleProperty(double x);
+    
+    virtual std::string serialize(std::string indent = "") const;
+    virtual void initWithParseNode(const parse::Node* n);
+    
+    bool operator==(double t) const;
+    bool operator!=(double t) const;
+    double operator()() const;
+    void operator()(double x);
+    operator double&();
+    operator double const&() const;
 
 private:
-	double value;
+    double value;
 };
 
 class StringProperty : public Serializable {
 public:
-	StringProperty();
-	StringProperty(const std::string& s);
-	StringProperty(const char* s);
-	
-	virtual std::string serialize(std::string indent = "") const;
-	virtual void initWithParseNode(const parse::Node* n);
-	
-	const std::string&  operator()() const;
-	void operator()(const std::string& s);
+    StringProperty();
+    StringProperty(const std::string& s);
+    StringProperty(const char* s);
+    
+    virtual std::string serialize(std::string indent = "") const;
+    virtual void initWithParseNode(const parse::Node* n);
+    
+    const std::string&  operator()() const;
+    void operator()(const std::string& s);
 
 private:
-	std::string value;
+    std::string value;
 };
 
 template<class T>
 class VectorProperty : public Serializable,
-					   public std::vector<T> {
+                       public std::vector<T> {
 public:
-	VectorProperty<T>() {}
-	VectorProperty<T>(const std::vector<T>& v) : std::vector<T>(v) {}
-	
-	virtual std::string serialize(std::string indent = "") const
-	{
-		std::string r = "[\n";
-		
-		int n = std::vector<T>::size();
-		
-		for(int i = 0; i < n; i++)
-		{
-			r += TAB + indent + std::vector<T>::at(i).serialize(indent + TAB) +
-				std::string((i==n-1)?"":",") + "\n";
-		}
-		
-		r += indent + "]";
-		
-		return r;
-	}
-	
-	void initWithParseNode(const parse::Node* n)
-	{
-		std::vector<T>::clear();
-		for(std::vector<parse::Node*>::const_iterator itr = n->children.begin();
-			itr!=n->children.end();
-			itr++)
-		{
-			T t;
-			t.initWithParseNode(*itr);
-			std::vector<T>::push_back(t);
-		}
-	}
+    VectorProperty<T>() {}
+    VectorProperty<T>(const std::vector<T>& v) : std::vector<T>(v) {}
+    
+    virtual std::string serialize(std::string indent = "") const
+    {
+        std::string r = "[\n";
+        
+        int n = std::vector<T>::size();
+        
+        for(int i = 0; i < n; i++)
+        {
+            r += TAB + indent + std::vector<T>::at(i).serialize(indent + TAB) +
+                std::string((i==n-1)?"":",") + "\n";
+        }
+        
+        r += indent + "]";
+        
+        return r;
+    }
+    
+    void initWithParseNode(const parse::Node* n)
+    {
+        std::vector<T>::clear();
+        for(std::vector<parse::Node*>::const_iterator itr = n->children.begin();
+            itr!=n->children.end();
+            itr++)
+        {
+            T t;
+            t.initWithParseNode(*itr);
+            std::vector<T>::push_back(t);
+        }
+    }
 };
 
 
 template<class T>
 class PointerVectorProperty : public Serializable,
-					          public std::vector<T> {
+                              public std::vector<T> {
 public:
-	PointerVectorProperty<T>() {}
-	PointerVectorProperty<T>(const std::vector<T>& v) : std::vector<T>(v) {}
-	
-	virtual std::string serialize(std::string indent = "") const
-	{
-		std::string r = "[\n";
-		
-		int n = std::vector<T>::size();
-		
-		for(int i = 0; i < n; i++)
-		{	
-			r += TAB + indent + std::vector<T>::at(i)->serialize(indent + TAB) +
-				std::string((i==n-1)?"":",") + "\n";
-		}
-		
-		r += indent + "]";
-		
-		return r;
-	}
-	
-	void initWithParseNode(const parse::Node* n)
-	{
-	}
+    PointerVectorProperty<T>() {}
+    PointerVectorProperty<T>(const std::vector<T>& v) : std::vector<T>(v) {}
+    
+    virtual std::string serialize(std::string indent = "") const
+    {
+        std::string r = "[\n";
+        
+        int n = std::vector<T>::size();
+        
+        for(int i = 0; i < n; i++)
+        {    
+            r += TAB + indent + std::vector<T>::at(i)->serialize(indent + TAB) +
+                std::string((i==n-1)?"":",") + "\n";
+        }
+        
+        r += indent + "]";
+        
+        return r;
+    }
+    
+    void initWithParseNode(const parse::Node* n)
+    {
+    }
 };
 
 } // end namespace

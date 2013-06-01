@@ -32,21 +32,21 @@ namespace g2c {
 
 class App {
 public:
-	App();
-	virtual ~App();
-	
-	virtual void init();
-	virtual void step(double t);
-	virtual void draw() const;
-	
-	virtual void keyboard(unsigned char inkey);
-	virtual void special(int inkey);
-	
-	virtual void reshape(int width, int height);
+    App();
+    virtual ~App();
     
-	virtual bool mouseDown(const Vec2& C);
-	virtual void mouseDragged(const Vec2& C);
-	virtual void mouseUp(const Vec2& C);
+    virtual void init();
+    virtual void step(double t);
+    virtual void draw() const;
+    
+    virtual void keyboard(unsigned char inkey);
+    virtual void special(int inkey);
+    
+    virtual void reshape(int width, int height);
+    
+    virtual bool mouseDown(const Vec2& C);
+    virtual void mouseDragged(const Vec2& C);
+    virtual void mouseUp(const Vec2& C);
 };
 
 } // end namespace

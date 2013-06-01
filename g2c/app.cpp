@@ -61,7 +61,7 @@ void App::special(int /*inkey*/)
 
 bool App::mouseDown(const Vec2& /*C*/)
 {
-	return false;
+    return false;
 }
 
 void App::mouseDragged(const Vec2& /*C*/)

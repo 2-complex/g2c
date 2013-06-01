@@ -39,105 +39,105 @@ ALCdevice* Context::alcDevice = NULL;
 
 Context::Context() : device(NULL), context(NULL)
 {
-	if(!Context::alcDevice)
-		Context::alcDevice = alcOpenDevice(NULL);
-	
-	device = Context::alcDevice;
-	alcDeviceRefCounter++;
-	
-	context = alcCreateContext(device, 0);
-	
-	ALenum  error = AL_NO_ERROR;
-	if((error = alGetError()) != AL_NO_ERROR)
-	{
-		g2cerror("OpenAL error in context initialization: 0x%x\n", error);
-		exit(0);
-	}
+    if(!Context::alcDevice)
+        Context::alcDevice = alcOpenDevice(NULL);
+    
+    device = Context::alcDevice;
+    alcDeviceRefCounter++;
+    
+    context = alcCreateContext(device, 0);
+    
+    ALenum  error = AL_NO_ERROR;
+    if((error = alGetError()) != AL_NO_ERROR)
+    {
+        g2cerror("OpenAL error in context initialization: 0x%x\n", error);
+        exit(0);
+    }
 }
 
 Context::~Context()
 {
-	alcSuspendContext(context);
-	alcMakeContextCurrent(NULL);
-	alcDestroyContext(context);
-	
-	alcDeviceRefCounter--;
-	if(alcDeviceRefCounter==0)
-		alcCloseDevice(device);
+    alcSuspendContext(context);
+    alcMakeContextCurrent(NULL);
+    alcDestroyContext(context);
+    
+    alcDeviceRefCounter--;
+    if(alcDeviceRefCounter==0)
+        alcCloseDevice(device);
 }
 
 void Context::makeCurrent()
 {
-	alcMakeContextCurrent(context);
+    alcMakeContextCurrent(context);
 }
 
 Source::Source() : source(0)
 {
-	alGenSources(1, &source);
+    alGenSources(1, &source);
 }
 
 Source::~Source()
 {
-	
+    
 }
 
 bool Source::isPlaying() const
 {
-	ALint state = 0;
-	alGetSourcei(source, AL_SOURCE_STATE, &state);
-	return state == AL_PLAYING;
+    ALint state = 0;
+    alGetSourcei(source, AL_SOURCE_STATE, &state);
+    return state == AL_PLAYING;
 }
 
 Sound::Sound() : buffer(0), source(NULL), loop(false)
 {
-	type = "Sound";
-	alGenBuffers(1, &buffer);
+    type = "Sound";
+    alGenBuffers(1, &buffer);
 }
 
 Sound::~Sound()
 {
-	
+    
 }
 
 void Sound::play() const
 {
-	if(source)
-	{
-		alSourcei(source->source, AL_BUFFER, buffer);
-		alSourcei(source->source, AL_LOOPING, loop);
-		alSourcePlay(source->source);
-	}
+    if(source)
+    {
+        alSourcei(source->source, AL_BUFFER, buffer);
+        alSourcei(source->source, AL_LOOPING, loop);
+        alSourcePlay(source->source);
+    }
 }
 
 void Sound::useSource(Source* inSource) const
 {
-	source = inSource;
+    source = inSource;
 }
 
 string Sound::serializeElements(std::string indent) const
 {
-	string r = Serializable::serializeElements(indent);
-	r += TAB + indent + "'file' : " + string("'") + file + "',\n";
-	if(loop)
-		r += TAB + indent + "'loop' : " + intToString(loop) + ",\n";
-	return r;
+    string r = Serializable::serializeElements(indent);
+    r += TAB + indent + "'file' : " + string("'") + file + "',\n";
+    if(loop)
+        r += TAB + indent + "'loop' : " + intToString(loop) + ",\n";
+    return r;
 }
 
 void Sound::handleChild(const parse::Node* n)
 {
-	string n_name = n->data.s;
-	parse::Node* value = n->data.value;
-	if(n_name == "file")
-		file = value->data.s;
-	
-	if(n_name == "name")
-		name = value->data.s;
-	
-	if(n_name == "file")
-		file = value->data.s;
-	
-	if(n_name == "loop")
-		loop = value->data.i;
+    string n_name = n->data.s;
+    parse::Node* value = n->data.value;
+    if(n_name == "file")
+        file = value->data.s;
+    
+    if(n_name == "name")
+        name = value->data.s;
+    
+    if(n_name == "file")
+        file = value->data.s;
+    
+    if(n_name == "loop")
+        loop = value->data.i;
 }
 
 } // end namespace

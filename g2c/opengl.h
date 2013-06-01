@@ -21,26 +21,26 @@
 
 
 #if IOS
-	#include <OpenGLES/ES1/gl.h>
-	#include <OpenGLES/ES1/glext.h>
-	#include <OpenGLES/ES2/gl.h>
-	#include <OpenGLES/ES2/glext.h>
+    #include <OpenGLES/ES1/gl.h>
+    #include <OpenGLES/ES1/glext.h>
+    #include <OpenGLES/ES2/gl.h>
+    #include <OpenGLES/ES2/glext.h>
 #endif
 
 #if ANDROID
-	#include <GLES/gl.h>
-	#include <GLES/glext.h>
-	#include <GLES2/gl2.h>
-	#include <GLES2/gl2ext.h>
+    #include <GLES/gl.h>
+    #include <GLES/glext.h>
+    #include <GLES2/gl2.h>
+    #include <GLES2/gl2ext.h>
 #endif
 
 #if GLUT
-	#ifdef __APPLE_CC__
-		#include <glut/glut.h>
-	#else
-		#include <GL/glew.h>
-		#include <GL/freeglut.h>
-		#include <GL/freeglut_ext.h>
-	#endif
+    #ifdef __APPLE_CC__
+        #include <glut/glut.h>
+    #else
+        #include <GL/glew.h>
+        #include <GL/freeglut.h>
+        #include <GL/freeglut_ext.h>
+    #endif
 #endif
 

@@ -35,296 +35,296 @@ namespace g2c {
 
 
 Serializable::Property::Property(PropertyType type, const std::string& name, long offset) :
-	type(type),
-	name(name),
-	offset(offset) {}
+    type(type),
+    name(name),
+    offset(offset) {}
 
 void Serializable::deserialize(const std::string& s)
 {
-	parse::Node* n = new parse::Node(s.c_str());
-	initWithParseNode(n);
-	delete n;
+    parse::Node* n = new parse::Node(s.c_str());
+    initWithParseNode(n);
+    delete n;
 }
 
 void Serializable::initWithParseNode(const parse::Node* n)
 {
-	for(vector<parse::Node*>::const_iterator itr = n->children.begin();
-		itr!=n->children.end();
-		itr++)
-	{
-		const parse::Node* node = *itr;
-		if(node->type == parse::kString && node->data.value!=NULL)
-			handleChild(node);
-	}
+    for(vector<parse::Node*>::const_iterator itr = n->children.begin();
+        itr!=n->children.end();
+        itr++)
+    {
+        const parse::Node* node = *itr;
+        if(node->type == parse::kString && node->data.value!=NULL)
+            handleChild(node);
+    }
 }
 
 void Serializable::handleChild(const parse::Node* n)
 {
-	string n_name = n->data.s;
-	parse::Node* value = n->data.value;
-	
-	if( n_name == "name" )
-		name = value->data.s;
-	
-	if( n_name == "type" )
-		type = value->data.s;
-	
-	for(vector<Property>::iterator itr = properties.begin();
-		itr!=properties.end();
-		itr++ )
-	{
-		void* ptr = (char*)(this) + itr->offset;
-		
-		switch( itr->type )
-		{
-			case kInt:
-				if( n_name == itr->name )
-					*(reinterpret_cast<int*>(ptr)) = value->data.i;
-			break;
-			
-			case kDouble:
-				if( n_name == itr->name )
-					*(reinterpret_cast<double*>(ptr)) = value->data.x;
-			break;
-			
-			case kString:
-				if( n_name == itr->name )
-					*(reinterpret_cast<string*>(ptr)) = value->data.s;
-			break;
-			
-			case kObject:
-				if( n_name == itr->name )
-					reinterpret_cast<Serializable*>(ptr)->initWithParseNode(value);
-			break;
-			
-			case kVectorDouble:
-				if( n_name == itr->name )
-				{
-					vector<double>* vptr = (vector<double>*)ptr;
-					for(vector<parse::Node*>::const_iterator itr = value->children.begin();
-						itr != value->children.end();
-						itr++)
-					{
-						vptr->push_back( (*itr)->data.x );
-					}
-				}
-			break;
-			
-			case kVectorInt:
-				if( n_name == itr->name )
-				{
-					vector<int>* vptr = (vector<int>*)ptr;
-					for(vector<parse::Node*>::const_iterator itr = value->children.begin();
-						itr != value->children.end();
-						itr++)
-					{
-						vptr->push_back( (*itr)->data.i );
-					}
-				}
-			break;
-			
-			case kVectorString:
-				if( n_name == itr->name )
-				{
-					vector<string>* vptr = (vector<string>*)ptr;
-					for(vector<parse::Node*>::const_iterator itr = value->children.begin();
-						itr != value->children.end();
-						itr++)
-					{
-						vptr->push_back( (*itr)->data.s );
-					}
-				}
-			break;
-		}
-	}
+    string n_name = n->data.s;
+    parse::Node* value = n->data.value;
+    
+    if( n_name == "name" )
+        name = value->data.s;
+    
+    if( n_name == "type" )
+        type = value->data.s;
+    
+    for(vector<Property>::iterator itr = properties.begin();
+        itr!=properties.end();
+        itr++ )
+    {
+        void* ptr = (char*)(this) + itr->offset;
+        
+        switch( itr->type )
+        {
+            case kInt:
+                if( n_name == itr->name )
+                    *(reinterpret_cast<int*>(ptr)) = value->data.i;
+            break;
+            
+            case kDouble:
+                if( n_name == itr->name )
+                    *(reinterpret_cast<double*>(ptr)) = value->data.x;
+            break;
+            
+            case kString:
+                if( n_name == itr->name )
+                    *(reinterpret_cast<string*>(ptr)) = value->data.s;
+            break;
+            
+            case kObject:
+                if( n_name == itr->name )
+                    reinterpret_cast<Serializable*>(ptr)->initWithParseNode(value);
+            break;
+            
+            case kVectorDouble:
+                if( n_name == itr->name )
+                {
+                    vector<double>* vptr = (vector<double>*)ptr;
+                    for(vector<parse::Node*>::const_iterator itr = value->children.begin();
+                        itr != value->children.end();
+                        itr++)
+                    {
+                        vptr->push_back( (*itr)->data.x );
+                    }
+                }
+            break;
+            
+            case kVectorInt:
+                if( n_name == itr->name )
+                {
+                    vector<int>* vptr = (vector<int>*)ptr;
+                    for(vector<parse::Node*>::const_iterator itr = value->children.begin();
+                        itr != value->children.end();
+                        itr++)
+                    {
+                        vptr->push_back( (*itr)->data.i );
+                    }
+                }
+            break;
+            
+            case kVectorString:
+                if( n_name == itr->name )
+                {
+                    vector<string>* vptr = (vector<string>*)ptr;
+                    for(vector<parse::Node*>::const_iterator itr = value->children.begin();
+                        itr != value->children.end();
+                        itr++)
+                    {
+                        vptr->push_back( (*itr)->data.s );
+                    }
+                }
+            break;
+        }
+    }
 }
 
 std::string Serializable::getType(const parse::Node* n) const
 {
-	string type = "";
-	for(vector<parse::Node*>::const_iterator itr = n->children.begin();
-		itr!=n->children.end();
-		itr++)
-	{
-		if((*itr)->data.s == "type")
-		{
-			type = (*itr)->data.value->data.s;
-			break;
-		}
-	}
-	return type;
+    string type = "";
+    for(vector<parse::Node*>::const_iterator itr = n->children.begin();
+        itr!=n->children.end();
+        itr++)
+    {
+        if((*itr)->data.s == "type")
+        {
+            type = (*itr)->data.value->data.s;
+            break;
+        }
+    }
+    return type;
 }
 
 string Serializable::serialize(string indent) const
 {
-	return serializeBegin(indent) +
-		serializeElements(indent) +
-		serializeEnd(indent);
+    return serializeBegin(indent) +
+        serializeElements(indent) +
+        serializeEnd(indent);
 }
 
 string Serializable::serializeBegin(string indent) const
 {
-	return "{\n";
+    return "{\n";
 }
 
 string Serializable::serializeElements(string indent) const
 {
-	string r;
-	
-	if( type != "" )
-		r += TAB + indent + "\"type\" : " + stringRepr(type) + ",\n";
-	if( name != "" )
-		r += TAB + indent + "\"name\" : " + stringRepr(name) + ",\n";
-	
-	int size = properties.size();
-	
-	int i = 0;
-	for(vector<Property>::const_iterator itr = properties.begin();
-		itr!=properties.end();
-		itr++ )
-	{
-		void* ptr = (char*)(this) + itr->offset;
-		
-		switch( itr->type )
-		{
-			case kString:
-				r += TAB + indent + "\"" + itr->name + "\" : " + 
-					stringRepr(*(reinterpret_cast<string*>(ptr)));
-			break;
-			
-			case kDouble:
-				r += TAB + indent + "\"" + itr->name + "\" : " +
-					floatToString(*(reinterpret_cast<double*>(ptr)));
-			break;
-			
-			case kInt:
-				r += TAB + indent + "\"" + itr->name + "\" : " +
-					intToString(*(reinterpret_cast<int*>(ptr)));
-			break;
-			
-			case kVectorDouble:
-				{
-					r += TAB + indent + "\"" + itr->name + "\" : [\n";
-					vector<double>* vptr = (vector<double>*)ptr;
-					
-					vector<double>::iterator itr = vptr->begin();
-					if( itr != vptr->end() )
-					while(true)
-					{
-						r += TAB + TAB + indent + floatToString(*itr);
-						itr++;
-						if( itr==vptr->end() )
-						{
-							r += "\n";
-							break;
-						}
-						r += ",\n";
-					}
-					
-					r += TAB + indent + "]";
-				}
-			break;
-			
-			case kVectorInt:
-				{
-					r += TAB + indent + "\"" + itr->name + "\" : [\n";
-					vector<int>* vptr = (vector<int>*)ptr;
-					
-					vector<int>::iterator itr = vptr->begin();
-					if( itr != vptr->end() )
-					while(true)
-					{
-						r += TAB + TAB + indent + intToString(*itr);
-						itr++;
-						if( itr==vptr->end() )
-						{
-							r += "\n";
-							break;
-						}
-						r += ",\n";
-					}
-					
-					r += TAB + indent + "]";
-				}
-			break;
-			
-			case kVectorString:
-				{
-					r += TAB + indent + "\"" + itr->name + "\" : [\n";
-					vector<string>* vptr = (vector<string>*)ptr;
-					
-					vector<string>::iterator itr = vptr->begin();
-					if( itr != vptr->end() )
-					while(true)
-					{
-						r += TAB + TAB + indent + stringRepr(*itr);
-						itr++;
-						if( itr==vptr->end() )
-						{
-							r += "\n";
-							break;
-						}
-						r += ",\n";
-					}
-										
-					r += TAB + indent + "]";
-				}
-			break;
-			
-			case kObject:
-				r += TAB + indent + "\"" + itr->name + "\" : " +
-					(reinterpret_cast<Serializable*>(ptr))->serialize(indent + TAB);
-			break;
-		}
-		
-		if( i!=(size-1) )
-			r += ",";
-		r += "\n";
-		
-		i++;
-	}
-	
-	return r;
+    string r;
+    
+    if( type != "" )
+        r += TAB + indent + "\"type\" : " + stringRepr(type) + ",\n";
+    if( name != "" )
+        r += TAB + indent + "\"name\" : " + stringRepr(name) + ",\n";
+    
+    int size = properties.size();
+    
+    int i = 0;
+    for(vector<Property>::const_iterator itr = properties.begin();
+        itr!=properties.end();
+        itr++ )
+    {
+        void* ptr = (char*)(this) + itr->offset;
+        
+        switch( itr->type )
+        {
+            case kString:
+                r += TAB + indent + "\"" + itr->name + "\" : " + 
+                    stringRepr(*(reinterpret_cast<string*>(ptr)));
+            break;
+            
+            case kDouble:
+                r += TAB + indent + "\"" + itr->name + "\" : " +
+                    floatToString(*(reinterpret_cast<double*>(ptr)));
+            break;
+            
+            case kInt:
+                r += TAB + indent + "\"" + itr->name + "\" : " +
+                    intToString(*(reinterpret_cast<int*>(ptr)));
+            break;
+            
+            case kVectorDouble:
+                {
+                    r += TAB + indent + "\"" + itr->name + "\" : [\n";
+                    vector<double>* vptr = (vector<double>*)ptr;
+                    
+                    vector<double>::iterator itr = vptr->begin();
+                    if( itr != vptr->end() )
+                    while(true)
+                    {
+                        r += TAB + TAB + indent + floatToString(*itr);
+                        itr++;
+                        if( itr==vptr->end() )
+                        {
+                            r += "\n";
+                            break;
+                        }
+                        r += ",\n";
+                    }
+                    
+                    r += TAB + indent + "]";
+                }
+            break;
+            
+            case kVectorInt:
+                {
+                    r += TAB + indent + "\"" + itr->name + "\" : [\n";
+                    vector<int>* vptr = (vector<int>*)ptr;
+                    
+                    vector<int>::iterator itr = vptr->begin();
+                    if( itr != vptr->end() )
+                    while(true)
+                    {
+                        r += TAB + TAB + indent + intToString(*itr);
+                        itr++;
+                        if( itr==vptr->end() )
+                        {
+                            r += "\n";
+                            break;
+                        }
+                        r += ",\n";
+                    }
+                    
+                    r += TAB + indent + "]";
+                }
+            break;
+            
+            case kVectorString:
+                {
+                    r += TAB + indent + "\"" + itr->name + "\" : [\n";
+                    vector<string>* vptr = (vector<string>*)ptr;
+                    
+                    vector<string>::iterator itr = vptr->begin();
+                    if( itr != vptr->end() )
+                    while(true)
+                    {
+                        r += TAB + TAB + indent + stringRepr(*itr);
+                        itr++;
+                        if( itr==vptr->end() )
+                        {
+                            r += "\n";
+                            break;
+                        }
+                        r += ",\n";
+                    }
+                                        
+                    r += TAB + indent + "]";
+                }
+            break;
+            
+            case kObject:
+                r += TAB + indent + "\"" + itr->name + "\" : " +
+                    (reinterpret_cast<Serializable*>(ptr))->serialize(indent + TAB);
+            break;
+        }
+        
+        if( i!=(size-1) )
+            r += ",";
+        r += "\n";
+        
+        i++;
+    }
+    
+    return r;
 }
 
 string Serializable::serializeEnd(string indent) const
 {
-	return indent + "}";
+    return indent + "}";
 }
 
 void Serializable::addProperty(const std::string& name, Serializable& element)
 {
-	properties.push_back(Property(kObject, name, (char*)(&element) - (char*)(this) ));
+    properties.push_back(Property(kObject, name, (char*)(&element) - (char*)(this) ));
 }
 
 void Serializable::addMember(const std::string& name, std::string& element)
 {
-	properties.push_back(Property(kString, name, (char*)(&element) - (char*)(this) ));
+    properties.push_back(Property(kString, name, (char*)(&element) - (char*)(this) ));
 }
 
 void Serializable::addMember(const std::string& name, double& element)
 {
-	properties.push_back(Property(kDouble, name, (char*)(&element) - (char*)(this) ));
+    properties.push_back(Property(kDouble, name, (char*)(&element) - (char*)(this) ));
 }
 
 void Serializable::addMember(const std::string& name, int& element)
 {
-	properties.push_back(Property(kInt, name, (char*)(&element) - (char*)(this) ));
+    properties.push_back(Property(kInt, name, (char*)(&element) - (char*)(this) ));
 }
 
 void Serializable::addMember(const std::string& name, vector<double>& element)
 {
-	properties.push_back(Property(kVectorDouble, name, (char*)(&element) - (char*)(this) ));
+    properties.push_back(Property(kVectorDouble, name, (char*)(&element) - (char*)(this) ));
 }
 
 void Serializable::addMember(const std::string& name, vector<int>& element)
 {
-	properties.push_back(Property(kVectorInt, name, (char*)(&element) - (char*)(this) ));
+    properties.push_back(Property(kVectorInt, name, (char*)(&element) - (char*)(this) ));
 }
 
 void Serializable::addMember(const std::string& name, vector<string>& element)
 {
-	properties.push_back(Property(kVectorString, name, (char*)(&element) - (char*)(this) ));
+    properties.push_back(Property(kVectorString, name, (char*)(&element) - (char*)(this) ));
 }
 
 
@@ -333,42 +333,42 @@ IntProperty::IntProperty(int i) : value(i) {}
 
 int IntProperty::operator()() const
 {
-	return value;
+    return value;
 }
 
 void IntProperty::operator()(int i)
 {
-	value = i;
+    value = i;
 }
 
 bool IntProperty::operator==(int i) const
 {
-	return value == i;
+    return value == i;
 }
 
 bool IntProperty::operator!=(int i) const
 {
-	return value != i;
+    return value != i;
 }
 
 IntProperty::operator int&()
 {
-	return value;
+    return value;
 }
 
 IntProperty::operator int const&() const
 {
-	return value;
+    return value;
 }
 
 string IntProperty::serialize(string indent) const
 {
-	return intToString(value);
+    return intToString(value);
 }
 
 void IntProperty::initWithParseNode(const parse::Node* n)
 {
-	value = n->data.i;
+    value = n->data.i;
 }
 
 
@@ -377,22 +377,22 @@ BoolProperty::BoolProperty(bool b) : value(b) {}
 
 bool BoolProperty::operator()() const
 {
-	return value;
+    return value;
 }
 
 void BoolProperty::operator()(bool b)
 {
-	value = b;
+    value = b;
 }
 
 string BoolProperty::serialize(string indent) const
 {
-	return value?"1":"0";
+    return value?"1":"0";
 }
 
 void BoolProperty::initWithParseNode(const parse::Node* n)
 {
-	value = n->data.i ? true : false;
+    value = n->data.i ? true : false;
 }
 
 
@@ -401,42 +401,42 @@ DoubleProperty::DoubleProperty(double x) : value(x) {}
 
 double DoubleProperty::operator()() const
 {
-	return value;
+    return value;
 }
 
 void DoubleProperty::operator()(double x)
 {
-	value = x;
+    value = x;
 }
 
 bool DoubleProperty::operator==(double t) const
 {
-	return value == t;
+    return value == t;
 }
 
 bool DoubleProperty::operator!=(double t) const
 {
-	return value != t;
+    return value != t;
 }
 
 DoubleProperty::operator double&()
 {
-	return value;
+    return value;
 }
 
 DoubleProperty::operator double const&() const
 {
-	return value;
+    return value;
 }
 
 string DoubleProperty::serialize(string indent) const
 {
-	return floatToString(value);
+    return floatToString(value);
 }
 
 void DoubleProperty::initWithParseNode(const parse::Node* n)
 {
-	value = n->data.x;
+    value = n->data.x;
 }
 
 
@@ -445,33 +445,33 @@ StringProperty::StringProperty(const string& s) : value(s) {}
 
 StringProperty::StringProperty(const char* s)
 {
-	value = s;
+    value = s;
 }
 
 const string& StringProperty::operator()() const
 {
-	return value;
+    return value;
 }
 
 void StringProperty::operator()(const string& s)
 {
-	value = s;
+    value = s;
 }
 
 string StringProperty::serialize(string indent) const
 {
-	return stringRepr(value);
+    return stringRepr(value);
 }
 
 void StringProperty::initWithParseNode(const parse::Node* n)
 {
-	value = n->data.s;
+    value = n->data.s;
 }
 
 
 void Serializable::display() const
 {
-	g2clog( "%s\n", serialize().c_str() );
+    g2clog( "%s\n", serialize().c_str() );
 }
 
 
