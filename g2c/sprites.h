@@ -467,6 +467,8 @@ namespace g2c {
                                 const char* s,
                                 const std::string& justification = "left") const;
         
+        void getWidthsFromBitmap(const Bitmap& bitmap);
+        
         virtual std::string serializeElements(std::string indent = "") const;
         virtual void handleChild(const parse::Node* n);
     };

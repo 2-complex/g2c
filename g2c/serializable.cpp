@@ -395,6 +395,16 @@ void BoolProperty::initWithParseNode(const parse::Node* n)
     value = n->data.i ? true : false;
 }
 
+BoolProperty::operator bool&()
+{
+    return value;
+}
+
+BoolProperty::operator bool() const
+{
+    return value;
+}
+
 
 DoubleProperty::DoubleProperty() : value(0) {}
 DoubleProperty::DoubleProperty(double x) : value(x) {}

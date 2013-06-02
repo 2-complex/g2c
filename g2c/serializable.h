@@ -115,7 +115,8 @@ public:
     
     bool operator()() const;
     void operator()(bool b);
-    operator bool() const;
+    operator bool&();
+	operator bool() const;
 
 private:
     bool value;

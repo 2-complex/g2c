@@ -352,6 +352,85 @@ Polygon Font::stringRectangle(double k, const char* s, const string& justificati
     return R;
 }
 
+void Font::getWidthsFromBitmap(const Bitmap& bitmap)
+{
+    const uint8_t* data = bitmap.getData();
+    double width = bitmap.getWidth();
+    double height = bitmap.getHeight();
+    int bitsPerPixel = bitmap.getBitsPerPixel();
+    
+    double w = 1.0 * width / numberOfColumns;
+    double h = 1.0 * height / numberOfRows;
+    
+    if( bitsPerPixel != 32 )
+    {
+        g2clog("Attempt to generate widths, not from 32 bit data.");
+        return;
+    }
+    
+    widths.clear();
+    lefts.clear();
+    
+    double threshold = 255.0;
+    
+    if( numberOfRows == 1 && numberOfColumns == 1 )
+    {
+        g2clog("Attempt to generate widths with"
+               " numberOfRows = numberOfColumns = 1.\n");
+    }
+    
+    vector<double> sums((int)(w+1));
+    
+    for( int j = 0; j < numberOfRows; j++ )
+    for( int i = 0; i < numberOfColumns; i++ )
+    {
+        int x0 = min((int)((i)*w), width);
+        int x1 = min((int)((i+1)*w), width);
+        int y0 = min((int)(j*h), height);
+        int y1 = min((int)((j+1)*h), height);
+        
+        /* iterate through find the first column the sum of whose
+           alpha is greater than threshold and the last that is less */
+        for( int x = x0; x < x1; x++ )
+        {
+            double sum = 0;
+            for( int y = y0; y < y1; y++ )
+            {
+                int index = (bitsPerPixel / 8) * (width * y + x);
+                uint8_t a = data[index + 3];
+                sum += 1.0 * a;
+            }
+            sums[x-x0] = sum;
+        }
+        
+        double right = w / 2;
+        double left = 0;
+        
+        for( int x = x0; x < x1; x++ )
+        {
+            if(sums[x-x0] > threshold)
+            {
+                left = x-x0;
+                break;
+            }
+        }
+        
+        for( int x = x1-1; x >= x0; x-- )
+        {
+            if(sums[x-x0] > threshold)
+            {
+                right = x-x0;
+                break;
+            }
+        }
+        
+        widths.push_back(right - left);
+        lefts.push_back(left);
+    }
+    
+    spacing = 3;
+}
+
 string Font::serializeElements(string indent) const
 {
     string r = Sprite::serializeElements(indent);
