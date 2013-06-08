@@ -33,14 +33,14 @@
 namespace g2c {
 
 
-
-
 class MacBank : public Bank {
 public:
     MacBank() {}
     virtual ~MacBank() {}
     
     std::string base_path;
+    
+    virtual void initDataWithPath(Data* data, const char* path);
     
     virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
     virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);

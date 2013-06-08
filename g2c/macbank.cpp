@@ -29,9 +29,6 @@ using namespace std;
 
 namespace g2c {
 
-
-
-
 void MacBank::initPersistentSerializableWithKey(Serializable* s, const char* key)
 {
     initSerializableWithPath(s, (string(key) + ".txt").c_str());
@@ -40,6 +37,27 @@ void MacBank::initPersistentSerializableWithKey(Serializable* s, const char* key
 void MacBank::writePersistentSerializableWithKey(const Serializable* s, const char* key)
 {
     writeSerializableToPath(s, (string(key) + ".txt").c_str());
+}
+
+void MacBank::initDataWithPath(Data* data, const char* path)
+{
+	string fullpath = base_path + directory + path;
+    
+    FILE* fp = fopen(fullpath.c_str(), "r");
+    if( !fp )
+    {
+        g2cerror( "File not found: %s\n", fullpath.c_str() );
+        exit(0);
+    }
+    
+    fseek(fp, 0, SEEK_END);
+    int size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    
+    data->resize(size+1);
+    data->array()[size] = 0;
+    fread(data->array(), 1, size, fp);
+    fclose(fp);
 }
 
 void MacBank::initSerializableWithPath(Serializable* s, const char* path)
@@ -67,8 +85,6 @@ void MacBank::initSerializableWithPath(Serializable* s, const char* path)
     directory = old_directory;
     
     free(data);
-    
-    
 }
 
 void MacBank::writeSerializableToPath(const Serializable* s, const char* path)
