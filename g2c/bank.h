@@ -33,13 +33,25 @@
 
 namespace g2c {
 
-
-
+class Data {
+public:
+	Data();
+	virtual ~Data();
+	uint8_t* array() const;
+	size_t size() const;
+	void resize(size_t size);
+	
+private:
+	size_t mSize;
+	uint8_t* mArray;
+};
 
 class Bank {
 public:
     Bank() {}
     virtual ~Bank() {}
+    
+    virtual void initDataWithPath(Data* data, const char* path) = 0;
     
     virtual void initPersistentSerializableWithKey(Serializable* s, const char* key) = 0;
     virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key) = 0;

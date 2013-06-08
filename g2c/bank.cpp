@@ -27,6 +27,39 @@ using namespace std;
 
 namespace g2c {
 
+Data::Data() : mArray(NULL), mSize(0) {}
+
+Data::~Data()
+{
+	if( mArray )
+		free(mArray);
+}
+
+void Data::resize(size_t size)
+{
+	if( mArray )
+	{
+		free(mArray);
+		mArray = NULL;
+	}
+	
+	if( size > 0 )
+	{
+		mArray = (uint8_t*)malloc(size);
+	}
+	
+	mSize = size;
+}
+
+uint8_t* Data::array() const
+{
+	return mArray;
+}
+
+size_t Data::size() const
+{
+	return mSize;
+}
 
 
 
