@@ -23,7 +23,7 @@ GRAPHICSFLAGS = -framework Cocoa -framework QuartzCore
 AUDIOFLAGS = -framework AudioToolbox -framework Foundation -framework OpenAL
 
 GRAPHICS = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/bank.o $(OBJ_DIR)/macbank.o $(OBJ_DIR)/graphics.o
-SPRITES = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/sound.o $(OBJ_DIR)/bank.o $(OBJ_DIR)/macbank.o $(OBJ_DIR)/sprites.o $(OBJ_DIR)/animations.o
+SPRITES = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/sound.o $(OBJ_DIR)/wave.o $(OBJ_DIR)/bank.o $(OBJ_DIR)/macbank.o $(OBJ_DIR)/sprites.o $(OBJ_DIR)/animations.o
 GAMES = $(SPRITES) $(OBJ_DIR)/graphics.o $(OBJ_DIR)/transforms.o
 
 ENVIRONMENT = $(SOURCE_DIR)/lin/lin.h $(OBJ_DIR)/util.o $(OBJ_DIR)/listener.o $(OBJ_DIR)/environment.o
@@ -66,6 +66,10 @@ $(OBJ_DIR)/util.o: $(SOURCE_DIR)/util.cpp $(SOURCE_DIR)/util.h
 $(OBJ_DIR)/sound.o: $(SOURCE_DIR)/sound.cpp $(SOURCE_DIR)/sound.h
 	@mkdir -p $(@D)
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/sound.cpp -o $(OBJ_DIR)/sound.o
+
+$(OBJ_DIR)/wave.o: $(SOURCE_DIR)/wave.cpp $(SOURCE_DIR)/wave.h
+	@mkdir -p $(@D)
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/wave.cpp -o $(OBJ_DIR)/wave.o
 
 $(OBJ_DIR)/rendertarget.o: $(SOURCE_DIR)/rendertarget.cpp $(SOURCE_DIR)/rendertarget.h $(SOURCE_DIR)/lin/lin.h
 	@mkdir -p $(@D)
