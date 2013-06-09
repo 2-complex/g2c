@@ -28,9 +28,6 @@
 
 namespace g2c {
 
-
-
-
 class MoveVec2 : public Animation {
 public:
     MoveVec2(double instart, double induration, Vec2* inv, const Vec2& indst);
@@ -111,6 +108,5 @@ public:
 };
 
 } // end namespace
-
 
 #endif

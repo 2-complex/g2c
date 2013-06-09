@@ -67,6 +67,7 @@ public:
     
     void useSource(Source* inSource) const;
     void play() const;
+    void stop() const;
     
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);

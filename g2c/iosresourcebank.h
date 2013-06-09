@@ -21,10 +21,10 @@
 
 
 
-#ifndef _IOS_RESOURCE_SBANK_
-#define _IOS_RESOURCE_SBANK_
+#ifndef _IOS_RESOURCE_BANK_
+#define _IOS_RESOURCE_BANK_
 
-#include "bank.h"
+#include "macbank.h"
 
 @class EAGLView;
 

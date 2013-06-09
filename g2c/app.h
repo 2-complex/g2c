@@ -34,19 +34,23 @@ class App {
 public:
     App();
     virtual ~App();
-    
+	
     virtual void init();
     virtual void step(double t);
     virtual void draw() const;
+    
+	virtual bool mouseDown(const Vec2& C);
+	virtual void mouseDragged(const Vec2& C);
+	virtual void mouseUp(const Vec2& C);
+	
+	virtual bool touchDown(unsigned int index, const Vec2& C);
+	virtual void touchDragged(unsigned int index, const Vec2& C);
+	virtual void touchUp(unsigned int index, const Vec2& C);
     
     virtual void keyboard(unsigned char inkey);
     virtual void special(int inkey);
     
     virtual void reshape(int width, int height);
-    
-    virtual bool mouseDown(const Vec2& C);
-    virtual void mouseDragged(const Vec2& C);
-    virtual void mouseUp(const Vec2& C);
 };
 
 } // end namespace

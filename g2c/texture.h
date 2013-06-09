@@ -30,14 +30,10 @@
 
 #include <stdint.h>
 
-class Bank;
-class Model;
-
 namespace g2c {
 
-
-
-
+class Bank;
+class Model;
 class Bitmap;
 
 class Bitmap {

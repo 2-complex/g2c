@@ -72,5 +72,18 @@ void App::mouseUp(const Vec2& /*C*/)
 {
 }
 
+bool App::touchDown(unsigned int index, const Vec2& C)
+{
+	return false;
+}
+
+void App::touchDragged(unsigned int index, const Vec2& C)
+{
+}
+
+void App::touchUp(unsigned int index, const Vec2& C)
+{
+}
+
 } // end namespace
 

@@ -2257,6 +2257,14 @@ void World::playSound(const std::string& /*name*/) const
 #endif
 }
 
+Sound* World::getSound(const string& name)
+{
+    map<string, Sound*>::iterator itr = soundMap.find(name);
+    if( itr != soundMap.end() )
+        return itr->second;
+    return NULL;
+}
+
 Node* World::getNode(const string& name)
 {
     map<string, Node*>::iterator itr = nodeMap.find(name);

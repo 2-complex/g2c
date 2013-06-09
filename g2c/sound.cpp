@@ -103,6 +103,14 @@ void Sound::play() const
     }
 }
 
+void Sound::stop() const
+{
+    if(source)
+    {
+        alSourceStop(source->source);
+    }
+}
+
 void Sound::useSource(Source* inSource) const
 {
     source = inSource;

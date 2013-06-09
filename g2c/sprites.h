@@ -112,6 +112,8 @@ namespace g2c {
         ColorProperty();
         ColorProperty(const Color& c);
         
+        inline ColorProperty& operator= (const Color& v) {x=v.x; y=v.y; z=v.z; w=v.w; return *this;}
+        
         virtual std::string serialize(std::string indent) const;
         void initWithParseNode(const parse::Node* n);
     };
@@ -514,6 +516,7 @@ namespace g2c {
         std::string serializeSprites(std::string indent = "") const;
         
         virtual void playSound(const std::string& name) const;
+        g2c::Sound* getSound(const std::string& name);
         virtual Node* getNode(const std::string& name);
         virtual Sprite* getSprite(const std::string& name);
         
