@@ -309,5 +309,21 @@ std::string relativePath(const std::string& source, const std::string& target)
     return result;
 }
 
+bool endsWith(const std::string& path, const std::string& extension)
+{
+	int n = path.size();
+	int m = extension.size();
+	
+	if( n < m )
+		return false;
+	
+	for( int i = 0; i < m; i++ )
+	{
+		if( path[n-1-i] != extension[m-1-i] )
+			return false;
+	}
+	return true;
+}
+
 } // end namespace
 

@@ -52,6 +52,7 @@ std::string directoryOfPath(const std::string& path);
 std::string fileOfPath(const std::string& path);
 std::string relativePath(const std::string& source, const std::string& target);
 std::vector<std::string> components(const std::string& path);
+bool endsWith(const std::string& path, const std::string& extension);
 
 } // end namespace
 
