@@ -28,7 +28,7 @@
 using namespace std;
 using namespace g2c;
 
-SpriteEnvironment::SpriteEnvironment() : sound_index(0), forwardKeyboard(false)
+SpriteEnvironment::SpriteEnvironment() : sound_index(0), forwardKeyboard(false), current(NULL)
 {
 	world.bank = &bank;
 	Sprite::renderer = &renderer;
