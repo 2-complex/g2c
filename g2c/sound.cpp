@@ -19,8 +19,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-
-
 #include "sound.h"
 #include "util.h"
 
@@ -28,11 +26,7 @@
 
 using namespace std;
 
-
 namespace g2c {
-
-
-
 
 int Context::alcDeviceRefCounter = 0;
 ALCdevice* Context::alcDevice = NULL;
@@ -139,6 +133,53 @@ void Sound::handleChild(const parse::Node* n)
     if(n_name == "loop")
         loop = value->data.i;
 }
+
+int Sound::getOpenALFormat(int numChannels, int bytesPerSample)
+{
+	string ch, b;
+	switch( numChannels )
+	{
+		case 1: ch = "MONO"; break;
+		case 2: ch = "STEREO"; break;
+		case 4: ch = "QUAD"; break;
+		case 6: ch = "51CHN"; break;
+		case 7: ch = "CHN61"; break;
+		case 8: ch = "71CHN"; break;
+		default:
+			g2cerror( "Error, wave number of channels %d not 1,2,4,6,7 or 8.\n", numChannels );
+			exit(0);
+		break;
+	}
+	
+	switch( bytesPerSample )
+	{
+		case 1: b = "8"; break;
+		case 2: b = "16"; break;
+		case 4:
+			b = "_FLOAT32";
+			g2clog( "WARNING: Wave bytes per sample 32."
+				"  OpenAL supports 32-bit float only, attempting float.\n" );
+		break;
+	}
+	
+	return alGetEnumValue(("AL_FORMAT_"+ch+b).c_str());
+}
+
+void Sound::load(int sampleRate, int numSamples, int numChannels,
+	int bytesPerSample, uint8_t* data)
+{
+	int format = getOpenALFormat(numChannels, bytesPerSample);
+	int size = numSamples * bytesPerSample;
+	
+	alBufferData(buffer, format, data, size, sampleRate);
+}
+
+void Sound::initWithWave(const Wave& wave)
+{
+	load(wave.sampleRate, wave.numSamples, wave.numChannels,
+		wave.bytesPerSample, wave.data);
+}
+
 
 } // end namespace
 

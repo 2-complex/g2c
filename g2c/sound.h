@@ -19,11 +19,10 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-
-
 #ifndef _SOUND_
 #define _SOUND_
 
+#include "wave.h"
 #include "serializable.h"
 
 #include <AudioToolbox/AudioToolbox.h>
@@ -31,9 +30,6 @@
 #include <OpenAL/alc.h>
 
 namespace g2c {
-
-
-
 
 class Context {
 public:
@@ -75,15 +71,20 @@ public:
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
     
+    void initWithWave(const Wave& wave);
+    
 private:
     mutable Source* source;
     void* getOpenALAudioData(CFURLRef inFileURL,
                              ALsizei* outDataSize,
                              ALenum* outDataFormat,
                              ALsizei* outSampleRate);
+	
+	int getOpenALFormat(int numChannels, int bytesPerSample);
+	void load(int sampleRate, int numSamples, int numChannels,
+		int bytesPerSample, uint8_t* data);
 };
 
 } // end namespace
-
 
 #endif

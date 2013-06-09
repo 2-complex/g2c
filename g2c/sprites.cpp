@@ -1936,6 +1936,7 @@ World::World() : bank(NULL)
 {
 #if !defined(STUB_SOUND)
     context = new Context();
+    context->makeCurrent();
     destroySoundQueue();
 #endif
     type = "World";
