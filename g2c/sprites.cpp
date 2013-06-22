@@ -28,9 +28,6 @@ using namespace std;
 
 namespace g2c {
 
-
-
-
 bool Sprite::drawLines = false; // Some time put this in the renderer, perhaps.
 Renderer* Sprite::renderer = NULL;
 
