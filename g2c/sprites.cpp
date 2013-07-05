@@ -534,7 +534,7 @@ void Font::handleChild(const parse::Node* n)
 }
 
 
-Node::Node() : visible(true), parent(NULL)
+Node::Node() : visible(true), parent(NULL), tookMouseDown(false)
 {
     type = "Node";
     addProperty("visible", visible);

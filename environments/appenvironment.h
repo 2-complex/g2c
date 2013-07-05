@@ -9,7 +9,10 @@ class AppEnvironment : public Environment {
 public:
 	AppEnvironment();
 	virtual ~AppEnvironment();
-	
+
+private:
+	bool touchOn;
+
 protected:
 	virtual void enables();
 	
