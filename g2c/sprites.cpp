@@ -28,9 +28,6 @@ using namespace std;
 
 namespace g2c {
 
-
-
-
 bool Sprite::drawLines = false; // Some time put this in the renderer, perhaps.
 Renderer* Sprite::renderer = NULL;
 
@@ -537,7 +534,7 @@ void Font::handleChild(const parse::Node* n)
 }
 
 
-Node::Node() : visible(true), parent(NULL)
+Node::Node() : visible(true), parent(NULL), tookMouseDown(false)
 {
     type = "Node";
     addProperty("visible", visible);

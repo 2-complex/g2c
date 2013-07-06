@@ -46,9 +46,6 @@
 
 
 namespace g2c {
-
-
-
     class Color;
     class Node;
     class Animator;
@@ -165,7 +162,7 @@ namespace g2c {
         mutable Color worldColor;
         
         std::vector<Serializable*> deleteMe;
-                
+       	
         bool tookMouseDown;
         void clearTookMouseDown();
     };
