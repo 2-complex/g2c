@@ -2230,7 +2230,7 @@ int gTimes = 0;
 std::string gLastName;
 
 
-void World::playSound(const std::string& /*name*/) const
+void World::playSound(const std::string& name) const
 {
 #if !defined(STUB_SOUND)
     if( sources.empty() )
