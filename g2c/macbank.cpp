@@ -188,7 +188,7 @@ void MacBank::initTextureWithPath(Texture2D* texture, const char* path)
 {
     Bitmap bitmap;
     initBitmapWithPath(&bitmap, path);
-    texture->initWithBitmap(&bitmap);
+    texture->initWithBitmap(bitmap);
 }
 
 void MacBank::initSoundWithPath(Sound* sound, const char* path)

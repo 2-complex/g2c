@@ -87,7 +87,10 @@ void AppEnvironment::special(unsigned char inkey)
 bool AppEnvironment::mouseDown(const Vec2& C)
 {
 	if(app)
-		return app->mouseDown(C);
+	{
+		app->mouseDown(C);
+		app->touchDown(0, C);
+	}
 	else
 		printf( "AppEnvironment used with no app\n" );
 	
@@ -97,7 +100,10 @@ bool AppEnvironment::mouseDown(const Vec2& C)
 void AppEnvironment::mouseDragged(const Vec2& C)
 {
 	if(app)
+	{
 		app->mouseDragged(C);
+		app->touchDragged(0, C);
+	}
 	else
 		printf( "AppEnvironment used with no app\n" );
 }
@@ -105,7 +111,10 @@ void AppEnvironment::mouseDragged(const Vec2& C)
 void AppEnvironment::mouseUp(const Vec2& C)
 {
 	if(app)
+	{
 		app->mouseUp(C);
+		app->touchUp(0, C);
+	}
 	else
 		printf( "AppEnvironment used with no app\n" );
 }

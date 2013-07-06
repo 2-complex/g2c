@@ -1416,12 +1416,12 @@ void Model::handleChild(const parse::Node* n)
                     bank->initBitmapWithPath(&positiveZBitmap, newCubeMap->positiveZFile.c_str());
                     bank->initBitmapWithPath(&negativeZBitmap, newCubeMap->negativeZFile.c_str());
                     newCubeMap->initWithBitmaps(
-                        &positiveXBitmap,
-                        &negativeXBitmap,
-                        &positiveYBitmap,
-                        &negativeYBitmap,
-                        &positiveZBitmap,
-                        &negativeZBitmap);
+                        positiveXBitmap,
+                        negativeXBitmap,
+                        positiveYBitmap,
+                        negativeYBitmap,
+                        positiveZBitmap,
+                        negativeZBitmap);
                 }
             }
         }

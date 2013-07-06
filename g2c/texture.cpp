@@ -279,13 +279,13 @@ void Texture2D::initWithImageData(const GLubyte* inData,
     }
 }
 
-void Texture2D::initWithBitmap(const Bitmap* bitmap)
+void Texture2D::initWithBitmap(const Bitmap& bitmap)
 {
     initWithImageData(
-        bitmap->getData(),
-        bitmap->getWidth(),
-        bitmap->getHeight(),
-        bitmap->getBitsPerPixel());
+        bitmap.getData(),
+        bitmap.getWidth(),
+        bitmap.getHeight(),
+        bitmap.getBitsPerPixel());
 }
 
 string Texture2D::serializeElements(string indent) const
@@ -381,44 +381,44 @@ void CubeMap::initWithImageData(const GLubyte* inDataPositiveX,
     }
 }
 
-void CubeMap::initWithBitmaps(const Bitmap* bitmapPositiveX,
-                              const Bitmap* bitmapNegativeX,
-                              const Bitmap* bitmapPositiveY,
-                              const Bitmap* bitmapNegativeY,
-                              const Bitmap* bitmapPositiveZ,
-                              const Bitmap* bitmapNegativeZ)
+void CubeMap::initWithBitmaps(const Bitmap& bitmapPositiveX,
+                              const Bitmap& bitmapNegativeX,
+                              const Bitmap& bitmapPositiveY,
+                              const Bitmap& bitmapNegativeY,
+                              const Bitmap& bitmapPositiveZ,
+                              const Bitmap& bitmapNegativeZ)
 {
-    int w = bitmapPositiveX->getWidth();
-    if( w != bitmapPositiveX->getWidth() || w != bitmapPositiveX->getHeight() ||
-        w != bitmapNegativeX->getWidth() || w != bitmapNegativeX->getHeight() ||
-        w != bitmapPositiveY->getWidth() || w != bitmapPositiveY->getHeight() ||
-        w != bitmapNegativeY->getWidth() || w != bitmapNegativeY->getHeight() ||
-        w != bitmapPositiveZ->getWidth() || w != bitmapPositiveZ->getHeight() ||
-        w != bitmapNegativeZ->getWidth() || w != bitmapNegativeZ->getHeight())
+    int w = bitmapPositiveX.getWidth();
+    if( w != bitmapPositiveX.getWidth() || w != bitmapPositiveX.getHeight() ||
+        w != bitmapNegativeX.getWidth() || w != bitmapNegativeX.getHeight() ||
+        w != bitmapPositiveY.getWidth() || w != bitmapPositiveY.getHeight() ||
+        w != bitmapNegativeY.getWidth() || w != bitmapNegativeY.getHeight() ||
+        w != bitmapPositiveZ.getWidth() || w != bitmapPositiveZ.getHeight() ||
+        w != bitmapNegativeZ.getWidth() || w != bitmapNegativeZ.getHeight())
     {
         g2cerror( "Attempt to make cube map from images which are not all the same square size.\n" );
         exit(0);
     }
     
-    int bpp = bitmapPositiveX->getBitsPerPixel();
-    if( bpp != bitmapPositiveX->getBitsPerPixel() ||
-        bpp != bitmapNegativeX->getBitsPerPixel() ||
-        bpp != bitmapPositiveY->getBitsPerPixel() ||
-        bpp != bitmapNegativeY->getBitsPerPixel() ||
-        bpp != bitmapPositiveZ->getBitsPerPixel() ||
-        bpp != bitmapNegativeZ->getBitsPerPixel())
+    int bpp = bitmapPositiveX.getBitsPerPixel();
+    if( bpp != bitmapPositiveX.getBitsPerPixel() ||
+        bpp != bitmapNegativeX.getBitsPerPixel() ||
+        bpp != bitmapPositiveY.getBitsPerPixel() ||
+        bpp != bitmapNegativeY.getBitsPerPixel() ||
+        bpp != bitmapPositiveZ.getBitsPerPixel() ||
+        bpp != bitmapNegativeZ.getBitsPerPixel())
     {
         g2cerror( "Attempt to make cube map from images which are not all the same bit-depth.\n" );
         exit(0);
     }
     
     initWithImageData(
-        bitmapPositiveX->getData(),
-        bitmapNegativeX->getData(),
-        bitmapPositiveY->getData(),
-        bitmapNegativeY->getData(),
-        bitmapPositiveZ->getData(),
-        bitmapNegativeZ->getData(), w, bpp);
+        bitmapPositiveX.getData(),
+        bitmapNegativeX.getData(),
+        bitmapPositiveY.getData(),
+        bitmapNegativeY.getData(),
+        bitmapPositiveZ.getData(),
+        bitmapNegativeZ.getData(), w, bpp);
 }
 
 string CubeMap::serializeElements(string indent) const

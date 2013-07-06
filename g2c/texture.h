@@ -105,7 +105,7 @@ public:
                            int inHeight,
                            int inBitsPerPixel);
     
-    void initWithBitmap(const Bitmap* bitmap);
+    void initWithBitmap(const Bitmap& bitmap);
     
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
@@ -138,12 +138,12 @@ public:
                            int inWidth,
                            int inBitsPerPixel);
     
-    void initWithBitmaps(const Bitmap* bitmapPositiveX,
-                         const Bitmap* bitmapNegativeX,
-                         const Bitmap* bitmapPositiveY,
-                         const Bitmap* bitmapNegativeY,
-                         const Bitmap* bitmapPositiveZ,
-                         const Bitmap* bitmapNegativeZ);
+    void initWithBitmaps(const Bitmap& bitmapPositiveX,
+                         const Bitmap& bitmapNegativeX,
+                         const Bitmap& bitmapPositiveY,
+                         const Bitmap& bitmapNegativeY,
+                         const Bitmap& bitmapPositiveZ,
+                         const Bitmap& bitmapNegativeZ);
     
 protected:
     virtual std::string serializeElements(std::string indent = "") const;
