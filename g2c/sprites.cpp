@@ -54,7 +54,7 @@ void Mat4Property::initWithParseNode(const parse::Node* n)
     int size = v.size();
     
     for( int i = 0; i < 16; i++ )
-        if( size >= 0 )
+        if( size > 0 )
             ptr[i] = v[i]();
 }
 
@@ -75,10 +75,10 @@ void Vec2Property::initWithParseNode(const parse::Node* n)
     VectorProperty<DoubleProperty> v;
     v.initWithParseNode(n);
     
-    if( v.size() >= 0 )
+    if( v.size() > 0 )
         x = v[0]();
     
-    if( v.size() >= 1 )
+    if( v.size() > 1 )
         y = v[1]();
 }
 
@@ -100,13 +100,13 @@ void Vec3Property::initWithParseNode(const parse::Node* n)
     VectorProperty<DoubleProperty> v;
     v.initWithParseNode(n);
     
-    if( v.size() >= 0 )
+    if( v.size() > 0 )
         x = v[0]();
     
-    if( v.size() >= 1 )
+    if( v.size() > 1 )
         y = v[1]();
     
-    if( v.size() >= 2 )
+    if( v.size() > 2 )
         z = v[2]();
 }
 
@@ -2230,7 +2230,7 @@ int gTimes = 0;
 std::string gLastName;
 
 
-void World::playSound(const std::string& name) const
+void World::playSound(const std::string& name, double gain) const
 {
 #if !defined(STUB_SOUND)
     if( sources.empty() )
@@ -2246,7 +2246,7 @@ void World::playSound(const std::string& name) const
             if( !source->isPlaying() )
             {
                 sound->useSource(source);
-                sound->play();
+                sound->play(gain);
                 break;
             }
         }

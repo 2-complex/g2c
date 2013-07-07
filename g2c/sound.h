@@ -66,7 +66,7 @@ public:
     bool loop;
     
     void useSource(Source* inSource) const;
-    void play() const;
+    void play(double gain = 1.0) const;
     void stop() const;
     
     virtual std::string serializeElements(std::string indent = "") const;

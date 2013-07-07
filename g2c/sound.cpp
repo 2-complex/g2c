@@ -93,12 +93,13 @@ Sound::~Sound()
     
 }
 
-void Sound::play() const
+void Sound::play(double gain) const
 {
     if(source)
     {
         alSourcei(source->source, AL_BUFFER, buffer);
         alSourcei(source->source, AL_LOOPING, loop);
+        alSourcef(source->source, AL_GAIN, gain);
         alSourcePlay(source->source);
     }
 }
