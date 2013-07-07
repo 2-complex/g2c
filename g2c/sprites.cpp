@@ -130,16 +130,16 @@ void ColorProperty::initWithParseNode(const parse::Node* n)
     VectorProperty<DoubleProperty> v;
     v.initWithParseNode(n);
     
-    if( v.size() >= 0 )
+    if( v.size() > 0 )
         r = v[0]();
     
-    if( v.size() >= 1 )
+    if( v.size() > 1 )
         g = v[1]();
     
-    if( v.size() >= 2 )
+    if( v.size() > 2 )
         b = v[2]();
     
-    if( v.size() >= 3 )
+    if( v.size() > 3 )
         a = v[3]();
 }
 
@@ -246,7 +246,7 @@ double Font::lineWidth(double k, const char* s, int startIndex) const
     double width = 0;
     
     char c = 0;
-    for(int i = startIndex; c=s[i]; i++)
+    for(int i = startIndex; (c=s[i]); i++)
     {
         if( c == '\n' || c == '\r' )
             break;
@@ -263,7 +263,7 @@ vector<pair<int, int> > Font::lineIndices(const char* s) const
     int i=0;
     char c=0;
     
-    for(; c=s[i]; i++)
+    for(; (c=s[i]); i++)
     {
         if( c == '\n' || c == '\r' )
         {
