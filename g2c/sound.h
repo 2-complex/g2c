@@ -62,10 +62,11 @@ public:
     
     std::string file;
     
+    mutable Source* source;
+    
     ALuint buffer;
     bool loop;
     
-    void useSource(Source* inSource) const;
     void play(double gain = 1.0) const;
     void stop() const;
     
@@ -75,7 +76,6 @@ public:
     void initWithWave(const Wave& wave);
     
 private:
-    mutable Source* source;
     void* getOpenALAudioData(CFURLRef inFileURL,
                              ALsizei* outDataSize,
                              ALenum* outDataFormat,

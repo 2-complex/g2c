@@ -2245,7 +2245,7 @@ void World::playSound(const std::string& name, double gain) const
             Source* source = *itr;
             if( !source->isPlaying() )
             {
-                sound->useSource(source);
+                sound->source = source;
                 sound->play(gain);
                 break;
             }

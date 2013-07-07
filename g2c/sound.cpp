@@ -82,7 +82,7 @@ bool Source::isPlaying() const
     return state == AL_PLAYING;
 }
 
-Sound::Sound() : buffer(0), source(NULL), loop(false)
+Sound::Sound() : source(NULL), buffer(0), loop(false)
 {
     type = "Sound";
     alGenBuffers(1, &buffer);
@@ -110,11 +110,6 @@ void Sound::stop() const
     {
         alSourceStop(source->source);
     }
-}
-
-void Sound::useSource(Source* inSource) const
-{
-    source = inSource;
 }
 
 string Sound::serializeElements(std::string indent) const

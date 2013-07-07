@@ -142,7 +142,7 @@ void Wave::initWithData(const uint8_t* data, size_t size)
 	sampleRate = wav->sampleRate;
 	numChannels = wav->numChannels;
 	bytesPerSample = wav->bitsPerSample / 8;
-	numSamples = wav->dataSize / (numChannels * bytesPerSample);
+	numSamples = wav->dataSize / bytesPerSample;
 	this->data = (uint8_t*)(wav+1);
 	
 	if( this->data + wav->dataSize > data + size )
