@@ -21,8 +21,9 @@ GLFLAGS = -framework GLUT -framework OpenGL
 GRAPHICSFLAGS = -framework Cocoa -framework QuartzCore
 AUDIOFLAGS = -framework AudioToolbox -framework Foundation -framework OpenAL
 
+LIN = $(G2C_SOURCE_DIR)/lin/lin.h
+
 ENVIRONMENTS =\
-	$(G2C_SOURCE_DIR)/lin/lin.h\
 	$(OBJ_DIR)/environment.o\
 	$(OBJ_DIR)/appenvironment.o
 
@@ -31,7 +32,7 @@ LIBG2C = $(G2C_SOURCE_DIR)/libg2c.a
 $(LIBG2C): force_look
 	cd $(G2C_SOURCE_DIR) && $(MAKE) libg2c.a
 
-test: $(ENVIRONMENTS) $(SPRITES) $(OBJ_DIR)/memoryapp.o test.cpp $(LIBG2C)
+test: $(LIN) $(ENVIRONMENTS) $(SPRITES) $(OBJ_DIR)/memoryapp.o test.cpp $(LIBG2C)
 	c++ $(FLAGS) $(DEBUG) $(OPTIMIZATION)\
 		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		$(ENVIRONMENTS) $(SPRITES) \
