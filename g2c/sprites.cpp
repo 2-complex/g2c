@@ -2018,8 +2018,7 @@ bool World::mouseDown(const Vec2& C)
     worldMatrix = matrix;
     worldColor = color;
     clearTookMouseDown();
-    Node::mouseDown(C);
-    return false;
+    return Node::mouseDown(C);
 }
 
 void World::mouseDragged(const Vec2& C)
