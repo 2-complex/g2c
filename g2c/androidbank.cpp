@@ -52,6 +52,11 @@ void AndroidBank::writePersistentSerializableWithKey(const Serializable* s, cons
     assert(false);
 }
 
+void AndroidBank::initDataWithPath(Data* s, const char* path)
+{
+    assert(false);
+}
+
 void AndroidBank::initSerializableWithPath(Serializable* s, const char* path)
 {
     string fullpath = base_path + directory + path;
@@ -147,25 +152,18 @@ void AndroidBank::initTextureWithPath(Texture2D* texture, const char* path)
 {
     Bitmap bitmap;
     initBitmapWithPath(&bitmap, path);
-    texture->initWithBitmap(&bitmap);
+    texture->initWithBitmap(bitmap);
 }
 
 #if !defined(STUB_SOUND)
 void AndroidBank::initSoundWithPath(Sound* sound, const char* path)
 {
-    
-}
 
-void* AndroidBank::getOpenALAudioData(CFURLRef inFileURL,
-                                  ALsizei* outDataSize,
-                                  ALenum* outDataFormat,
-                                  ALsizei* outSampleRate) const
-{
-    
+
 }
+#endif
 
 } // end namespace
 
 
-#endif
 

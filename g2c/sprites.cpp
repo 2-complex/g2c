@@ -2254,6 +2254,7 @@ void World::playSound(const std::string& name, double gain) const
 #endif
 }
 
+#if !defined(STUB_SOUND)
 Sound* World::getSound(const string& name)
 {
     map<string, Sound*>::iterator itr = soundMap.find(name);
@@ -2261,6 +2262,7 @@ Sound* World::getSound(const string& name)
         return itr->second;
     return NULL;
 }
+#endif
 
 Node* World::getNode(const string& name)
 {
@@ -2278,22 +2280,26 @@ Sprite* World::getSprite(const string& name)
     return NULL;
 }
 
-#if !defined(STUB_SOUND)
+
 void World::initSoundQueue() const
 {
+#if !defined(STUB_SOUND)
     context->makeCurrent();
     sources.resize(8);
     
     for(vector<Source*>::iterator itr = sources.begin(); itr!=sources.end(); itr++)
         *itr = new Source;
+#endif
 }
 
 void World::destroySoundQueue() const
 {
+#if !defined(STUB_SOUND)
     for(vector<Source*>::iterator itr = sources.begin(); itr!=sources.end(); itr++)
         delete *itr;
-}
 #endif
+}
+
 
 Animator::Animator() : eventStoppedCounter(0)
 {
