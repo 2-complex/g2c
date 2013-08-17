@@ -513,7 +513,9 @@ namespace g2c {
         std::string serializeSprites(std::string indent = "") const;
         
         virtual void playSound(const std::string& name, double gain = 1.0) const;
+#if !defined(STUB_SOUND)
         g2c::Sound* getSound(const std::string& name);
+#endif
         virtual Node* getNode(const std::string& name);
         virtual Sprite* getSprite(const std::string& name);
         

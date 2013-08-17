@@ -30,9 +30,6 @@
 
 namespace g2c {
 
-
-
-
 class AndroidBank : public Bank {
 public:
     AndroidBank() : env(NULL), loader(NULL) {}
@@ -45,6 +42,7 @@ public:
     virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
     virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);
     
+    virtual void initDataWithPath(Data* s, const char* path);
     virtual void initSerializableWithPath(Serializable* s, const char* path);
     virtual void writeSerializableToPath(const Serializable* s, const char* path);
     virtual void initTextureWithPath(Texture2D* texture, const char* path);
@@ -52,10 +50,6 @@ public:
 
 #if !defined(STUB_SOUND)
     virtual void initSoundWithPath(Sound* sound, const char* path);
-    void* getOpenALAudioData(CFURLRef inFileURL,
-                     ALsizei* outDataSize,
-                     ALenum* outDataFormat,
-                     ALsizei* outSampleRate) const;
 #endif
 
 protected:

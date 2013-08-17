@@ -291,6 +291,9 @@ void Node::print() const
             g2clog( "'%s'", data.s.c_str() );
         break;
         
+        case kObject:
+        case kList:
+        case kTuple:
         default:
             char front = 0, back = 0;
             switch(type)
@@ -306,6 +309,12 @@ void Node::print() const
                 case kTuple:
                     front = '(';
                     back = ')';
+                break;
+                
+                case kNode:
+                case kInt:
+                case kFloat:
+                case kString:
                 break;
             }
             if(front)
