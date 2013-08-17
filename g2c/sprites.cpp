@@ -1932,7 +1932,8 @@ Layer::Layer() {type = "Layer";}
 World::World() : bank(NULL)
 {
 #if !defined(STUB_SOUND)
-    context = new Context();
+	player = new Player();
+    context = new Context(player);
     context->makeCurrent();
     destroySoundQueue();
 #endif
@@ -1948,6 +1949,7 @@ World::~World()
 {
 #if !defined(STUB_SOUND)
     delete context;
+    delete player;
 #endif
 
     for(vector<Sprite*>::iterator itr = sprites.begin(); itr!=sprites.end(); itr++)

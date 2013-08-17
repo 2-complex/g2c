@@ -24,35 +24,39 @@
 
 #include "wave.h"
 #include "serializable.h"
-
-#include <AudioToolbox/AudioToolbox.h>
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
+#include "player.h"
 
 namespace g2c {
 
+class Context;
+
 class Context {
+friend class Sound;
+friend class Source;
 public:
-    Context();
+    explicit Context(Player* player);
     virtual ~Context();
     
     void makeCurrent();
-    
-    ALCdevice* device;
-    ALCcontext* context;
-    
-    static int alcDeviceRefCounter;
-    static ALCdevice* alcDevice;
+	
+private:
+	int index;
+	Player* player;
+	
+	static Context* currentContext;
 };
 
 class Source {
+friend class Sound;
 public:
     Source();
     virtual ~Source();
     
-    ALuint source;
-    
     bool isPlaying() const;
+	
+private:
+	int index;
+	Player* player;
 };
 
 class Sound : public Serializable {
@@ -64,8 +68,9 @@ public:
     
     mutable Source* source;
     
-    ALuint buffer;
     bool loop;
+    
+    void initWithWave(const Wave& wave);
     
     void play(double gain = 1.0) const;
     void stop() const;
@@ -73,15 +78,10 @@ public:
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
     
-    void initWithWave(const Wave& wave);
-    
 private:
-    void* getOpenALAudioData(CFURLRef inFileURL,
-                             ALsizei* outDataSize,
-                             ALenum* outDataFormat,
-                             ALsizei* outSampleRate);
+	int index;
+	Player* player;
 	
-	int getOpenALFormat(int numChannels, int bytesPerSample);
 	void load(int sampleRate, int numSamples, int numChannels,
 		int bytesPerSample, uint8_t* data);
 };

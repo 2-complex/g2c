@@ -539,6 +539,7 @@ namespace g2c {
         void destroySoundQueue() const;
         
 #if !defined(STUB_SOUND)
+		mutable Player* player;
         mutable Context* context;
         mutable std::vector<Source*> sources;
 #endif
