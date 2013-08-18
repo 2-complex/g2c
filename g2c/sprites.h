@@ -42,6 +42,7 @@
 
 #if !defined(STUB_SOUND)
 #include "sound.h"
+#include "openalplayer.h"
 #endif
 
 
