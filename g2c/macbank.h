@@ -26,6 +26,10 @@
 
 #include "bank.h"
 
+#include <AudioToolbox/AudioToolbox.h>
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+
 #include <QuartzCore/QuartzCore.h>
 
 #include <queue>
@@ -51,7 +55,7 @@ public:
 
 #if !defined(STUB_SOUND)
     virtual void initSoundWithPath(Sound* sound, const char* path);
-#endif    
+#endif
 
     void* getOpenALAudioData(CFURLRef inFileURL,
                      ALsizei* outDataSize,

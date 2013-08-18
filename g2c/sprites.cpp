@@ -1932,7 +1932,7 @@ Layer::Layer() {type = "Layer";}
 World::World() : bank(NULL)
 {
 #if !defined(STUB_SOUND)
-	player = new Player();
+	player = new OpenALPlayer();
     context = new Context(player);
     context->makeCurrent();
     destroySoundQueue();

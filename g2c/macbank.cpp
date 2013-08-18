@@ -230,7 +230,7 @@ void MacBank::initSoundWithPath(Sound* sound, const char* path)
 		}
 		
 		// Attach Audio Data to OpenAL Buffer
-		alBufferData(sound->buffer, format, data, size, freq);
+		alBufferData(sound->getIndex(), format, data, size, freq);
 		
 		free(data);
 	}

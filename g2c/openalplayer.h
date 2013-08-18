@@ -19,37 +19,57 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef _PLAYER_
-#define _PLAYER_
+#ifndef _OPENAL_PLAYER_
+#define _OPENAL_PLAYER_
 
-#include <stdint.h>
+#include "player.h"
+
+#include <AudioToolbox/AudioToolbox.h>
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+
+#include <map>
 
 namespace g2c {
 
-class Player {
+class OpenALPlayer : public Player {
 public:
-	virtual ~Player();
 	
-	virtual int createContext() = 0;
-	virtual void destroyContext(int index) = 0;
+	virtual int createContext();
+	virtual void destroyContext(int index);
 	
-	virtual int createSource() = 0;
-	virtual void destroySource(int index) = 0;
+	virtual int createSource();
+	virtual void destroySource(int index);
 	
-	virtual int createSound() = 0;
-	virtual void destroySound(int index) = 0;
+	virtual int createSound();
+	virtual void destroySound(int index);
 	
-	virtual void makeContextCurrent(int index) = 0;
+	virtual void makeContextCurrent(int index);
 	
-	virtual bool isSourcePlaying(int index) = 0;
+	virtual bool isSourcePlaying(int index);
 	
-	virtual void stopSource(int index) = 0;
+	virtual void stopSource(int index);
 	
 	virtual void loadSound(int index, int sampleRate, int numSamples, int numChannels,
-		int bytesPerSample, uint8_t* data) = 0;
+		int bytesPerSample, uint8_t* data);
 	
-	virtual void playSound(int soundIndex, int sourceIndex, bool loop, double gain) = 0;
+	virtual void playSound(int soundIndex, int sourceIndex, bool loop, double gain);
+	
+private:
+	
+	struct ContextInfo {
+		ALCdevice* device;
+		ALCcontext* context;
+	};
+	
+	std::map<int, ContextInfo> contextInfo;
+	
+	static int alcDeviceRefCounter;
+	static ALCdevice* alcDevice;
+	
+	int getOpenALFormat(int numChannels, int bytesPerSample);
 };
+
 
 }
 

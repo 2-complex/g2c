@@ -78,6 +78,10 @@ public:
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
     
+    // Temprary fix for MacBank which has code in it which appeals directly to OpenAL.
+    // Sheesh.
+    int getIndex() {return index;}
+    
 private:
 	int index;
 	Player* player;
