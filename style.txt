@@ -47,8 +47,7 @@ NOT
 if( ... ) foo();
 
 
-No tab characters allowed in c++ files.
+No tab characters allowed in c/c++ files or header files.
 
 End of line characters are '\n', that's ascii character 10, not ascii character 13.
-
 
