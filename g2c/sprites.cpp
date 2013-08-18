@@ -1935,6 +1935,7 @@ World::World() : bank(NULL), soundInitted(false)
     context = new Context(player);
     context->makeCurrent();
     destroySoundQueue();
+    
     type = "World";
     
     addProperty("sprites", sprites);
@@ -1956,7 +1957,7 @@ World::~World()
 }
 
 void World::initSound(Player* inPlayer)
-{
+{	
 	if( soundInitted )
 	{
 		g2cerror("Sound intted for world twice");
@@ -1964,11 +1965,12 @@ void World::initSound(Player* inPlayer)
 	}
 	
 	// Throw away the stub player/context.
-	delete player;
 	delete context;
+	delete player;
 	
 	player = inPlayer;
 	context = new Context(player);
+	context->makeCurrent();
 	
 	soundInitted = true; // Only allow once.
 }

@@ -38,6 +38,8 @@ Context::Context(Player* player) : index(0), player(player)
 Context::~Context()
 {
 	player->destroyContext(index);
+	if( Context::currentContext == this )
+		Context::currentContext = NULL;
 }
 
 void Context::makeCurrent()
@@ -54,6 +56,12 @@ void Context::makeCurrent()
 
 Source::Source() : index(0)
 {
+	if( !Context::currentContext )
+    {
+    	g2cerror("Attempt to create Source with no current context.\n");
+    	exit(0);
+    }
+    
 	player = Context::currentContext->player;
 	
 	if( !player )
