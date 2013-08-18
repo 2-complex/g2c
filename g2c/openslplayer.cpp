@@ -243,15 +243,6 @@ void OpenSLPlayer::makeContextCurrent(int index)
 	contextIndex = index;
 }
 
-
-bool OpenSLPlayer::isSourcePlaying(int index)
-{
-}
-
-void OpenSLPlayer::stopSource(int index)
-{
-}
-
 void OpenSLPlayer::loadSound(int index, int sampleRate, int numSamples, int numChannels,
 	int bytesPerSample, const uint8_t* data)
 {

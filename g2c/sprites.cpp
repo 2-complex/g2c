@@ -1929,36 +1929,48 @@ void Integer::draw() const
 
 Layer::Layer() {type = "Layer";}
 
-World::World() : bank(NULL)
+World::World() : bank(NULL), soundInitted(false)
 {
-#if !defined(STUB_SOUND)
-	player = new OpenALPlayer();
+	player = new Player();
     context = new Context(player);
     context->makeCurrent();
     destroySoundQueue();
-#endif
     type = "World";
     
     addProperty("sprites", sprites);
-#if !defined(STUB_SOUND)
     addProperty("sounds", sounds);
-#endif
 }
 
 World::~World()
 {
-#if !defined(STUB_SOUND)
+	if( !soundInitted )
+		delete player;
+	
     delete context;
-    delete player;
-#endif
 
     for(vector<Sprite*>::iterator itr = sprites.begin(); itr!=sprites.end(); itr++)
         delete *itr;
 
-#if !defined(STUB_SOUND)
     for(vector<Sound*>::iterator itr = sounds.begin(); itr!=sounds.end(); itr++)
         delete *itr;
-#endif
+}
+
+void World::initSound(Player* inPlayer)
+{
+	if( soundInitted )
+	{
+		g2cerror("Sound intted for world twice");
+		exit(0);
+	}
+	
+	// Throw away the stub player/context.
+	delete player;
+	delete context;
+	
+	player = inPlayer;
+	context = new Context(player);
+	
+	soundInitted = true; // Only allow once.
 }
 
 void World::draw() const
@@ -2105,14 +2117,12 @@ void World::updateSpriteMap()
 
 void World::updateSoundMap()
 {
-#if !defined(STUB_SOUND)
     soundMap.clear();
     for(vector<Sound*>::iterator itr = sounds.begin(); itr!=sounds.end(); itr++)
     {
         Sound* sound = *itr;
         soundMap[sound->name] = sound;
     }
-#endif
 }
 
 void World::updateNodeMap(Node* node)
@@ -2168,7 +2178,6 @@ void World::handleChild(const parse::Node* n)
             handled = true;
         }
         
-#if !defined(STUB_SOUND)
         if( n_name == "sounds" )
         {
             for(vector<parse::Node*>::const_iterator itr = value->children.begin();
@@ -2198,7 +2207,6 @@ void World::handleChild(const parse::Node* n)
             
             handled = true;
         }
-#endif
     }
     
     if( !handled )
@@ -2212,9 +2220,7 @@ void World::clear()
     clearChildren();
     
     sprites.clear();
-#if !defined(STUB_SOUND)
     sounds.clear();
-#endif
     
     for( vector<Serializable*>::iterator itr = deleteResources.begin();
          itr != deleteResources.end();
@@ -2233,7 +2239,6 @@ std::string gLastName;
 
 void World::playSound(const std::string& name, double gain) const
 {
-#if !defined(STUB_SOUND)
     if( sources.empty() )
         initSoundQueue();
     
@@ -2252,10 +2257,8 @@ void World::playSound(const std::string& name, double gain) const
             }
         }
     }
-#endif
 }
 
-#if !defined(STUB_SOUND)
 Sound* World::getSound(const string& name)
 {
     map<string, Sound*>::iterator itr = soundMap.find(name);
@@ -2263,7 +2266,6 @@ Sound* World::getSound(const string& name)
         return itr->second;
     return NULL;
 }
-#endif
 
 Node* World::getNode(const string& name)
 {
@@ -2284,21 +2286,17 @@ Sprite* World::getSprite(const string& name)
 
 void World::initSoundQueue() const
 {
-#if !defined(STUB_SOUND)
     context->makeCurrent();
     sources.resize(8);
     
     for(vector<Source*>::iterator itr = sources.begin(); itr!=sources.end(); itr++)
         *itr = new Source;
-#endif
 }
 
 void World::destroySoundQueue() const
 {
-#if !defined(STUB_SOUND)
     for(vector<Source*>::iterator itr = sources.begin(); itr!=sources.end(); itr++)
         delete *itr;
-#endif
 }
 
 

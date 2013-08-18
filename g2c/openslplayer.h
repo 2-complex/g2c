@@ -48,10 +48,6 @@ public:
 	
 	virtual void makeContextCurrent(int index);
 	
-	virtual bool isSourcePlaying(int index);
-	
-	virtual void stopSource(int index);
-	
 	virtual void loadSound(int index, int sampleRate, int numSamples, int numChannels,
 		int bytesPerSample, const uint8_t* data);
 	

@@ -52,10 +52,8 @@ public:
     virtual void initSerializableWithPath(Serializable* s, const char* path);
     virtual void writeSerializableToPath(const Serializable* s, const char* path);
     virtual void initTextureWithPath(Texture2D* texture, const char* path);
-
-#if !defined(STUB_SOUND)
+	
     virtual void initSoundWithPath(Sound* sound, const char* path);
-#endif
 
     void* getOpenALAudioData(CFURLRef inFileURL,
                      ALsizei* outDataSize,

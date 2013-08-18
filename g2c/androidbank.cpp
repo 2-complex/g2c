@@ -155,13 +155,11 @@ void AndroidBank::initTextureWithPath(Texture2D* texture, const char* path)
     texture->initWithBitmap(bitmap);
 }
 
-#if !defined(STUB_SOUND)
 void AndroidBank::initSoundWithPath(Sound* sound, const char* path)
 {
 
 
 }
-#endif
 
 } // end namespace
 

@@ -48,9 +48,7 @@ public:
     virtual void initTextureWithPath(Texture2D* texture, const char* path);
     virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
 
-#if !defined(STUB_SOUND)
     virtual void initSoundWithPath(Sound* sound, const char* path);
-#endif
 
 protected:
     std::string directory;

@@ -40,11 +40,7 @@
 #include "bank.h"
 #include "texture.h"
 
-#if !defined(STUB_SOUND)
 #include "sound.h"
-#include "openalplayer.h"
-#endif
-
 
 namespace g2c {
     class Color;
@@ -488,9 +484,9 @@ namespace g2c {
         Bank* bank;
         
         PointerVectorProperty<Sprite*> sprites;
-#if !defined(STUB_SOUND)
         PointerVectorProperty<Sound*> sounds;
-#endif
+        
+        void initSound(Player* player);
         
         virtual void draw() const;
         
@@ -514,17 +510,16 @@ namespace g2c {
         std::string serializeSprites(std::string indent = "") const;
         
         virtual void playSound(const std::string& name, double gain = 1.0) const;
-#if !defined(STUB_SOUND)
         g2c::Sound* getSound(const std::string& name);
-#endif
+		
         virtual Node* getNode(const std::string& name);
         virtual Sprite* getSprite(const std::string& name);
         
     private:
+    	bool soundInitted;
+    	
         std::map<std::string, Sprite*> spriteMap;
-#if !defined(STUB_SOUND)
         std::map<std::string, Sound*> soundMap;
-#endif
         std::map<std::string, Node*> nodeMap;
         
         std::vector<Serializable*> deleteResources;
@@ -539,11 +534,9 @@ namespace g2c {
         void initSoundQueue() const;
         void destroySoundQueue() const;
         
-#if !defined(STUB_SOUND)
 		mutable Player* player;
         mutable Context* context;
         mutable std::vector<Source*> sources;
-#endif
     };
     
     class Animation {
