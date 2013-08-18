@@ -109,7 +109,6 @@ void OpenALPlayer::destroyContext(int index)
     contextInfo.erase(index);
 }
 
-
 int OpenALPlayer::createSource()
 {
 	ALuint index = 0;
@@ -138,7 +137,7 @@ void OpenALPlayer::destroySound(int index)
 }
 
 void OpenALPlayer::loadSound(int index, int sampleRate, int numSamples, int numChannels,
-	int bytesPerSample, uint8_t* data)
+	int bytesPerSample, const uint8_t* data)
 {
 	int format = getOpenALFormat(numChannels, bytesPerSample);
 	int size = numSamples * bytesPerSample;

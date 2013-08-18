@@ -85,6 +85,12 @@ Sound::Sound() : index(0), source(NULL), loop(false)
 {
     type = "Sound";
     
+    if( !Context::currentContext )
+    {
+    	g2cerror("Attempt to create Sound with no current context.\n");
+    	exit(0);
+    }
+    
     player = Context::currentContext->player;
     
     if( !player )
@@ -162,7 +168,7 @@ void Sound::handleChild(const parse::Node* n)
 }
 
 void Sound::load(int sampleRate, int numSamples, int numChannels,
-	int bytesPerSample, uint8_t* data)
+	int bytesPerSample, const uint8_t* data)
 {
 	if( !player )
 	{

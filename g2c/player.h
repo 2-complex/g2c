@@ -46,7 +46,7 @@ public:
 	virtual void stopSource(int index) = 0;
 	
 	virtual void loadSound(int index, int sampleRate, int numSamples, int numChannels,
-		int bytesPerSample, uint8_t* data) = 0;
+		int bytesPerSample, const uint8_t* data) = 0;
 	
 	virtual void playSound(int soundIndex, int sourceIndex, bool loop, double gain) = 0;
 };

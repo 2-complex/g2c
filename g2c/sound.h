@@ -82,12 +82,13 @@ public:
     // Sheesh.
     int getIndex() {return index;}
     
+    // Was private, not sure if it should be private.
+    void load(int sampleRate, int numSamples, int numChannels,
+		int bytesPerSample, const uint8_t* data);
+	
 private:
 	int index;
-	Player* player;
-	
-	void load(int sampleRate, int numSamples, int numChannels,
-		int bytesPerSample, uint8_t* data);
+	Player* player;	
 };
 
 } // end namespace
