@@ -597,6 +597,11 @@ void Node::remove(Node* t)
     t->parent = NULL;
 }
 
+void Node::clear()
+{
+    children.clear();
+}
+
 void Node::removeAndDelete(Node* t)
 {
     remove(t);
@@ -1679,7 +1684,8 @@ Actor* Actor::actorInClick(const Vec2& C)
 
 Button::Button() : baseFrame(0),
                    depressed(false),
-                   handler(NULL)
+                   handler(NULL),
+                   enabled(true)
 {
     type = "Button";
 }
@@ -1687,7 +1693,8 @@ Button::Button() : baseFrame(0),
 Button::Button(Sprite* insprite) : Actor(insprite),
                                    baseFrame(0),
                                    depressed(false),
-                                   handler(NULL)
+                                   handler(NULL),
+                                   enabled(true)
 {
     type = "Button";
     frame = 0;
@@ -1696,7 +1703,8 @@ Button::Button(Sprite* insprite) : Actor(insprite),
 Button::Button(Sprite* insprite, int baseFrame) : Actor(insprite),
                                                   baseFrame(baseFrame),
                                                   depressed(false),
-                                                  handler(NULL)
+                                                  handler(NULL),
+                                                  enabled(true)
 {
     type = "Button";
     frame = baseFrame;
@@ -1718,7 +1726,7 @@ void Button::draw() const
 
 bool Button::mouseDown(const Vec2& C)
 {
-    if( !visible() )
+    if( !visible() || !enabled )
         return false;
     
     frame = baseFrame;
@@ -1736,7 +1744,7 @@ bool Button::mouseDown(const Vec2& C)
 
 void Button::mouseDragged(const Vec2& C)
 {
-    if( !visible() )
+    if( !visible() || !enabled )
         return;
     
     frame = baseFrame;
@@ -1757,7 +1765,7 @@ void Button::mouseDragged(const Vec2& C)
 
 void Button::mouseUp(const Vec2& C)
 {
-    if( !visible() )
+    if( !visible() || !enabled )
         return;
     
     if( vectorInside(C) )
