@@ -589,6 +589,7 @@ namespace g2c {
         
         void step(double t);
         
+        void end();
         void clear();
         
         int animationsAdded;
