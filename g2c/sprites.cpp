@@ -1189,7 +1189,7 @@ void RendererGL2::drawMesh(const Mesh* mesh,
         fv[i] = (GLfloat)(texMatrix.ptr()[i]);
     glUniformMatrix3fv(texMatrixLocation, 1, false, fv);
     
-    const GLfloat cf[] = {color.r, color.g, color.b, color.a};
+    const GLfloat cf[] = {(GLfloat)color.r, (GLfloat)color.g, (GLfloat)color.b, (GLfloat)color.a};
     glUniform4fv(colorLocation, 1, cf);
     
     if(!texture)

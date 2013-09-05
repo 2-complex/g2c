@@ -24,6 +24,8 @@
 
 #include "log.h"
 
+#include <stdlib.h>
+
 using namespace std;
 
 namespace g2c {

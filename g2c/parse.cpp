@@ -24,6 +24,8 @@
 
 #include <stack>
 
+#include <stdlib.h>
+
 using namespace parse;
 using namespace std;
 

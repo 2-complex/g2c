@@ -23,6 +23,8 @@
 #include "bank.h"
 #include "util.h"
 
+#include <stdlib.h>
+
 using namespace std;
 
 namespace g2c {
