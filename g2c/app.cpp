@@ -85,5 +85,25 @@ void App::touchUp(unsigned int index, const Vec2& C)
 {
 }
 
+bool App::getNeedsKeyboard()
+{
+	return needsKeyboard;
+}
+
+void App::showKeyboard()
+{
+	needsKeyboard = true;
+}
+
+void App::hideKeyboard()
+{
+	needsKeyboard = false;
+}
+
+void App::finishTyping()
+{
+	needsKeyboard = false;
+}
+
 } // end namespace
 

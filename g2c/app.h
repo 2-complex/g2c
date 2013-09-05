@@ -51,6 +51,16 @@ public:
     virtual void special(int inkey);
     
     virtual void reshape(int width, int height);
+    
+    bool getNeedsKeyboard();
+	void finishTyping();
+
+protected:
+	void showKeyboard();
+	void hideKeyboard();
+
+private:
+	bool needsKeyboard;
 };
 
 } // end namespace

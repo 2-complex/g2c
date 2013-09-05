@@ -134,6 +134,8 @@ namespace g2c {
         
         void remove(Node* t);
         void removeAndDelete(Node* t);
+        void clear();
+        
         virtual void removeSprite(const Sprite* sprite);
         
         void clearChildren();
@@ -411,7 +413,7 @@ namespace g2c {
         Button(Sprite* insprite, int inBaseFrame);
         
         int baseFrame;
-        bool depressed;
+        bool enabled;
         
         virtual void draw() const;
         
@@ -423,6 +425,8 @@ namespace g2c {
         std::string serializeElements(std::string indent) const;
         
         ButtonHandler* handler;
+    private:
+    	bool depressed;
     };
     
     class ButtonHandler {
@@ -585,6 +589,7 @@ namespace g2c {
         
         void step(double t);
         
+        void end();
         void clear();
         
         int animationsAdded;

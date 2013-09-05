@@ -597,6 +597,11 @@ void Node::remove(Node* t)
     t->parent = NULL;
 }
 
+void Node::clear()
+{
+    children.clear();
+}
+
 void Node::removeAndDelete(Node* t)
 {
     remove(t);
@@ -1679,7 +1684,8 @@ Actor* Actor::actorInClick(const Vec2& C)
 
 Button::Button() : baseFrame(0),
                    depressed(false),
-                   handler(NULL)
+                   handler(NULL),
+                   enabled(true)
 {
     type = "Button";
 }
@@ -1687,7 +1693,8 @@ Button::Button() : baseFrame(0),
 Button::Button(Sprite* insprite) : Actor(insprite),
                                    baseFrame(0),
                                    depressed(false),
-                                   handler(NULL)
+                                   handler(NULL),
+                                   enabled(true)
 {
     type = "Button";
     frame = 0;
@@ -1696,7 +1703,8 @@ Button::Button(Sprite* insprite) : Actor(insprite),
 Button::Button(Sprite* insprite, int baseFrame) : Actor(insprite),
                                                   baseFrame(baseFrame),
                                                   depressed(false),
-                                                  handler(NULL)
+                                                  handler(NULL),
+                                                  enabled(true)
 {
     type = "Button";
     frame = baseFrame;
@@ -1718,7 +1726,7 @@ void Button::draw() const
 
 bool Button::mouseDown(const Vec2& C)
 {
-    if( !visible() )
+    if( !visible() || !enabled )
         return false;
     
     frame = baseFrame;
@@ -1736,7 +1744,7 @@ bool Button::mouseDown(const Vec2& C)
 
 void Button::mouseDragged(const Vec2& C)
 {
-    if( !visible() )
+    if( !visible() || !enabled )
         return;
     
     frame = baseFrame;
@@ -1757,7 +1765,7 @@ void Button::mouseDragged(const Vec2& C)
 
 void Button::mouseUp(const Vec2& C)
 {
-    if( !visible() )
+    if( !visible() || !enabled )
         return;
     
     if( vectorInside(C) )
@@ -2388,11 +2396,26 @@ void Animator::remove(Animation* a)
     }
 }
 
+class AnimationContainer
+{
+public:
+	double t;
+	int i;
+	Animation* a;
+	
+	AnimationContainer(double t, int i, Animation* a) : t(t), i(i), a(a) {}
+	
+	bool operator<(const AnimationContainer& c) const
+	{
+		return t < c.t || (t == c.t && i < c.i);
+	}
+};
 
 void Animator::step(double t)
 {
-    vector<Animation*> beginMe, advanceMe, endMe;
+	set<AnimationContainer> beginMe, advanceMe, endMe;
     
+    int index = 0;
     for(set<Animation*>::iterator itr = S.begin(); itr!= S.end(); itr++)
     {
         Animation* a = *itr;
@@ -2400,37 +2423,56 @@ void Animator::step(double t)
         if(t > a->start)
         {
             if(!a->running)
-                beginMe.push_back(a);
+                beginMe.insert(AnimationContainer(a->start, index, a));
             
-            advanceMe.push_back(a);
+            advanceMe.insert(AnimationContainer(a->start, index, a));
         }
+        
         if(!a->forever && t > a->start + a->duration)
-            endMe.push_back(*itr);
+            endMe.insert(AnimationContainer(a->start + a->duration, index, a));
+        
+        index++;
     }
     
-    for(vector<Animation*>::iterator itr = beginMe.begin(); itr!= beginMe.end(); itr++)
+    for(set<AnimationContainer>::iterator itr = beginMe.begin(); itr!= beginMe.end(); itr++)
     {
-        Animation* a = *itr;
+        Animation* a = itr->a;
         a->begin();
         a->running = true;
     }
     
-    for(vector<Animation*>::iterator itr = advanceMe.begin(); itr!= advanceMe.end(); itr++)
+    for(set<AnimationContainer>::iterator itr = advanceMe.begin(); itr!= advanceMe.end(); itr++)
     {
-        Animation* a = *itr;
+        Animation* a = itr->a;
         a->advance(t);
         a->last = t;
     }
-                
-    for(vector<Animation*>::iterator itr = endMe.begin(); itr!= endMe.end(); itr++)
+    
+    for(set<AnimationContainer>::iterator itr = endMe.begin(); itr!= endMe.end(); itr++)
     {
-        Animation* a = *itr;
-        
+        Animation* a = itr->a;
         a->end();
         remove(a);
     }
 }
 
+void Animator::end()
+{
+	vector<Animation*> endMe;
+	
+	for(set<Animation*>::iterator itr = S.begin(); itr!= S.end(); itr++)
+	{
+		endMe.push_back(*itr);
+	}
+	
+	for(vector<Animation*>::iterator itr = endMe.begin(); itr!= endMe.end(); itr++)
+	{
+		Animation* a = *itr;
+		
+		a->end();
+		remove(a);
+	}
+}
 
 void Animator::clear()
 {
