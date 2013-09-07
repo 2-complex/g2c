@@ -63,7 +63,19 @@ size_t Data::size() const
 	return mSize;
 }
 
-
+void Bank::initSoundWithPath(Sound* sound, const char* path)
+{
+	if( endsWith(path, ".wav") || endsWith(path, ".wave") ||
+		endsWith(path, ".WAV") || endsWith(path, ".WAVE") )
+	{
+		Data data;
+		Wave wave;
+		
+		initDataWithPath(&data, path);
+		wave.initWithData(data.array(), data.size());
+		sound->initWithWave(wave);
+	}
+}
 
 void AsynchronousBank::initPersistentSerializableWithKey(Serializable* s, const char* key)
 {

@@ -147,7 +147,7 @@ void Wave::initWithData(const uint8_t* data, size_t size)
 	
 	if( this->data + wav->dataSize > data + size )
 	{
-		printf( "Size of data encoded in wav exceeds size of data given." );
+		g2clog( "Size of data encoded in wav exceeds size of data given." );
 		exit(0);
 	}
 }

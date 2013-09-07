@@ -38,6 +38,7 @@ public:
     std::string base_path;
     
     void setEnvAndLoader(JNIEnv* env, jobject loader);
+	void setAssetManager(jobject assetManager);
     
     virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
     virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);
@@ -48,13 +49,12 @@ public:
     virtual void initTextureWithPath(Texture2D* texture, const char* path);
     virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
 
-    virtual void initSoundWithPath(Sound* sound, const char* path);
-
 protected:
     std::string directory;
     
     JNIEnv* env;
     jobject loader;
+    jobject assetManager;
 };
 
 }

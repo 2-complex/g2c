@@ -24,6 +24,8 @@
 #include "util.h"
 
 #include <android/bitmap.h>
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
 
 #include <assert.h>
 #include <string>
@@ -33,8 +35,10 @@ using namespace std;
 
 namespace g2c {
 
-
-
+void AndroidBank::setAssetManager(jobject assetManager)
+{
+    this->assetManager = assetManager;
+}
 
 void AndroidBank::setEnvAndLoader(JNIEnv* env, jobject loader)
 {
@@ -52,9 +56,20 @@ void AndroidBank::writePersistentSerializableWithKey(const Serializable* s, cons
     assert(false);
 }
 
-void AndroidBank::initDataWithPath(Data* s, const char* path)
+void AndroidBank::initDataWithPath(Data* data, const char* path)
 {
-    assert(false);
+    AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
+	assert(NULL != manager);
+	
+	AAsset* asset = AAssetManager_open(manager, path, AASSET_MODE_UNKNOWN);
+	assert(NULL != asset);
+    
+    void const* temp = AAsset_getBuffer(asset);
+    size_t size = AAsset_getLength(asset);
+    
+    data->resize(size+1);
+    data->array()[size] = 0;
+    memcpy(data->array(), temp, size);
 }
 
 void AndroidBank::initSerializableWithPath(Serializable* s, const char* path)
@@ -153,12 +168,6 @@ void AndroidBank::initTextureWithPath(Texture2D* texture, const char* path)
     Bitmap bitmap;
     initBitmapWithPath(&bitmap, path);
     texture->initWithBitmap(bitmap);
-}
-
-void AndroidBank::initSoundWithPath(Sound* sound, const char* path)
-{
-
-
 }
 
 } // end namespace

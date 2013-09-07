@@ -56,7 +56,7 @@ public:
     
     virtual void initSerializableWithPath(Serializable* s, const char* path) = 0;
     virtual void writeSerializableToPath(const Serializable* s, const char* path) = 0;
-    virtual void initSoundWithPath(Sound* sound, const char* path) = 0;
+    virtual void initSoundWithPath(Sound* sound, const char* path);
     virtual void initTextureWithPath(Texture2D* texture, const char* path) = 0;
     virtual void initBitmapWithPath(Bitmap* bitmap, const char* path) = 0;
 };
