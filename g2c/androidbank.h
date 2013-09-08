@@ -32,7 +32,7 @@ namespace g2c {
 
 class AndroidBank : public Bank {
 public:
-    AndroidBank() : env(NULL), loader(NULL) {}
+    AndroidBank() : env(NULL), loader(NULL), assetManager(NULL) {}
     virtual ~AndroidBank() {}
     
     std::string base_path;

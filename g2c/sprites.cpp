@@ -2207,11 +2207,12 @@ void World::handleChild(const parse::Node* n)
                 
                 if( sound )
                 {
+#if !ANDROID
                     sound->initWithParseNode(*itr);
                     sounds.push_back(sound);
                     deleteResources.push_back(sound);
-                    
                     bank->initSoundWithPath(sound, sound->file.c_str());
+#endif
                 }
             }
             
