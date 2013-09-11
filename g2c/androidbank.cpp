@@ -80,7 +80,7 @@ void AndroidBank::initSerializableWithPath(Serializable* s, const char* path)
     directory += directoryOfPath(path);
     
     // Get the Loader class.
-    jclass class_Loader = env->FindClass("com.complex.pool.Loader");
+    jclass class_Loader = env->FindClass("com.complex.g2c.Loader");
     
     // Get the c object representing the java method for getting a string.
     jmethodID method_getStringFromPath = env->GetMethodID(
@@ -118,7 +118,7 @@ void AndroidBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
     int ret;
     
     // Get the Loader class.
-    jclass class_Loader = env->FindClass("com.complex.pool.Loader");
+    jclass class_Loader = env->FindClass("com.complex.g2c.Loader");
     
     // Get the c object representing the java method for getting a bitmap.
     jmethodID method_getBitmapFromPath = env->GetMethodID(
