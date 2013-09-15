@@ -32,12 +32,13 @@ namespace g2c {
 
 class AndroidBank : public Bank {
 public:
-    AndroidBank() : env(NULL), loader(NULL) {}
+    AndroidBank() : env(NULL), loader(NULL), assetManager(NULL) {}
     virtual ~AndroidBank() {}
     
     std::string base_path;
     
     void setEnvAndLoader(JNIEnv* env, jobject loader);
+	void setAssetManager(jobject assetManager);
     
     virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
     virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);
@@ -48,15 +49,12 @@ public:
     virtual void initTextureWithPath(Texture2D* texture, const char* path);
     virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
 
-#if !defined(STUB_SOUND)
-    virtual void initSoundWithPath(Sound* sound, const char* path);
-#endif
-
 protected:
     std::string directory;
     
     JNIEnv* env;
     jobject loader;
+    jobject assetManager;
 };
 
 }

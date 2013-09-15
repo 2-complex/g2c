@@ -69,6 +69,8 @@ public:
     
     Value& operator=(const Value& v);
     
+    void mimmic(const Value& v);
+    
     enum Type {
         NONE,
         FLOAT,

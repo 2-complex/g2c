@@ -24,9 +24,7 @@
 #define _BANK_
 
 #include "serializable.h"
-#if !defined(STUB_SOUND)
 #include "sound.h"
-#endif
 #include "texture.h"
 
 #include <queue>
@@ -58,9 +56,7 @@ public:
     
     virtual void initSerializableWithPath(Serializable* s, const char* path) = 0;
     virtual void writeSerializableToPath(const Serializable* s, const char* path) = 0;
-#if !defined(STUB_SOUND)
-    virtual void initSoundWithPath(Sound* sound, const char* path) = 0;
-#endif
+    virtual void initSoundWithPath(Sound* sound, const char* path);
     virtual void initTextureWithPath(Texture2D* texture, const char* path) = 0;
     virtual void initBitmapWithPath(Bitmap* bitmap, const char* path) = 0;
 };
@@ -85,9 +81,7 @@ public:
     virtual void initSerializableWithPath(Serializable* s, const char* path);
     virtual void writeSerializableToPath(const Serializable* s, const char* path);
 
-#if !defined(STUB_SOUND)
     virtual void initSoundWithPath(Sound* sound, const char* path);
-#endif
     virtual void initTextureWithPath(Texture2D* texture, const char* path);
     
     bool step();

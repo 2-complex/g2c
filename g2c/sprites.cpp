@@ -597,6 +597,11 @@ void Node::remove(Node* t)
     t->parent = NULL;
 }
 
+void Node::clear()
+{
+    children.clear();
+}
+
 void Node::removeAndDelete(Node* t)
 {
     remove(t);
@@ -1189,7 +1194,7 @@ void RendererGL2::drawMesh(const Mesh* mesh,
         fv[i] = (GLfloat)(texMatrix.ptr()[i]);
     glUniformMatrix3fv(texMatrixLocation, 1, false, fv);
     
-    const GLfloat cf[] = {color.r, color.g, color.b, color.a};
+    const GLfloat cf[] = {(GLfloat)color.r, (GLfloat)color.g, (GLfloat)color.b, (GLfloat)color.a};
     glUniform4fv(colorLocation, 1, cf);
     
     if(!texture)
@@ -1679,7 +1684,8 @@ Actor* Actor::actorInClick(const Vec2& C)
 
 Button::Button() : baseFrame(0),
                    depressed(false),
-                   handler(NULL)
+                   handler(NULL),
+                   enabled(true)
 {
     type = "Button";
 }
@@ -1687,7 +1693,8 @@ Button::Button() : baseFrame(0),
 Button::Button(Sprite* insprite) : Actor(insprite),
                                    baseFrame(0),
                                    depressed(false),
-                                   handler(NULL)
+                                   handler(NULL),
+                                   enabled(true)
 {
     type = "Button";
     frame = 0;
@@ -1696,7 +1703,8 @@ Button::Button(Sprite* insprite) : Actor(insprite),
 Button::Button(Sprite* insprite, int baseFrame) : Actor(insprite),
                                                   baseFrame(baseFrame),
                                                   depressed(false),
-                                                  handler(NULL)
+                                                  handler(NULL),
+                                                  enabled(true)
 {
     type = "Button";
     frame = baseFrame;
@@ -1718,7 +1726,7 @@ void Button::draw() const
 
 bool Button::mouseDown(const Vec2& C)
 {
-    if( !visible() )
+    if( !visible() || !enabled )
         return false;
     
     frame = baseFrame;
@@ -1736,7 +1744,7 @@ bool Button::mouseDown(const Vec2& C)
 
 void Button::mouseDragged(const Vec2& C)
 {
-    if( !visible() )
+    if( !visible() || !enabled )
         return;
     
     frame = baseFrame;
@@ -1757,7 +1765,7 @@ void Button::mouseDragged(const Vec2& C)
 
 void Button::mouseUp(const Vec2& C)
 {
-    if( !visible() )
+    if( !visible() || !enabled )
         return;
     
     if( vectorInside(C) )
@@ -1929,36 +1937,50 @@ void Integer::draw() const
 
 Layer::Layer() {type = "Layer";}
 
-World::World() : bank(NULL)
+World::World() : bank(NULL), soundInitted(false)
 {
-#if !defined(STUB_SOUND)
-	player = new OpenALPlayer();
+	player = new Player();
     context = new Context(player);
     context->makeCurrent();
     destroySoundQueue();
-#endif
+    
     type = "World";
     
     addProperty("sprites", sprites);
-#if !defined(STUB_SOUND)
     addProperty("sounds", sounds);
-#endif
 }
 
 World::~World()
 {
-#if !defined(STUB_SOUND)
+	if( !soundInitted )
+		delete player;
+	
     delete context;
-    delete player;
-#endif
 
     for(vector<Sprite*>::iterator itr = sprites.begin(); itr!=sprites.end(); itr++)
         delete *itr;
 
-#if !defined(STUB_SOUND)
     for(vector<Sound*>::iterator itr = sounds.begin(); itr!=sounds.end(); itr++)
         delete *itr;
-#endif
+}
+
+void World::initSound(Player* inPlayer)
+{	
+	if( soundInitted )
+	{
+		g2cerror("Sound intted for world twice");
+		exit(0);
+	}
+	
+	// Throw away the stub player/context.
+	delete context;
+	delete player;
+	
+	player = inPlayer;
+	context = new Context(player);
+	context->makeCurrent();
+	
+	soundInitted = true; // Only allow once.
 }
 
 void World::draw() const
@@ -2105,14 +2127,12 @@ void World::updateSpriteMap()
 
 void World::updateSoundMap()
 {
-#if !defined(STUB_SOUND)
     soundMap.clear();
     for(vector<Sound*>::iterator itr = sounds.begin(); itr!=sounds.end(); itr++)
     {
         Sound* sound = *itr;
         soundMap[sound->name] = sound;
     }
-#endif
 }
 
 void World::updateNodeMap(Node* node)
@@ -2168,7 +2188,6 @@ void World::handleChild(const parse::Node* n)
             handled = true;
         }
         
-#if !defined(STUB_SOUND)
         if( n_name == "sounds" )
         {
             for(vector<parse::Node*>::const_iterator itr = value->children.begin();
@@ -2188,17 +2207,17 @@ void World::handleChild(const parse::Node* n)
                 
                 if( sound )
                 {
+#if !ANDROID
                     sound->initWithParseNode(*itr);
                     sounds.push_back(sound);
                     deleteResources.push_back(sound);
-                    
                     bank->initSoundWithPath(sound, sound->file.c_str());
+#endif
                 }
             }
             
             handled = true;
         }
-#endif
     }
     
     if( !handled )
@@ -2212,9 +2231,7 @@ void World::clear()
     clearChildren();
     
     sprites.clear();
-#if !defined(STUB_SOUND)
     sounds.clear();
-#endif
     
     for( vector<Serializable*>::iterator itr = deleteResources.begin();
          itr != deleteResources.end();
@@ -2233,7 +2250,6 @@ std::string gLastName;
 
 void World::playSound(const std::string& name, double gain) const
 {
-#if !defined(STUB_SOUND)
     if( sources.empty() )
         initSoundQueue();
     
@@ -2252,10 +2268,8 @@ void World::playSound(const std::string& name, double gain) const
             }
         }
     }
-#endif
 }
 
-#if !defined(STUB_SOUND)
 Sound* World::getSound(const string& name)
 {
     map<string, Sound*>::iterator itr = soundMap.find(name);
@@ -2263,7 +2277,6 @@ Sound* World::getSound(const string& name)
         return itr->second;
     return NULL;
 }
-#endif
 
 Node* World::getNode(const string& name)
 {
@@ -2284,21 +2297,17 @@ Sprite* World::getSprite(const string& name)
 
 void World::initSoundQueue() const
 {
-#if !defined(STUB_SOUND)
     context->makeCurrent();
     sources.resize(8);
     
     for(vector<Source*>::iterator itr = sources.begin(); itr!=sources.end(); itr++)
         *itr = new Source;
-#endif
 }
 
 void World::destroySoundQueue() const
 {
-#if !defined(STUB_SOUND)
     for(vector<Source*>::iterator itr = sources.begin(); itr!=sources.end(); itr++)
         delete *itr;
-#endif
 }
 
 
@@ -2388,11 +2397,26 @@ void Animator::remove(Animation* a)
     }
 }
 
+class AnimationContainer
+{
+public:
+	double t;
+	int i;
+	Animation* a;
+	
+	AnimationContainer(double t, int i, Animation* a) : t(t), i(i), a(a) {}
+	
+	bool operator<(const AnimationContainer& c) const
+	{
+		return t < c.t || (t == c.t && i < c.i);
+	}
+};
 
 void Animator::step(double t)
 {
-    vector<Animation*> beginMe, advanceMe, endMe;
+	set<AnimationContainer> beginMe, advanceMe, endMe;
     
+    int index = 0;
     for(set<Animation*>::iterator itr = S.begin(); itr!= S.end(); itr++)
     {
         Animation* a = *itr;
@@ -2400,37 +2424,56 @@ void Animator::step(double t)
         if(t > a->start)
         {
             if(!a->running)
-                beginMe.push_back(a);
+                beginMe.insert(AnimationContainer(a->start, index, a));
             
-            advanceMe.push_back(a);
+            advanceMe.insert(AnimationContainer(a->start, index, a));
         }
+        
         if(!a->forever && t > a->start + a->duration)
-            endMe.push_back(*itr);
+            endMe.insert(AnimationContainer(a->start + a->duration, index, a));
+        
+        index++;
     }
     
-    for(vector<Animation*>::iterator itr = beginMe.begin(); itr!= beginMe.end(); itr++)
+    for(set<AnimationContainer>::iterator itr = beginMe.begin(); itr!= beginMe.end(); itr++)
     {
-        Animation* a = *itr;
+        Animation* a = itr->a;
         a->begin();
         a->running = true;
     }
     
-    for(vector<Animation*>::iterator itr = advanceMe.begin(); itr!= advanceMe.end(); itr++)
+    for(set<AnimationContainer>::iterator itr = advanceMe.begin(); itr!= advanceMe.end(); itr++)
     {
-        Animation* a = *itr;
+        Animation* a = itr->a;
         a->advance(t);
         a->last = t;
     }
-                
-    for(vector<Animation*>::iterator itr = endMe.begin(); itr!= endMe.end(); itr++)
+    
+    for(set<AnimationContainer>::iterator itr = endMe.begin(); itr!= endMe.end(); itr++)
     {
-        Animation* a = *itr;
-        
+        Animation* a = itr->a;
         a->end();
         remove(a);
     }
 }
 
+void Animator::end()
+{
+	vector<Animation*> endMe;
+	
+	for(set<Animation*>::iterator itr = S.begin(); itr!= S.end(); itr++)
+	{
+		endMe.push_back(*itr);
+	}
+	
+	for(vector<Animation*>::iterator itr = endMe.begin(); itr!= endMe.end(); itr++)
+	{
+		Animation* a = *itr;
+		
+		a->end();
+		remove(a);
+	}
+}
 
 void Animator::clear()
 {

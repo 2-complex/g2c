@@ -23,6 +23,8 @@
 #include "bank.h"
 #include "util.h"
 
+#include <stdlib.h>
+
 using namespace std;
 
 namespace g2c {
@@ -61,7 +63,19 @@ size_t Data::size() const
 	return mSize;
 }
 
-
+void Bank::initSoundWithPath(Sound* sound, const char* path)
+{
+	if( endsWith(path, ".wav") || endsWith(path, ".wave") ||
+		endsWith(path, ".WAV") || endsWith(path, ".WAVE") )
+	{
+		Data data;
+		Wave wave;
+		
+		initDataWithPath(&data, path);
+		wave.initWithData(data.array(), data.size());
+		sound->initWithWave(wave);
+	}
+}
 
 void AsynchronousBank::initPersistentSerializableWithKey(Serializable* s, const char* key)
 {
@@ -83,12 +97,10 @@ void AsynchronousBank::writeSerializableToPath(const Serializable* s, const char
     bank->writeSerializableToPath(s, path);
 }
 
-#if !defined(STUB_SOUND)
 void AsynchronousBank::initSoundWithPath(Sound* sound, const char* path)
 {
     q.push(LoadInstruction(sound, path));
 }
-#endif
 
 void AsynchronousBank::initTextureWithPath(Texture2D* texture, const char* path)
 {
@@ -115,12 +127,12 @@ bool AsynchronousBank::step()
     {
         bank->initTextureWithPath((Texture2D*)inst.resource, inst.path.c_str());
     }
-#if !defined(STUB_SOUND)
+	
     else if( inst.resource->type == "Sound" )
     {
         bank->initSoundWithPath((Sound*)inst.resource, inst.path.c_str());
     }
-#endif
+	
     else
     {   // Assume if it's anything else it's a generic serializable.
         bank->initSerializableWithPath(inst.resource, inst.path.c_str());

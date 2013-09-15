@@ -40,11 +40,7 @@
 #include "bank.h"
 #include "texture.h"
 
-#if !defined(STUB_SOUND)
 #include "sound.h"
-#include "openalplayer.h"
-#endif
-
 
 namespace g2c {
     class Color;
@@ -142,6 +138,8 @@ namespace g2c {
         
         void remove(Node* t);
         void removeAndDelete(Node* t);
+        void clear();
+        
         virtual void removeSprite(const Sprite* sprite);
         
         void clearChildren();
@@ -494,7 +492,7 @@ namespace g2c {
         Button(Sprite* insprite, int inBaseFrame);
         
         int baseFrame;
-        bool depressed;
+        bool enabled;
         
         virtual void draw() const;
         
@@ -506,6 +504,8 @@ namespace g2c {
         std::string serializeElements(std::string indent) const;
         
         ButtonHandler* handler;
+    private:
+    	bool depressed;
     };
     
     /*! Abstract helper class for Button the purpose of which is to hold the virtual function
@@ -573,9 +573,9 @@ namespace g2c {
         Bank* bank;
         
         PointerVectorProperty<Sprite*> sprites;
-#if !defined(STUB_SOUND)
         PointerVectorProperty<Sound*> sounds;
-#endif
+        
+        void initSound(Player* player);
         
         virtual void draw() const;
         
@@ -599,17 +599,16 @@ namespace g2c {
         std::string serializeSprites(std::string indent = "") const;
         
         virtual void playSound(const std::string& name, double gain = 1.0) const;
-#if !defined(STUB_SOUND)
         g2c::Sound* getSound(const std::string& name);
-#endif
+		
         virtual Node* getNode(const std::string& name);
         virtual Sprite* getSprite(const std::string& name);
         
     private:
+    	bool soundInitted;
+    	
         std::map<std::string, Sprite*> spriteMap;
-#if !defined(STUB_SOUND)
         std::map<std::string, Sound*> soundMap;
-#endif
         std::map<std::string, Node*> nodeMap;
         
         std::vector<Serializable*> deleteResources;
@@ -624,11 +623,9 @@ namespace g2c {
         void initSoundQueue() const;
         void destroySoundQueue() const;
         
-#if !defined(STUB_SOUND)
 		mutable Player* player;
         mutable Context* context;
         mutable std::vector<Source*> sources;
-#endif
     };
     
     class Animation {
@@ -677,6 +674,7 @@ namespace g2c {
         
         void step(double t);
         
+        void end();
         void clear();
         
         int animationsAdded;

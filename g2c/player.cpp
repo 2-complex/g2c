@@ -20,9 +20,70 @@
 */
 
 #include "player.h"
+#include "log.h"
 
 namespace g2c {
 
 Player::~Player() {}
+
+int Player::createContext()
+{
+	g2clog("Stub Player context created\n");
+	return 1;
+}
+
+void Player::destroyContext(int index)
+{
+	g2clog("Stub Player context destroyed\n");
+}
+
+int Player::createSource()
+{
+	g2clog("Stub Player source created\n");
+	return 1;
+}
+
+void Player::destroySource(int index)
+{
+	g2clog("Stub Player source destroyed\n");
+}
+
+int Player::createSound()
+{
+	g2clog("Stub Player sound created\n");
+	return 1;
+}
+
+void Player::destroySound(int index)
+{
+	g2clog("Stub Player sound destroyed\n");
+}
+
+void Player::makeContextCurrent(int index)
+{
+	g2clog("Stub Player context made current\n");
+}
+
+bool Player::isSourcePlaying(int index)
+{
+	g2clog("Stub Player asked if source is playing\n");
+	return true;
+}
+
+void Player::stopSource(int index)
+{
+	g2clog("Stub Player source stopped\n");
+}
+
+void Player::loadSound(int index, int sampleRate, int numSamples, int numChannels,
+	int bytesPerSample, const uint8_t* data)
+{
+	g2clog("Stub Player sound data loaded\n");
+}
+
+void Player::playSound(int soundIndex, int sourceIndex, bool loop, double gain)
+{
+	g2clog("Stub Player sound played\n");
+}
 
 }

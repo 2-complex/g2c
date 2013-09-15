@@ -24,6 +24,8 @@
 
 #include "log.h"
 
+#include <stdlib.h>
+
 using namespace std;
 
 namespace g2c {
@@ -38,6 +40,8 @@ Context::Context(Player* player) : index(0), player(player)
 Context::~Context()
 {
 	player->destroyContext(index);
+	if( Context::currentContext == this )
+		Context::currentContext = NULL;
 }
 
 void Context::makeCurrent()
@@ -54,6 +58,12 @@ void Context::makeCurrent()
 
 Source::Source() : index(0)
 {
+	if( !Context::currentContext )
+    {
+    	g2cerror("Attempt to create Source with no current context.\n");
+    	exit(0);
+    }
+    
 	player = Context::currentContext->player;
 	
 	if( !player )
@@ -84,6 +94,12 @@ bool Source::isPlaying() const
 Sound::Sound() : index(0), source(NULL), loop(false)
 {
     type = "Sound";
+    
+    if( !Context::currentContext )
+    {
+    	g2cerror("Attempt to create Sound with no current context.\n");
+    	exit(0);
+    }
     
     player = Context::currentContext->player;
     
@@ -162,7 +178,7 @@ void Sound::handleChild(const parse::Node* n)
 }
 
 void Sound::load(int sampleRate, int numSamples, int numChannels,
-	int bytesPerSample, uint8_t* data)
+	int bytesPerSample, const uint8_t* data)
 {
 	if( !player )
 	{

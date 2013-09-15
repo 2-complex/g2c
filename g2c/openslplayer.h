@@ -19,21 +19,23 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef _OPENAL_PLAYER_
-#define _OPENAL_PLAYER_
+#ifndef _OPENSL_PLAYER_
+#define _OPENSL_PLAYER_
 
 #include "player.h"
 
-#include <AudioToolbox/AudioToolbox.h>
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
+#include <SLES/OpenSLES.h>
+#include <SLES/OpenSLES_Android.h>
 
 #include <map>
 
 namespace g2c {
 
-class OpenALPlayer : public Player {
+
+class OpenSLPlayer : public Player {
+friend void bqPlayerCallback(SLAndroidSimpleBufferQueueItf bq, void *ptr);
 public:
+	OpenSLPlayer();
 	
 	virtual int createContext();
 	virtual void destroyContext(int index);
@@ -46,28 +48,49 @@ public:
 	
 	virtual void makeContextCurrent(int index);
 	
-	virtual bool isSourcePlaying(int index);
-	
-	virtual void stopSource(int index);
-	
 	virtual void loadSound(int index, int sampleRate, int numSamples, int numChannels,
 		int bytesPerSample, const uint8_t* data);
 	
 	virtual void playSound(int soundIndex, int sourceIndex, bool loop, double gain);
-	
-private:
-	
+
+private:	
 	struct ContextInfo {
-		ALCdevice* device;
-		ALCcontext* context;
+		SLObjectItf engineObject;
+		SLEngineItf engine;
+		SLObjectItf outputMixObject;
+		SLEnvironmentalReverbItf outputMixEnvironmentalReverb; // unused for now.
 	};
 	
-	std::map<int, ContextInfo> contextInfo;
+	class SourceInfo {
+	public:
+		SourceInfo();
+		virtual ~SourceInfo();
+		
+		// buffer queue player interfaces
+		SLObjectItf bqPlayerObject;
+		SLPlayItf bqPlayerPlay;
+		SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue;
+		SLEffectSendItf bqPlayerEffectSend;
+		SLMuteSoloItf bqPlayerMuteSolo;
+		SLVolumeItf bqPlayerVolume;
+		
+		void realize();
+	};
 	
-	static int alcDeviceRefCounter;
-	static ALCdevice* alcDevice;
+	class Audio {
+	public:
+		Audio();
+		virtual ~Audio();
+		
+		uint8_t* buffer;
+		unsigned int size;
+	};
+
 	
-	int getOpenALFormat(int numChannels, int bytesPerSample);
+	int contextIndex;
+	std::map<int, ContextInfo> contextInfos;
+	std::map<int, SourceInfo*> sourceInfos;
+	std::map<int, Audio*> audios;
 };
 
 

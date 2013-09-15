@@ -30,25 +30,25 @@ class Player {
 public:
 	virtual ~Player();
 	
-	virtual int createContext() = 0;
-	virtual void destroyContext(int index) = 0;
+	virtual int createContext();
+	virtual void destroyContext(int index);
 	
-	virtual int createSource() = 0;
-	virtual void destroySource(int index) = 0;
+	virtual int createSource();
+	virtual void destroySource(int index);
 	
-	virtual int createSound() = 0;
-	virtual void destroySound(int index) = 0;
+	virtual int createSound();
+	virtual void destroySound(int index);
 	
-	virtual void makeContextCurrent(int index) = 0;
+	virtual void makeContextCurrent(int index);
 	
-	virtual bool isSourcePlaying(int index) = 0;
+	virtual bool isSourcePlaying(int index);
 	
-	virtual void stopSource(int index) = 0;
+	virtual void stopSource(int index);
 	
 	virtual void loadSound(int index, int sampleRate, int numSamples, int numChannels,
-		int bytesPerSample, uint8_t* data) = 0;
+		int bytesPerSample, const uint8_t* data);
 	
-	virtual void playSound(int soundIndex, int sourceIndex, bool loop, double gain) = 0;
+	virtual void playSound(int soundIndex, int sourceIndex, bool loop, double gain);
 };
 
 }

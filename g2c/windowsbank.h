@@ -28,9 +28,6 @@
 
 namespace g2c {
 
-
-
-
 class WindowsBank : public Bank {
 public:
     WindowsBank() {}
@@ -45,14 +42,8 @@ public:
     virtual void writeSerializableToPath(const Serializable* s, const char* path);
     virtual void initTextureWithPath(Texture2D* texture, const char* path);
     virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
-
-#if !defined(STUB_SOUND)
+	
     virtual void initSoundWithPath(Sound* sound, const char* path);
-    void* getOpenALAudioData(CFURLRef inFileURL,
-                     ALsizei* outDataSize,
-                     ALenum* outDataFormat,
-                     ALsizei* outSampleRate) const;
-#endif
 
 protected:
     std::string directory;

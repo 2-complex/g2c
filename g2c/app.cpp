@@ -85,5 +85,40 @@ void App::touchUp(unsigned int index, const Vec2& C)
 {
 }
 
+void App::controllerKeyDown(int deviceId, char c)
+{
+
+}
+
+void App::controllerKeyUp(int deviceId, char c)
+{
+
+}
+
+void App::controllerMotion(int deviceId, int inputId, double x, double y)
+{
+
+}
+
+bool App::getNeedsKeyboard()
+{
+	return needsKeyboard;
+}
+
+void App::showKeyboard()
+{
+	needsKeyboard = true;
+}
+
+void App::hideKeyboard()
+{
+	needsKeyboard = false;
+}
+
+void App::finishTyping()
+{
+	needsKeyboard = false;
+}
+
 } // end namespace
 

@@ -140,20 +140,9 @@ void WindowsBank::initTextureWithPath(Texture2D* texture, const char* path)
     texture->initWithBitmap(&bitmap);
 }
 
-#if !defined(STUB_SOUND)
 void WindowsBank::initSoundWithPath(Sound* sound, const char* path)
 {
 
 }
 
-void* WindowsBank::getOpenALAudioData(CFURLRef inFileURL,
-                                  ALsizei* outDataSize,
-                                  ALenum* outDataFormat,
-                                  ALsizei* outSampleRate) const
-{
-    
-}
-
 } // end namespace
-
-#endif
