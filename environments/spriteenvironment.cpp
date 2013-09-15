@@ -28,7 +28,8 @@
 using namespace std;
 using namespace g2c;
 
-SpriteEnvironment::SpriteEnvironment() : sound_index(0), forwardKeyboard(false), current(NULL)
+SpriteEnvironment::SpriteEnvironment() : sound_index(0), forwardKeyboard(false), current(NULL),
+	editMode(false)
 {
 	world.bank = &bank;
 	Sprite::renderer = &renderer;
@@ -101,37 +102,50 @@ void SpriteEnvironment::draw() const
 
 bool SpriteEnvironment::mouseDown(const Vec2& C)
 {
-	Vec2 localC = C - center;
-	lastLoc = localC;
-	current = world.actorInClick(localC);
-	
-	if( current )
-	{
-		printf( "selected: %s\n", current->name.c_str() );
-		return true;
+	if( editMode )
+	{		
+		Vec2 localC = C - center;
+		lastLoc = localC;
+		current = world.actorInClick(localC);
+		
+		if( current )
+		{
+			printf( "selected: %s\n", current->name.c_str() );
+			return true;
+		}
+		return false;
 	}
-	return false;
+	
+	return world.mouseDown(C);
 }
 
 void SpriteEnvironment::mouseDragged(const Vec2& C)
 {
-	Vec2 localC = C - center;
-	if( current )
+	if( editMode )
 	{
-		Mat4 m = current->getWorldMatrix();
-		Vec2 delta = (localC - lastLoc);
-		Vec4 v = m.inverse()*Vec4(delta.x, delta.y, 0, 0);
-		delta.set(v.x, v.y);
+		Vec2 localC = C - center;
+		if( current )
+		{
+			Mat4 m = current->getWorldMatrix();
+			Vec2 delta = (localC - lastLoc);
+			Vec4 v = m.inverse()*Vec4(delta.x, delta.y, 0, 0);
+			delta.set(v.x, v.y);
+			
+			current->position += delta;
+		}
 		
-		current->position += delta;
+		lastLoc = localC;
 	}
-	
-	lastLoc = localC;
+	else
+		world.mouseDragged(C);
 }
 
 void SpriteEnvironment::mouseUp(const Vec2& C)
 {
-	mouseDragged(C);
+	if( editMode )
+		mouseDragged(C);
+	else
+		world.mouseUp(C);
 }
 
 void SpriteEnvironment::keyboard(unsigned char inkey)
@@ -144,6 +158,16 @@ void SpriteEnvironment::keyboard(unsigned char inkey)
 	
 	switch(inkey)
 	{
+		case 'e':
+		{
+			editMode = !editMode;
+			if( editMode )
+				printf( "Edit mode on.  Hit shift-S to save.\n" );
+			else
+				printf( "Edit mode off.\n" );
+		}
+		break;
+		
 		case 'S':
 		{
 			FILE* fp = fopen(filename.c_str(), "w");

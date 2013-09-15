@@ -61,6 +61,7 @@ private:
 	std::string filename;
 	
 	int sound_index;
+	bool editMode;
 	Actor* current;
 	Vec2 lastLoc;
 };
