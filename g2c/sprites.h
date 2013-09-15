@@ -116,7 +116,11 @@ namespace g2c {
         void initWithParseNode(const parse::Node* n);
     };
     
-    
+    /*! Node is a node in a transform tree.  A Node contians a vector of children and a pointer
+    	to a parent.  Use the function add() to add a Node to another Node as a child.  Use remove()
+    	to remove child nodes.  Node::draw() iterates through the children and calls draw on each
+    	one.  Subclass of Node implement Node::draw() to draw using the matrix obtained by
+    	getWorldMatrix() and the color obtained by getWorldColor(). */
     class Node : public Serializable,
                  public Listener {
     public:
@@ -168,6 +172,8 @@ namespace g2c {
         void clearTookMouseDown();
     };
     
+    /*! Mesh represents a collection of planar triangles or line segments to be drawn on the screen.
+    	To draw a mesh, populate positions and vertices */
     class Mesh {
     public:
         Mesh();
@@ -177,9 +183,6 @@ namespace g2c {
             kTriangles,
             kLines
         };
-        
-        const float* getPositions() const;
-        const short* getIndices() const;
         
         int numberOfVertices;
         int numberOfElements;
@@ -192,6 +195,12 @@ namespace g2c {
         short* indices;
     };
     
+    /*! Renderer is an abstract base-class whose virtual methods define how a Mesh shall be drawn.
+    	Subclasses of Renderer represent a scheme for drawing a mesh in a particular graphics
+    	library.
+    	
+    	To implement a renderer, implement init() and drawMesh().  Whichever renderer
+    	Sprite::renderer is set to gets used to draw all sprite graphics.  */
     class Renderer {
     public:
         Renderer();
@@ -204,7 +213,11 @@ namespace g2c {
         Mesh* quad;
         
     public:
+    	/*! Overridden to initialize the renderer.*/
         virtual void init() = 0;
+        
+        /*! Overridden to draw a Mesh object.  If mesh is NULL, drawMesh must still draw a default
+        	unit square.   */
         virtual void drawMesh(const Mesh* mesh,
                               const Mat4& matrix,
                               const Mat3& texMatrix,
@@ -214,6 +227,11 @@ namespace g2c {
         virtual void drawMesh(const Mesh* m, const Node* n) const;
     };
     
+    /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 1
+    	collection.  The draw function in this will work in desktop OpenGL or in OpenGL ES 1.
+    	
+    	Set Sprite::renderer to an instance of RendererGL1 to and call init().  Then all meshes
+    	will draw using it.*/
     class RendererGL1 : public Renderer {
     public:
         RendererGL1();
@@ -227,6 +245,11 @@ namespace g2c {
                               const Texture* texture) const;
     };
     
+    /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 2
+    	collection.  The draw function in this will work in desktop OpenGL or in OpenGL ES 2.
+    	
+    	Set Sprite::renderer to an instance of RendererGL2 to and call init().  Then all meshes
+    	will draw using it.*/
     class RendererGL2 : public Renderer {
     public:
         RendererGL2();
@@ -260,8 +283,8 @@ namespace g2c {
                               const Color& color,
                               const Texture* texture) const;
     };
-
-    
+	
+	
     class Polygon : public Node {
     public:
         Polygon();
@@ -319,25 +342,49 @@ namespace g2c {
         void triangulate() const;
     };
     
+    /*! An Actor represents 2D graphics on the screen, typically a sprite at
+    	a particular 2D location with a current frame of animation.  Several actors
+    	might use the same Sprite.  For instance, a sprite might be a picture of a bullet,
+    	and a game with lots of bullets on the screen at the same time would use several
+    	Actors all pointing to the same Sprite.
+    	
+    	An Actor has a pointer to a Sprite and also a Mesh.  Actor::draw() draws the mesh
+    	using the sprite as a texture.  If no Mesh is specified, a default rectangular mesh is used.
+    	
+    	Actors can be positioned and scaled using x,y, and k, also a frame of animation that is current.
+    	The frame gets used to compute texture coordiates when drawing the mesh.*/
     class Actor : public Node {
     public:
         Actor();
+        
+        /*! Initializes the Actor with given Sprite object. */
         explicit Actor(Sprite* insprite);
         virtual ~Actor();
         
         Sprite* sprite;
         Mesh* mesh;
         
+        /*! The x coordinate where to draw on the screen.  Modifying x changes position. */
         double& x;
+        
+        /*! The x coordinate where to draw on the screen.  Modifying y changes position.*/
         double& y;
+        
+        /*! A scaling factor. */
         DoubleProperty k;
         
+        /*! The index of the current frame of animation of the Sprite to draw. */
         IntProperty frame;
+        
+        /*! The 2D coordinates where to draw on the screen. */
         Vec2Property position;
         
         Polygon polygon;
         
+        /*! Draws mesh using sprite as a texture.  If mesh is NULL, uses a default unit square Mesh.
+        	If sprite is NULL*/
         virtual void draw() const;
+        
         virtual void handleChild(const parse::Node* n);
         virtual Polygon collisionPolygon() const;
         bool vectorInside(const Vec2& C) const;
@@ -350,18 +397,29 @@ namespace g2c {
         StringProperty spriteName;
     };
     
+    /*! Actor for drawing text from a string and a Font object.  Text::draw draws a quad for each
+    	character in its member string s, sampling the texture represented by font to get
+    	characters. */
     class Text : public Actor {
     public:
         Text();
-        Text(Font* infont);
+        explicit Text(Font* infont);
         
+        /*! A string either "left", "right" or "center" describing how the drawn string eminates
+        	from the coordinates of this Actor. */
         std::string justification;
-        std::string s;
-        std::string fontName;
-        Font* font;
-        bool drawPipe;
         
-        void setString(const std::string& ins);
+        /*! A standard c++ string, this is the text that gets drawn. */
+        std::string s;
+        
+        /*! A font object is a Sprite whose frames correspond to the characters to be drawn. */
+        Font* font;
+        
+        std::string fontName;
+        
+        bool drawPipe;
+    	
+    	/*! Draws an image of the c++ string s using the characters in font. */
         virtual void draw() const;
         
         virtual std::string serializeElements(std::string indent) const;
@@ -383,6 +441,15 @@ namespace g2c {
         virtual void draw() const;
     };
     
+    /*! A Sprite represnts a texture on the GPU whose image is a rectangular array of animation
+    	frames.  For instance a chracter in a side-scroller could use a Sprite to hold all
+    	the possible poses.
+    	
+    	Sprite can be initialized by using the functions of its parent class Texture2D to load in a
+    	Bitmap and then setting numberOfRows and numberOfColumns.
+    	
+    	The class Actor is made to draw a Sprite on the screen with specific coordinates and current
+    	animation frames. */
     class Sprite : public Texture2D {
     public:
         Sprite();
@@ -408,6 +475,18 @@ namespace g2c {
         virtual void handleChild(const parse::Node* n);
     };
     
+    /*! Button is a type of Actor that is clickable, it is meant to draw as a sprite using
+    	a Sprite object just like its parent, except that it has its own implementations of
+    	mouseDown, mouseDragged and mouseUp which handle the animation of the button getting
+    	pushed.
+    	
+    	To use a Button, instantiate one, set the button's sprite, set the integer baseFrame
+    	to the index of the frame of the sprite for the button in resting state.  The next frame
+    	after that is assumed to be for the depressed state.
+    	
+    	To implement a behaviour for the button when pressed, subclass ButtonHandler, override
+    	click() function, and then set the button's handler element to an instance of that
+    	subclass.*/
     class Button : public Actor {
     public:
         Button();
@@ -429,6 +508,9 @@ namespace g2c {
         ButtonHandler* handler;
     };
     
+    /*! Abstract helper class for Button the purpose of which is to hold the virtual function
+    	click().  Subclass ButtonHandler and override click, then set a Button's handler element
+    	to an instnace of the subclass.  click() will be called when the button is clicked. */
     class ButtonHandler {
     public:
         ButtonHandler();
@@ -440,6 +522,9 @@ namespace g2c {
         virtual void click(Button* button) = 0;
     };
     
+    /*! Font is a type of Sprite which contains images of characters.  Whereas a sprite contains
+    	frames of animation and is drawn using an Actor, Font contains as its frames images of
+    	characters, and is drawn using a Text object. */
     class Font : public Sprite {
     public:
         Font();

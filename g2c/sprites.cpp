@@ -626,7 +626,7 @@ void Node::draw() const
     {
         Node* node = *itr;
         
-        if(node->visible())
+        if( node->visible() )
         {
             node->worldMatrix = worldMatrix * node->matrix;
             node->worldColor = worldColor * node->color;
@@ -640,7 +640,7 @@ void Node::handleChild(const parse::Node* n)
     const parse::Node* value = n->data.value;
     string n_name = n->data.s;
     
-    if(n_name == "children")
+    if( n_name == "children" )
     {
         for(vector<parse::Node*>::const_iterator itr = value->children.begin();
             itr!=value->children.end();
