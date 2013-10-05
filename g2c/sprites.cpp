@@ -538,8 +538,6 @@ Node::Node() : visible(true), parent(NULL), tookMouseDown(false)
 {
     type = "Node";
     addProperty("visible", visible);
-    addProperty("matrix", matrix);
-    addProperty("color", color);
     addProperty("children", children);
 }
 
@@ -627,17 +625,22 @@ Node* Node::findChild(const string& name) const
 
 void Node::draw() const
 {
+	drawInTree(getMatrix(), getColor());
+}
+
+void Node::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
+{
     for(vector<Node*>::const_iterator itr = children.begin(); itr!=children.end(); itr++)
     {
         Node* node = *itr;
         
         if( node->visible() )
         {
-            node->worldMatrix = worldMatrix * node->matrix;
-            node->worldColor = worldColor * node->color;
-            node->draw();
+            node->drawInTree(
+            	worldMatrix * node->getMatrix(),
+            	worldColor * node->getColor() );
         }
-    }
+    }	
 }
 
 void Node::handleChild(const parse::Node* n)
@@ -703,7 +706,7 @@ void Node::clearChildren()
     deleteMe.clear();
 }
 
-bool Node::vectorInside( const Vec2& /*V*/ ) const
+bool Node::vectorInside( const Mat4& /*worldMatrix*/, const Vec2& /*V*/ ) const
 {
     return true;
 }
@@ -721,8 +724,6 @@ void Node::keyboard(unsigned char inkey)
             Node* node = *itr;
             if( node->listening )
             {
-                node->worldMatrix = worldMatrix * node->matrix;
-                node->worldColor = worldColor * node->color;
                 (*itr)->keyboard(inkey);
             }
         }
@@ -731,10 +732,15 @@ void Node::keyboard(unsigned char inkey)
 
 bool Node::mouseDown(const Vec2& C)
 {
+	return mouseDown(getMatrix(), C);
+}
+
+bool Node::mouseDown(const Mat4& worldMatrix, const Vec2& C)
+{
     if( !visible() )
         return false;
     
-    if( delegate && vectorInside(C) )
+    if( delegate && vectorInside(worldMatrix, C) )
     {
         Vec4 v = worldMatrix.inverse() * Vec4(C.x, C.y, 0.0, 1.0);
         v /= v.w;
@@ -753,9 +759,7 @@ bool Node::mouseDown(const Vec2& C)
             
             if(node->listening)
             {
-                node->worldMatrix = worldMatrix * node->matrix;
-                node->worldColor = worldColor * node->color;
-                if( (*itr)->mouseDown(C) )
+                if( node->mouseDown(worldMatrix * node->getMatrix(), C) )
                 {
                     tookMouseDown = true;
                     return true;
@@ -767,6 +771,11 @@ bool Node::mouseDown(const Vec2& C)
 }
 
 void Node::mouseDragged(const Vec2& C)
+{
+	mouseDragged(getMatrix(), C);
+}
+
+void Node::mouseDragged(const Mat4& worldMatrix, const Vec2& C)
 {
     if(!tookMouseDown)
         return;
@@ -785,16 +794,18 @@ void Node::mouseDragged(const Vec2& C)
         {
             Node* node = *itr;
             if(node->listening)
-            {
-                node->worldMatrix = worldMatrix * node->matrix;
-                node->worldColor = worldColor * node->color;
-                (*itr)->mouseDragged(C);
-            }
+                node->mouseDragged(worldMatrix * node->getMatrix(), C);
         }
     }
 }
 
 void Node::mouseUp(const Vec2& C)
+{
+	// Default behavior same as mouseDragged.
+	mouseDragged(C);
+}
+
+void Node::mouseUp(const Mat4& worldMatrix, const Vec2& C)
 {
     if(!tookMouseDown)
         return;
@@ -814,32 +825,44 @@ void Node::mouseUp(const Vec2& C)
             Node* node = *itr;
             if(node->listening)
             {
-                node->worldMatrix = worldMatrix * node->matrix;
-                node->worldColor = worldColor * node->color;
-                (*itr)->mouseUp(C);
+                (*itr)->mouseUp(worldMatrix * node->getMatrix(), C);
             }
         }
     }
 }
 
-const Mat4& Node::getWorldMatrix() const
+Mat4 Node::getMatrix() const
 {
-    return worldMatrix;
+    return Mat4();
 }
 
-const Color& Node::getWorldColor() const
+Color Node::getColor() const
 {
-    return worldColor;
+    return Color(1.0, 1.0, 1.0, 1.0);
 }
 
-Actor* Node::actorInClick(const Vec2& C)
+Mat4 Node::getWorldMatrix() const
+{
+	if(parent)
+		return parent->getWorldMatrix() * getMatrix();
+	return Mat4();
+}
+
+Color Node::getWorldColor() const
+{
+	if(parent)
+		return parent->getWorldColor() * getColor();
+	return Color(1.0, 1.0, 1.0, 1.0);
+}
+
+Actor* Node::actorInClick(const Mat4& worldMatrix, const Vec2& C)
 {
     if(!visible())
         return NULL;
     
     for(vector<Node*>::reverse_iterator itr = children.rbegin(); itr!=children.rend(); itr++)
     {
-        Actor* n = (*itr)->actorInClick(C);
+        Actor* n = (*itr)->actorInClick(worldMatrix * n->getMatrix(), C);
         if( n )
             return n;
     }
@@ -905,22 +928,6 @@ Renderer::~Renderer()
 {
     delete quad;
 }
-
-void Renderer::drawMesh(const Mesh* mesh, const Node* node) const
-{
-    const Mat4& matrix = node->getWorldMatrix();
-    const Color& color = node->getWorldColor();
-    
-    const Texture* texture = NULL;
-    
-    if( projection == Mat4() )
-    {
-        g2clog( "WARNING: using renderer with projection = identity matrix.\n" );
-    }
-    
-    drawMesh(mesh, matrix, Mat3(), color, texture);
-}
-
 
 RendererGL1::RendererGL1()
 {
@@ -1223,6 +1230,8 @@ Polygon::Polygon() : drawType(kSolid), valid(false), mesh(NULL)
 {
     type = "Polygon";
     addProperty("vertices", vertices);
+    addProperty("color", color);
+    addProperty("matrix", matrix);
 }
 
 Polygon::Polygon(const Polygon& P) : drawType(kSolid), valid(false), mesh(NULL)
@@ -1235,6 +1244,16 @@ Polygon::~Polygon()
 {
     if( mesh )
         delete mesh;
+}
+
+Mat4 Polygon::getMatrix() const
+{
+	return matrix;
+}
+
+Color Polygon::getColor() const
+{
+	return color;
 }
 
 Polygon& Polygon::operator=(const Polygon& P)
@@ -1326,7 +1345,7 @@ Polygon operator * (const Mat4& M, const Polygon& P)
     return R;
 }
 
-void Polygon::draw() const
+void Polygon::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 {
     if( size() < 3 )
         return;
@@ -1334,7 +1353,7 @@ void Polygon::draw() const
     update();
     
     if( Sprite::renderer && mesh )
-        Sprite::renderer->drawMesh(mesh, this);
+        Sprite::renderer->drawMesh(mesh, worldMatrix, Mat3(), worldColor, NULL);
     else
     {
         g2cerror( "Attempt to draw polygon with no renderer.\n" );
@@ -1368,12 +1387,15 @@ double angleAToB(const Vec2& A, const Vec2& B)
     return sgn * acos(A.dot(B)/(A.mag()*B.mag()));
 }
 
-bool Polygon::vectorInside(const Vec2& V) const
+bool Polygon::vectorInside(const Mat4& worldMatrix, const Vec2& V) const
 {
+	Vec4 tmp = worldMatrix * Vec4(V.x, V.y, 0.0, 1.0);
+	Vec2 tv = Vec2( tmp.x, tmp.y ) / tmp.w;
+	
     double theta = 0;
     int n = size();
     for( int i=0; i<n; i++ )
-        theta += angleAToB( vertices[i] - V, vertices[(i+1)%n] - V );
+        theta += angleAToB( vertices[i] - tv, vertices[(i+1)%n] - tv );
     return ( theta > 1 || theta < -1 );
 }
 
@@ -1585,9 +1607,28 @@ void Actor::init()
     
     addProperty("position", position);
     addProperty("k", k);
+    addProperty("rotation", rotation);
     addProperty("frame", frame);
+    addProperty("color", color);
     addProperty("spriteName", spriteName);
 }
+
+Mat4 Actor::getMatrix() const
+{
+	double c = k*cos(rotation);
+	double s = k*sin(rotation);
+	
+    return Mat4( c, s, 0, 0,
+    			-s, c, 0, 0,
+    			 0, 0, 1, 0,
+    			 x, y, 0, 1);
+}
+
+Color Actor::getColor() const
+{
+    return color;
+}
+
 
 void Actor::removeSprite(const Sprite* s)
 {
@@ -1597,22 +1638,21 @@ void Actor::removeSprite(const Sprite* s)
     Node::removeSprite(s);
 }
 
-void Actor::draw() const
+void Actor::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 {
     Mat4 matrix(worldMatrix);
-    
     Mat3 texMatrix;
     
     if( sprite )
     {
-        matrix = matrix * sprite->getOffsetMatrix(position.x, position.y, k());
+        matrix = matrix * sprite->getOffsetMatrix(0.0, 0.0, 1.0);
         texMatrix = sprite->getTexMatrix(frame());
     }
     
     Sprite::renderer->drawMesh(mesh, matrix, texMatrix, worldColor, sprite);
     
     if( Sprite::drawLines )
-        collisionPolygon().draw();
+        collisionPolygon().drawInTree(worldMatrix, worldColor);
 }
 
 
@@ -1664,20 +1704,20 @@ Polygon Actor::collisionPolygon() const
     }
     
     R.setDrawType(Polygon::kOutline);
-    return worldMatrix * R;
+    return R;
 }
 
-bool Actor::vectorInside(const Vec2& C) const
+bool Actor::vectorInside(const Mat4& worldMatrix, const Vec2& C) const
 {
-    return collisionPolygon().vectorInside(Vec2(C.x, C.y));
+    return collisionPolygon().vectorInside(worldMatrix, Vec2(C.x, C.y));
 }
 
-Actor* Actor::actorInClick(const Vec2& C)
+Actor* Actor::actorInClick(const Mat4& worldMatrix, const Vec2& C)
 {
     if(!visible())
         return NULL;
     
-    if( vectorInside(C) )
+    if( vectorInside(worldMatrix * getMatrix(), C) )
         return this;
     return NULL;
 }
@@ -1710,7 +1750,7 @@ Button::Button(Sprite* insprite, int baseFrame) : Actor(insprite),
     frame = baseFrame;
 }
 
-void Button::draw() const
+void Button::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 {
     if( !sprite )
     {
@@ -1718,20 +1758,20 @@ void Button::draw() const
         exit(0);
     }
     
-    Actor::draw();
+    Actor::drawInTree(worldMatrix, worldColor);
     
     if( Sprite::drawLines )
-        collisionPolygon().draw();
+        collisionPolygon().drawInTree(worldMatrix, worldColor);
 }
 
-bool Button::mouseDown(const Vec2& C)
+bool Button::mouseDown(const Mat4& worldMatrix, const Vec2& C)
 {
     if( !visible() || !enabled )
         return false;
     
     frame = baseFrame;
     
-    if( vectorInside(C) )
+    if( vectorInside(worldMatrix, C) )
     {
         frame = frame() + 1;
         depressed = true;
@@ -1742,13 +1782,13 @@ bool Button::mouseDown(const Vec2& C)
     return false;
 }
 
-void Button::mouseDragged(const Vec2& C)
+void Button::mouseDragged(const Mat4& worldMatrix, const Vec2& C)
 {
     if( !visible() || !enabled )
         return;
     
     frame = baseFrame;
-    if( vectorInside(C) )
+    if( vectorInside(worldMatrix, C) )
     {
         frame = frame() + 1;
     }
@@ -1763,12 +1803,12 @@ void Button::mouseDragged(const Vec2& C)
     }
 }
 
-void Button::mouseUp(const Vec2& C)
+void Button::mouseUp(const Mat4& worldMatrix, const Vec2& C)
 {
     if( !visible() || !enabled )
         return;
     
-    if( vectorInside(C) )
+    if( vectorInside(worldMatrix, C) )
     {
         if( handler )
             handler->click(this);
@@ -1829,7 +1869,7 @@ Text::Text(Font* infont) : Actor(infont),
     type = "Text";
 }
 
-void Text::draw() const
+void Text::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 {
     if( font )
     {
@@ -1838,7 +1878,7 @@ void Text::draw() const
             position.x, position.y, k(),
             news.c_str(), justification);
         if( Sprite::drawLines )
-            collisionPolygon().draw();
+            collisionPolygon().drawInTree(worldMatrix, worldColor);
     }
     else
     {
@@ -1894,7 +1934,7 @@ Polygon Text::collisionPolygon() const
     }
     if( font )
     {
-        R = worldMatrix * (font->stringRectangle(k, s.c_str(), justification) + position);
+        R = (font->stringRectangle(k, s.c_str(), justification) + position);
     }
     else
     {
@@ -1923,7 +1963,7 @@ Integer::Integer(Font* infont, int* inptr) : Text(infont),
     type = "Integer";
 }
 
-void Integer::draw() const
+void Integer::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 {
     if( ptr )
     {
@@ -1931,11 +1971,27 @@ void Integer::draw() const
             intToStringWithCommas(*ptr).c_str(), justification);
     }
     else
-        Text::draw();
+        Text::drawInTree(worldMatrix, worldColor);
 }
 
 
-Layer::Layer() {type = "Layer";}
+Layer::Layer()
+{
+	type = "Layer";
+	addProperty("matrix", matrix);
+    addProperty("color", color);
+}
+
+Mat4 Layer::getMatrix() const
+{
+    return matrix;
+}
+
+Color Layer::getColor() const
+{
+    return color;
+}
+
 
 World::World() : bank(NULL), soundInitted(false)
 {
@@ -1983,16 +2039,19 @@ void World::initSound(Player* inPlayer)
 	soundInitted = true; // Only allow once.
 }
 
-void World::draw() const
+Actor* World::actorInClick(const Vec2& V)
+{
+	return Node::actorInClick(getMatrix(), V);
+}
+
+void World::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 {
     if( !Sprite::renderer )
     {
         g2cerror( "Attempt to draw with no renderer world: %s\n", name.c_str() );
         exit(0);
     }
-    worldMatrix = matrix;
-    worldColor = color;
-    Node::draw();
+    Node::drawInTree(worldMatrix * getMatrix(), worldColor * getColor());
 }
 
 void World::resize(int width, int height)
@@ -2030,33 +2089,10 @@ void World::removeSprite(const Sprite* sprite)
     Node::removeSprite(sprite);
 }
 
-void World::keyboard(unsigned char inkey)
-{
-    worldMatrix = matrix;
-    worldColor = color;
-    Node::keyboard(inkey);
-}
-
 bool World::mouseDown(const Vec2& C)
 {
-    worldMatrix = matrix;
-    worldColor = color;
     clearTookMouseDown();
-    return Node::mouseDown(C);
-}
-
-void World::mouseDragged(const Vec2& C)
-{
-    worldMatrix = matrix;
-    worldColor = color;
-    Node::mouseDragged(C);
-}
-
-void World::mouseUp(const Vec2& C)
-{
-    worldMatrix = matrix;
-    worldColor = color;
-    Node::mouseUp(C);
+    return Node::mouseDown(getMatrix(), C);
 }
 
 void World::initWithPath(const char* path)
@@ -2222,7 +2258,7 @@ void World::handleChild(const parse::Node* n)
     
     if( !handled )
     {
-        Node::handleChild(n);
+        Layer::handleChild(n);
     }
 }
 

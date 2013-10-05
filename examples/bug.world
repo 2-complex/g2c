@@ -9,7 +9,7 @@
       "type" : "Polygon",
       "name" : "sully",
       "visible" : 1,
-      "matrix" : [ 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 30, 20, 0, 1 ],
+      "matrix" : [ 1.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 30, 20, 0, 1 ],
       "color" : [ 0.5, 1, 0.5, 1 ],
       "children" : [
       ],
@@ -37,12 +37,25 @@
           "type" : "Actor",
           "name" : "jake",
           "visible" : 1,
-          "matrix" : [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ],
           "color" : [ 1, 1, 1, 1 ],
           "children" : [
           ],
           "position" : [ 100, 45 ],
+          "rotation" : 1.047197,
           "k" : 0.7,
+          "frame" : 0,
+          "spriteName" : "ladybug"
+        },
+        {
+          "type" : "Actor",
+          "name" : "jake",
+          "visible" : 1,
+          "color" : [ 1, 1, 0.9, 1 ],
+          "children" : [
+          ],
+          "position" : [ 120, 245 ],
+          "rotation" : -1.047197,
+          "k" : 1.7,
           "frame" : 0,
           "spriteName" : "ladybug"
         }
@@ -62,7 +75,6 @@
         "type" : "Polygon",
         "visible" : 1,
         "matrix" : [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ],
-        "color" : [ 1, 1, 1, 1 ],
         "children" : [
         ],
         "vertices" : [

@@ -115,8 +115,8 @@ namespace g2c {
     /*! Node is a node in a transform tree.  A Node contians a vector of children and a pointer
     	to a parent.  Use the function add() to add a Node to another Node as a child.  Use remove()
     	to remove child nodes.  Node::draw() iterates through the children and calls draw on each
-    	one.  Subclass of Node implement Node::draw() to draw using the matrix obtained by
-    	getWorldMatrix() and the color obtained by getWorldColor(). */
+    	one.  Subclasses of Node implement drawInTree(worldMatrix, worldColor) to draw using the
+    	given matrix and color. */
     class Node : public Serializable,
                  public Listener {
     public:
@@ -125,8 +125,11 @@ namespace g2c {
         
         BoolProperty visible;
         
-        Mat4Property matrix;
-        ColorProperty color;
+        virtual Mat4 getMatrix() const;
+        virtual Color getColor() const;
+        
+        virtual Mat4 getWorldMatrix() const;
+        virtual Color getWorldColor() const;
         
         Node* parent;
         PointerVectorProperty<Node*> children;
@@ -144,27 +147,27 @@ namespace g2c {
         
         void clearChildren();
         
-        virtual void draw() const;
-        virtual Actor* actorInClick(const Vec2& C);
+        void draw() const;
+        virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
+        
+        virtual Actor* actorInClick(const Mat4& worldMatrix, const Vec2& C);
         
         virtual void handleChild(const parse::Node* n);
         
-        virtual bool vectorInside( const Vec2& V ) const;
+        virtual bool vectorInside(const Mat4& worldMatrix, const Vec2& V) const;
         
         // Methods of Listener.
         virtual void keyboard(unsigned char inkey);
         virtual bool mouseDown(const Vec2& C);    
         virtual void mouseDragged(const Vec2& C);
         virtual void mouseUp(const Vec2& C);
-        
-        const Mat4& getWorldMatrix() const;
-        const Color& getWorldColor() const;
-        
+                
     protected:
-        mutable Mat4 worldMatrix;
-        mutable Color worldColor;
-        
         std::vector<Serializable*> deleteMe;
+        
+        virtual bool mouseDown(const Mat4& worldMatrix, const Vec2& C);
+        virtual void mouseDragged(const Mat4& worldMatrix, const Vec2& C);
+        virtual void mouseUp(const Mat4& worldMatrix, const Vec2& C);
        	
         bool tookMouseDown;
         void clearTookMouseDown();
@@ -221,8 +224,6 @@ namespace g2c {
                               const Mat3& texMatrix,
                               const Color& color,
                               const Texture* texture) const = 0;
-        
-        virtual void drawMesh(const Mesh* m, const Node* n) const;
     };
     
     /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 1
@@ -293,6 +294,12 @@ namespace g2c {
             kOutline,
         };
         
+        ColorProperty color;
+        Mat4Property matrix;
+        
+        Mat4 getMatrix() const;
+		Color getColor() const;
+        
         Polygon(const Polygon& P);
         Polygon& operator=(const Polygon& P);
         
@@ -312,12 +319,10 @@ namespace g2c {
         inline friend class Polygon operator + (const Vec2& V, const Polygon& P) {return P+V;}
         void rotate(double theta);
         
-        virtual void draw() const;
-        
         std::vector<Vec2>::size_type size() const;
         bool empty() const;
         
-        bool vectorInside( const Vec2& V ) const;
+        bool vectorInside( const Mat4& worldMatrix, const Vec2& V ) const;
         
         void reverse();
         void setVertices(const std::vector<Vec2>& p);
@@ -331,6 +336,8 @@ namespace g2c {
         
         VectorProperty<Vec2Property> vertices;
         
+    	virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
+    	
     private:
         mutable Mesh* mesh;
         DrawType drawType;
@@ -377,18 +384,27 @@ namespace g2c {
         /*! The 2D coordinates where to draw on the screen. */
         Vec2Property position;
         
-        Polygon polygon;
+        /*! An angle measured in radians to rotate the actor. */
+        DoubleProperty rotation;
         
-        /*! Draws mesh using sprite as a texture.  If mesh is NULL, uses a default unit square Mesh.
-        	If sprite is NULL*/
-        virtual void draw() const;
+        ColorProperty color;
+        
+        virtual Mat4 getMatrix() const;
+    	virtual Color getColor() const;
+        
+        Polygon polygon;
         
         virtual void handleChild(const parse::Node* n);
         virtual Polygon collisionPolygon() const;
-        bool vectorInside(const Vec2& C) const;
-        virtual Actor* actorInClick(const Vec2& C);
-        virtual void removeSprite(const Sprite* sprite);
+        bool vectorInside(const Mat4& worldMatrix, const Vec2& C) const;
         
+        Actor* actorInClick(const Mat4& worldMatrix, const Vec2& C);
+        virtual void removeSprite(const Sprite* sprite);
+    	
+    	/*! Draws mesh using sprite as a texture.  If mesh is NULL, uses a default unit square Mesh.
+        	If sprite is NULL*/
+    	virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
+    	
     private:
         void init();
         
@@ -417,9 +433,6 @@ namespace g2c {
         
         bool drawPipe;
     	
-    	/*! Draws an image of the c++ string s using the characters in font. */
-        virtual void draw() const;
-        
         virtual std::string serializeElements(std::string indent) const;
         virtual void handleChild(const parse::Node* n);
         
@@ -427,6 +440,9 @@ namespace g2c {
         
         // Methods of listener.
         void keyboard(unsigned char inkey);
+        
+        /*! Draws an image of the c++ string s using the characters in font. */
+    	virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
     };
     
     class Integer : public Text {
@@ -436,7 +452,8 @@ namespace g2c {
         
         int* ptr;
         
-        virtual void draw() const;
+        /*! Draws an image of the c++ string s using the characters in font. */
+    	virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
     };
     
     /*! A Sprite represnts a texture on the GPU whose image is a rectangular array of animation
@@ -494,16 +511,18 @@ namespace g2c {
         int baseFrame;
         bool enabled;
         
-        virtual void draw() const;
-        
-        virtual bool mouseDown(const Vec2& C);
-        virtual void mouseDragged(const Vec2& C);
-        virtual void mouseUp(const Vec2& C);
-        
+        virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
+                
         virtual void handleChild(const parse::Node* n);
         std::string serializeElements(std::string indent) const;
         
         ButtonHandler* handler;
+        
+    protected:
+    	virtual bool mouseDown(const Mat4& worldMatrix, const Vec2& C);
+        virtual void mouseDragged(const Mat4& worldMatrix, const Vec2& C);
+        virtual void mouseUp(const Mat4& worldMatrix, const Vec2& C);
+        
     private:
     	bool depressed;
     };
@@ -562,9 +581,15 @@ namespace g2c {
     public:
         Layer();
         virtual ~Layer() {}
+        
+        Mat4Property matrix;
+        ColorProperty color;
+        
+    	virtual Mat4 getMatrix() const;
+    	virtual Color getColor() const;
     };
     
-    class World : public Node {
+    class World : public Layer {
         friend class Actor;
     public:
         World();
@@ -577,8 +602,6 @@ namespace g2c {
         
         void initSound(Player* player);
         
-        virtual void draw() const;
-        
         virtual void resize(int width, int height);
         
         void addSprite(Sprite* sprite);
@@ -586,11 +609,10 @@ namespace g2c {
         
         void clear();
         
+        Actor* actorInClick(const Vec2& C);
+        
         // Methods of Listener.
-        virtual void keyboard(unsigned char inkey);
         virtual bool mouseDown(const Vec2& C);    
-        virtual void mouseDragged(const Vec2& C);
-        virtual void mouseUp(const Vec2& C);
         
         virtual void initWithPath(const char* path);
         virtual void initWithParseNode(const parse::Node* n);
@@ -603,6 +625,8 @@ namespace g2c {
 		
         virtual Node* getNode(const std::string& name);
         virtual Sprite* getSprite(const std::string& name);
+        
+        virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
         
     private:
     	bool soundInitted;
