@@ -22,7 +22,7 @@ int main(int argc, char** args)
 {
 	MySpriteEnvironment e;
 	
-	e.filename = (char*)"bug.world";
+	e.filename = (char*)"box.model";
 	if( argc > 1 )
 		e.filename = args[1];
 	
