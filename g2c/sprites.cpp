@@ -838,7 +838,7 @@ Mat4 Node::getMatrix() const
 
 Color Node::getColor() const
 {
-    return Color(1.0, 1.0, 1.0, 1.0);
+    return color;
 }
 
 Mat4 Node::getWorldMatrix() const
@@ -1251,11 +1251,6 @@ Mat4 Polygon::getMatrix() const
 	return matrix;
 }
 
-Color Polygon::getColor() const
-{
-	return color;
-}
-
 Polygon& Polygon::operator=(const Polygon& P)
 {
     vertices = P.vertices;
@@ -1624,12 +1619,6 @@ Mat4 Actor::getMatrix() const
     			 x, y, 0, 1);
 }
 
-Color Actor::getColor() const
-{
-    return color;
-}
-
-
 void Actor::removeSprite(const Sprite* s)
 {
     if( sprite == s )
@@ -1986,12 +1975,6 @@ Mat4 Layer::getMatrix() const
 {
     return matrix;
 }
-
-Color Layer::getColor() const
-{
-    return color;
-}
-
 
 World::World() : bank(NULL), soundInitted(false)
 {

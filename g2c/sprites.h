@@ -124,6 +124,7 @@ namespace g2c {
         virtual ~Node();
         
         BoolProperty visible;
+        ColorProperty color;
         
         virtual Mat4 getMatrix() const;
         virtual Color getColor() const;
@@ -294,11 +295,9 @@ namespace g2c {
             kOutline,
         };
         
-        ColorProperty color;
         Mat4Property matrix;
         
         Mat4 getMatrix() const;
-		Color getColor() const;
         
         Polygon(const Polygon& P);
         Polygon& operator=(const Polygon& P);
@@ -387,10 +386,7 @@ namespace g2c {
         /*! An angle measured in radians to rotate the actor. */
         DoubleProperty rotation;
         
-        ColorProperty color;
-        
         virtual Mat4 getMatrix() const;
-    	virtual Color getColor() const;
         
         Polygon polygon;
         
@@ -586,7 +582,6 @@ namespace g2c {
         ColorProperty color;
         
     	virtual Mat4 getMatrix() const;
-    	virtual Color getColor() const;
     };
     
     class World : public Layer {
