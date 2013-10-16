@@ -300,7 +300,7 @@ string Value::toString() const
         
         default:
         {
-            string r = "[";;
+            string r = "[";
             for(int i = 0; i < size; i++)
                 r += floatToString(data.ptr[i]) + ", ";
             r+="]";
