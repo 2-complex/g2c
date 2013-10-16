@@ -39,50 +39,50 @@ Context::Context(Player* player) : index(0), player(player)
 
 Context::~Context()
 {
-	player->destroyContext(index);
-	if( Context::currentContext == this )
-		Context::currentContext = NULL;
+    player->destroyContext(index);
+    if( Context::currentContext == this )
+        Context::currentContext = NULL;
 }
 
 void Context::makeCurrent()
 {
-	if( index <= 0 )
-	{
-		g2cerror("Attempt to make context current which was not initialized properly.\n");
-		exit(0);
-	}
-	
-	currentContext = this;
+    if( index <= 0 )
+    {
+        g2cerror("Attempt to make context current which was not initialized properly.\n");
+        exit(0);
+    }
+    
+    currentContext = this;
     player->makeContextCurrent(index);
 }
 
 Source::Source() : index(0)
 {
-	if( !Context::currentContext )
+    if( !Context::currentContext )
     {
-    	g2cerror("Attempt to create Source with no current context.\n");
-    	exit(0);
+        g2cerror("Attempt to create Source with no current context.\n");
+        exit(0);
     }
     
-	player = Context::currentContext->player;
-	
-	if( !player )
-	{
-		g2cerror("Attempt to make Source with no player.\n");
-		exit(0);
-	}
-	
+    player = Context::currentContext->player;
+    
+    if( !player )
+    {
+        g2cerror("Attempt to make Source with no player.\n");
+        exit(0);
+    }
+    
     index = player->createSource();
 }
 
 Source::~Source()
 {
-	if( index <= 0 )
-	{
-		g2cerror("Attempt to destroy Source which was not initialized properly.\n");
-		exit(0);
-	}
-	
+    if( index <= 0 )
+    {
+        g2cerror("Attempt to destroy Source which was not initialized properly.\n");
+        exit(0);
+    }
+    
     player->destroySource(index);
 }
 
@@ -97,58 +97,58 @@ Sound::Sound() : index(0), source(NULL), loop(false)
     
     if( !Context::currentContext )
     {
-    	g2cerror("Attempt to create Sound with no current context.\n");
-    	exit(0);
+        g2cerror("Attempt to create Sound with no current context.\n");
+        exit(0);
     }
     
     player = Context::currentContext->player;
     
     if( !player )
-	{
-		g2cerror("Attempt to create Sound with no player set.\n");
-		exit(0);
-	}
-	
+    {
+        g2cerror("Attempt to create Sound with no player set.\n");
+        exit(0);
+    }
+    
     index = player->createSound();
     
     if( index <= 0 )
-	{
-		g2cerror("Player failed to create sound.\n");
-		exit(0);
-	}
+    {
+        g2cerror("Player failed to create sound.\n");
+        exit(0);
+    }
 }
 
 Sound::~Sound()
 {
-	if( index <= 0 )
-	{
-		g2cerror("Attempt to destroy Sound which was not initialized properly.\n");
-		exit(0);
-	}
-	
+    if( index <= 0 )
+    {
+        g2cerror("Attempt to destroy Sound which was not initialized properly.\n");
+        exit(0);
+    }
+    
     player->destroySound(index);
 }
 
 void Sound::play(double gain) const
 {
-	if( !source )
-	{
-		g2cerror("Attempt to play Sound with no source.\n");
-		exit(0);
-	}
-	
-	player->playSound(index, source->index, loop, gain);
+    if( !source )
+    {
+        g2cerror("Attempt to play Sound with no source.\n");
+        exit(0);
+    }
+    
+    player->playSound(index, source->index, loop, gain);
 }
 
 void Sound::stop() const
 {
     if( !source )
-	{
-		g2cerror("Attempt to stop Sound with no source.\n");
-		exit(0);
-	}
-	
-	player->stopSource(source->index);
+    {
+        g2cerror("Attempt to stop Sound with no source.\n");
+        exit(0);
+    }
+    
+    player->stopSource(source->index);
 }
 
 string Sound::serializeElements(std::string indent) const
@@ -178,22 +178,22 @@ void Sound::handleChild(const parse::Node* n)
 }
 
 void Sound::load(int sampleRate, int numSamples, int numChannels,
-	int bytesPerSample, const uint8_t* data)
+    int bytesPerSample, const uint8_t* data)
 {
-	if( !player )
-	{
-		g2cerror("Attempt to load sound with no player.");
-		exit(0);
-	}
-	
-	player->loadSound(index, sampleRate, numSamples, numChannels,
-		bytesPerSample, data);
+    if( !player )
+    {
+        g2cerror("Attempt to load sound with no player.");
+        exit(0);
+    }
+    
+    player->loadSound(index, sampleRate, numSamples, numChannels,
+        bytesPerSample, data);
 }
 
 void Sound::initWithWave(const Wave& wave)
 {
-	load(wave.sampleRate, wave.numSamples, wave.numChannels,
-		wave.bytesPerSample, wave.data);
+    load(wave.sampleRate, wave.numSamples, wave.numChannels,
+        wave.bytesPerSample, wave.data);
 }
 
 

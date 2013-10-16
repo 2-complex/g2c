@@ -38,7 +38,7 @@ public:
     std::string base_path;
     
     void setEnvAndLoader(JNIEnv* env, jobject loader);
-	void setAssetManager(jobject assetManager);
+    void setAssetManager(jobject assetManager);
     
     virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
     virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);

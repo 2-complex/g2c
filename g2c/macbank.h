@@ -52,7 +52,7 @@ public:
     virtual void initSerializableWithPath(Serializable* s, const char* path);
     virtual void writeSerializableToPath(const Serializable* s, const char* path);
     virtual void initTextureWithPath(Texture2D* texture, const char* path);
-	
+    
     virtual void initSoundWithPath(Sound* sound, const char* path);
 
     void* getOpenALAudioData(CFURLRef inFileURL,

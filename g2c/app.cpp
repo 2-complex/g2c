@@ -74,7 +74,7 @@ void App::mouseUp(const Vec2& /*C*/)
 
 bool App::touchDown(unsigned int index, const Vec2& C)
 {
-	return false;
+    return false;
 }
 
 void App::touchDragged(unsigned int index, const Vec2& C)
@@ -102,22 +102,22 @@ void App::controllerMotion(int deviceId, int inputId, double x, double y)
 
 bool App::getNeedsKeyboard()
 {
-	return needsKeyboard;
+    return needsKeyboard;
 }
 
 void App::showKeyboard()
 {
-	needsKeyboard = true;
+    needsKeyboard = true;
 }
 
 void App::hideKeyboard()
 {
-	needsKeyboard = false;
+    needsKeyboard = false;
 }
 
 void App::finishTyping()
 {
-	needsKeyboard = false;
+    needsKeyboard = false;
 }
 
 } // end namespace

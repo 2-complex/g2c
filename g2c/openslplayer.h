@@ -35,62 +35,62 @@ namespace g2c {
 class OpenSLPlayer : public Player {
 friend void bqPlayerCallback(SLAndroidSimpleBufferQueueItf bq, void *ptr);
 public:
-	OpenSLPlayer();
-	
-	virtual int createContext();
-	virtual void destroyContext(int index);
-	
-	virtual int createSource();
-	virtual void destroySource(int index);
-	
-	virtual int createSound();
-	virtual void destroySound(int index);
-	
-	virtual void makeContextCurrent(int index);
-	
-	virtual void loadSound(int index, int sampleRate, int numSamples, int numChannels,
-		int bytesPerSample, const uint8_t* data);
-	
-	virtual void playSound(int soundIndex, int sourceIndex, bool loop, double gain);
+    OpenSLPlayer();
+    
+    virtual int createContext();
+    virtual void destroyContext(int index);
+    
+    virtual int createSource();
+    virtual void destroySource(int index);
+    
+    virtual int createSound();
+    virtual void destroySound(int index);
+    
+    virtual void makeContextCurrent(int index);
+    
+    virtual void loadSound(int index, int sampleRate, int numSamples, int numChannels,
+        int bytesPerSample, const uint8_t* data);
+    
+    virtual void playSound(int soundIndex, int sourceIndex, bool loop, double gain);
 
-private:	
-	struct ContextInfo {
-		SLObjectItf engineObject;
-		SLEngineItf engine;
-		SLObjectItf outputMixObject;
-		SLEnvironmentalReverbItf outputMixEnvironmentalReverb; // unused for now.
-	};
-	
-	class SourceInfo {
-	public:
-		SourceInfo();
-		virtual ~SourceInfo();
-		
-		// buffer queue player interfaces
-		SLObjectItf bqPlayerObject;
-		SLPlayItf bqPlayerPlay;
-		SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue;
-		SLEffectSendItf bqPlayerEffectSend;
-		SLMuteSoloItf bqPlayerMuteSolo;
-		SLVolumeItf bqPlayerVolume;
-		
-		void realize();
-	};
-	
-	class Audio {
-	public:
-		Audio();
-		virtual ~Audio();
-		
-		uint8_t* buffer;
-		unsigned int size;
-	};
+private:    
+    struct ContextInfo {
+        SLObjectItf engineObject;
+        SLEngineItf engine;
+        SLObjectItf outputMixObject;
+        SLEnvironmentalReverbItf outputMixEnvironmentalReverb; // unused for now.
+    };
+    
+    class SourceInfo {
+    public:
+        SourceInfo();
+        virtual ~SourceInfo();
+        
+        // buffer queue player interfaces
+        SLObjectItf bqPlayerObject;
+        SLPlayItf bqPlayerPlay;
+        SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue;
+        SLEffectSendItf bqPlayerEffectSend;
+        SLMuteSoloItf bqPlayerMuteSolo;
+        SLVolumeItf bqPlayerVolume;
+        
+        void realize();
+    };
+    
+    class Audio {
+    public:
+        Audio();
+        virtual ~Audio();
+        
+        uint8_t* buffer;
+        unsigned int size;
+    };
 
-	
-	int contextIndex;
-	std::map<int, ContextInfo> contextInfos;
-	std::map<int, SourceInfo*> sourceInfos;
-	std::map<int, Audio*> audios;
+    
+    int contextIndex;
+    std::map<int, ContextInfo> contextInfos;
+    std::map<int, SourceInfo*> sourceInfos;
+    std::map<int, Audio*> audios;
 };
 
 

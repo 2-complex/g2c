@@ -27,13 +27,13 @@
 
 class Wave {
 public:
-	int sampleRate;
-	int numChannels;
-	int numSamples;
-	int bytesPerSample;
-	uint8_t* data;
-	
-	void initWithData(const uint8_t* data, size_t size);
+    int sampleRate;
+    int numChannels;
+    int numSamples;
+    int bytesPerSample;
+    uint8_t* data;
+    
+    void initWithData(const uint8_t* data, size_t size);
 };
 
 #endif

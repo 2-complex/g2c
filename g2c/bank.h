@@ -33,15 +33,15 @@ namespace g2c {
 
 class Data {
 public:
-	Data();
-	virtual ~Data();
-	uint8_t* array() const;
-	size_t size() const;
-	void resize(size_t size);
-	
+    Data();
+    virtual ~Data();
+    uint8_t* array() const;
+    size_t size() const;
+    void resize(size_t size);
+    
 private:
-	size_t mSize;
-	uint8_t* mArray;
+    size_t mSize;
+    uint8_t* mArray;
 };
 
 class Bank {

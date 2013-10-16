@@ -33,48 +33,48 @@ Data::Data() : mArray(NULL), mSize(0) {}
 
 Data::~Data()
 {
-	if( mArray )
-		free(mArray);
+    if( mArray )
+        free(mArray);
 }
 
 void Data::resize(size_t size)
 {
-	if( mArray )
-	{
-		free(mArray);
-		mArray = NULL;
-	}
-	
-	if( size > 0 )
-	{
-		mArray = (uint8_t*)malloc(size);
-	}
-	
-	mSize = size;
+    if( mArray )
+    {
+        free(mArray);
+        mArray = NULL;
+    }
+    
+    if( size > 0 )
+    {
+        mArray = (uint8_t*)malloc(size);
+    }
+    
+    mSize = size;
 }
 
 uint8_t* Data::array() const
 {
-	return mArray;
+    return mArray;
 }
 
 size_t Data::size() const
 {
-	return mSize;
+    return mSize;
 }
 
 void Bank::initSoundWithPath(Sound* sound, const char* path)
 {
-	if( endsWith(path, ".wav") || endsWith(path, ".wave") ||
-		endsWith(path, ".WAV") || endsWith(path, ".WAVE") )
-	{
-		Data data;
-		Wave wave;
-		
-		initDataWithPath(&data, path);
-		wave.initWithData(data.array(), data.size());
-		sound->initWithWave(wave);
-	}
+    if( endsWith(path, ".wav") || endsWith(path, ".wave") ||
+        endsWith(path, ".WAV") || endsWith(path, ".WAVE") )
+    {
+        Data data;
+        Wave wave;
+        
+        initDataWithPath(&data, path);
+        wave.initWithData(data.array(), data.size());
+        sound->initWithWave(wave);
+    }
 }
 
 void AsynchronousBank::initPersistentSerializableWithKey(Serializable* s, const char* key)
@@ -127,12 +127,12 @@ bool AsynchronousBank::step()
     {
         bank->initTextureWithPath((Texture2D*)inst.resource, inst.path.c_str());
     }
-	
+    
     else if( inst.resource->type == "Sound" )
     {
         bank->initSoundWithPath((Sound*)inst.resource, inst.path.c_str());
     }
-	
+    
     else
     {   // Assume if it's anything else it's a generic serializable.
         bank->initSerializableWithPath(inst.resource, inst.path.c_str());

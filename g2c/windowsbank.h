@@ -42,7 +42,7 @@ public:
     virtual void writeSerializableToPath(const Serializable* s, const char* path);
     virtual void initTextureWithPath(Texture2D* texture, const char* path);
     virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
-	
+    
     virtual void initSoundWithPath(Sound* sound, const char* path);
 
 protected:

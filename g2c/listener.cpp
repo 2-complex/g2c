@@ -139,7 +139,7 @@ void initListenerGlut()
     glutKeyboardUpFunc(fkeyboardUp);
     glutSpecialFunc(fspecial);
 }
-	
+    
 #endif
 
 } // end namespace

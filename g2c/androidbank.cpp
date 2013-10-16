@@ -59,10 +59,10 @@ void AndroidBank::writePersistentSerializableWithKey(const Serializable* s, cons
 void AndroidBank::initDataWithPath(Data* data, const char* path)
 {
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
-	assert(NULL != manager);
-	
-	AAsset* asset = AAssetManager_open(manager, path, AASSET_MODE_UNKNOWN);
-	assert(NULL != asset);
+    assert(NULL != manager);
+    
+    AAsset* asset = AAssetManager_open(manager, path, AASSET_MODE_UNKNOWN);
+    assert(NULL != asset);
     
     void const* temp = AAsset_getBuffer(asset);
     size_t size = AAsset_getLength(asset);

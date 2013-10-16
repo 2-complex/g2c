@@ -38,12 +38,12 @@ public:
     virtual ~Context();
     
     void makeCurrent();
-	
+    
 private:
-	int index;
-	Player* player;
-	
-	static Context* currentContext;
+    int index;
+    Player* player;
+    
+    static Context* currentContext;
 };
 
 class Source {
@@ -53,10 +53,10 @@ public:
     virtual ~Source();
     
     bool isPlaying() const;
-	
+    
 private:
-	int index;
-	Player* player;
+    int index;
+    Player* player;
 };
 
 class Sound : public Serializable {
@@ -84,11 +84,11 @@ public:
     
     // Was private, not sure if it should be private.
     void load(int sampleRate, int numSamples, int numChannels,
-		int bytesPerSample, const uint8_t* data);
-	
+        int bytesPerSample, const uint8_t* data);
+    
 private:
-	int index;
-	Player* player;	
+    int index;
+    Player* player;    
 };
 
 } // end namespace

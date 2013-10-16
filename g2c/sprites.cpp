@@ -625,7 +625,7 @@ Node* Node::findChild(const string& name) const
 
 void Node::draw() const
 {
-	drawInTree(getMatrix(), getColor());
+    drawInTree(getMatrix(), getColor());
 }
 
 void Node::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
@@ -637,10 +637,10 @@ void Node::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
         if( node->visible() )
         {
             node->drawInTree(
-            	worldMatrix * node->getMatrix(),
-            	worldColor * node->getColor() );
+                worldMatrix * node->getMatrix(),
+                worldColor * node->getColor() );
         }
-    }	
+    }    
 }
 
 void Node::handleChild(const parse::Node* n)
@@ -732,7 +732,7 @@ void Node::keyboard(unsigned char inkey)
 
 bool Node::mouseDown(const Vec2& C)
 {
-	return mouseDown(getMatrix(), C);
+    return mouseDown(getMatrix(), C);
 }
 
 bool Node::mouseDown(const Mat4& worldMatrix, const Vec2& C)
@@ -772,7 +772,7 @@ bool Node::mouseDown(const Mat4& worldMatrix, const Vec2& C)
 
 void Node::mouseDragged(const Vec2& C)
 {
-	mouseDragged(getMatrix(), C);
+    mouseDragged(getMatrix(), C);
 }
 
 void Node::mouseDragged(const Mat4& worldMatrix, const Vec2& C)
@@ -801,8 +801,8 @@ void Node::mouseDragged(const Mat4& worldMatrix, const Vec2& C)
 
 void Node::mouseUp(const Vec2& C)
 {
-	// Default behavior same as mouseDragged.
-	mouseDragged(C);
+    // Default behavior same as mouseDragged.
+    mouseDragged(C);
 }
 
 void Node::mouseUp(const Mat4& worldMatrix, const Vec2& C)
@@ -843,16 +843,16 @@ Color Node::getColor() const
 
 Mat4 Node::getWorldMatrix() const
 {
-	if(parent)
-		return parent->getWorldMatrix() * getMatrix();
-	return Mat4();
+    if(parent)
+        return parent->getWorldMatrix() * getMatrix();
+    return Mat4();
 }
 
 Color Node::getWorldColor() const
 {
-	if(parent)
-		return parent->getWorldColor() * getColor();
-	return Color(1.0, 1.0, 1.0, 1.0);
+    if(parent)
+        return parent->getWorldColor() * getColor();
+    return Color(1.0, 1.0, 1.0, 1.0);
 }
 
 Actor* Node::actorInClick(const Mat4& worldMatrix, const Vec2& C)
@@ -1248,7 +1248,7 @@ Polygon::~Polygon()
 
 Mat4 Polygon::getMatrix() const
 {
-	return matrix;
+    return matrix;
 }
 
 Polygon& Polygon::operator=(const Polygon& P)
@@ -1384,9 +1384,9 @@ double angleAToB(const Vec2& A, const Vec2& B)
 
 bool Polygon::vectorInside(const Mat4& worldMatrix, const Vec2& V) const
 {
-	Vec4 tmp = worldMatrix * Vec4(V.x, V.y, 0.0, 1.0);
-	Vec2 tv = Vec2( tmp.x, tmp.y ) / tmp.w;
-	
+    Vec4 tmp = worldMatrix * Vec4(V.x, V.y, 0.0, 1.0);
+    Vec2 tv = Vec2( tmp.x, tmp.y ) / tmp.w;
+    
     double theta = 0;
     int n = size();
     for( int i=0; i<n; i++ )
@@ -1610,13 +1610,13 @@ void Actor::init()
 
 Mat4 Actor::getMatrix() const
 {
-	double c = k*cos(rotation);
-	double s = k*sin(rotation);
-	
+    double c = k*cos(rotation);
+    double s = k*sin(rotation);
+    
     return Mat4( c, s, 0, 0,
-    			-s, c, 0, 0,
-    			 0, 0, 1, 0,
-    			 x, y, 0, 1);
+                -s, c, 0, 0,
+                 0, 0, 1, 0,
+                 x, y, 0, 1);
 }
 
 void Actor::removeSprite(const Sprite* s)
@@ -1966,8 +1966,8 @@ void Integer::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 
 Layer::Layer()
 {
-	type = "Layer";
-	addProperty("matrix", matrix);
+    type = "Layer";
+    addProperty("matrix", matrix);
     addProperty("color", color);
 }
 
@@ -1978,7 +1978,7 @@ Mat4 Layer::getMatrix() const
 
 World::World() : bank(NULL), soundInitted(false)
 {
-	player = new Player();
+    player = new Player();
     context = new Context(player);
     context->makeCurrent();
     destroySoundQueue();
@@ -1991,9 +1991,9 @@ World::World() : bank(NULL), soundInitted(false)
 
 World::~World()
 {
-	if( !soundInitted )
-		delete player;
-	
+    if( !soundInitted )
+        delete player;
+    
     delete context;
 
     for(vector<Sprite*>::iterator itr = sprites.begin(); itr!=sprites.end(); itr++)
@@ -2004,27 +2004,27 @@ World::~World()
 }
 
 void World::initSound(Player* inPlayer)
-{	
-	if( soundInitted )
-	{
-		g2cerror("Sound intted for world twice");
-		exit(0);
-	}
-	
-	// Throw away the stub player/context.
-	delete context;
-	delete player;
-	
-	player = inPlayer;
-	context = new Context(player);
-	context->makeCurrent();
-	
-	soundInitted = true; // Only allow once.
+{    
+    if( soundInitted )
+    {
+        g2cerror("Sound intted for world twice");
+        exit(0);
+    }
+    
+    // Throw away the stub player/context.
+    delete context;
+    delete player;
+    
+    player = inPlayer;
+    context = new Context(player);
+    context->makeCurrent();
+    
+    soundInitted = true; // Only allow once.
 }
 
 Actor* World::actorInClick(const Vec2& V)
 {
-	return Node::actorInClick(getMatrix(), V);
+    return Node::actorInClick(getMatrix(), V);
 }
 
 void World::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
@@ -2419,21 +2419,21 @@ void Animator::remove(Animation* a)
 class AnimationContainer
 {
 public:
-	double t;
-	int i;
-	Animation* a;
-	
-	AnimationContainer(double t, int i, Animation* a) : t(t), i(i), a(a) {}
-	
-	bool operator<(const AnimationContainer& c) const
-	{
-		return t < c.t || (t == c.t && i < c.i);
-	}
+    double t;
+    int i;
+    Animation* a;
+    
+    AnimationContainer(double t, int i, Animation* a) : t(t), i(i), a(a) {}
+    
+    bool operator<(const AnimationContainer& c) const
+    {
+        return t < c.t || (t == c.t && i < c.i);
+    }
 };
 
 void Animator::step(double t)
 {
-	set<AnimationContainer> beginMe, advanceMe, endMe;
+    set<AnimationContainer> beginMe, advanceMe, endMe;
     
     int index = 0;
     for(set<Animation*>::iterator itr = S.begin(); itr!= S.end(); itr++)
@@ -2478,20 +2478,20 @@ void Animator::step(double t)
 
 void Animator::end()
 {
-	vector<Animation*> endMe;
-	
-	for(set<Animation*>::iterator itr = S.begin(); itr!= S.end(); itr++)
-	{
-		endMe.push_back(*itr);
-	}
-	
-	for(vector<Animation*>::iterator itr = endMe.begin(); itr!= endMe.end(); itr++)
-	{
-		Animation* a = *itr;
-		
-		a->end();
-		remove(a);
-	}
+    vector<Animation*> endMe;
+    
+    for(set<Animation*>::iterator itr = S.begin(); itr!= S.end(); itr++)
+    {
+        endMe.push_back(*itr);
+    }
+    
+    for(vector<Animation*>::iterator itr = endMe.begin(); itr!= endMe.end(); itr++)
+    {
+        Animation* a = *itr;
+        
+        a->end();
+        remove(a);
+    }
 }
 
 void Animator::clear()

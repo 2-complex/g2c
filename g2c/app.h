@@ -34,22 +34,22 @@ class App {
 public:
     App();
     virtual ~App();
-	
+    
     virtual void init();
     virtual void step(double t);
     virtual void draw() const;
     
-	virtual bool mouseDown(const Vec2& C);
-	virtual void mouseDragged(const Vec2& C);
-	virtual void mouseUp(const Vec2& C);
-	
-	virtual bool touchDown(unsigned int index, const Vec2& C);
-	virtual void touchDragged(unsigned int index, const Vec2& C);
-	virtual void touchUp(unsigned int index, const Vec2& C);
-	
-	virtual void controllerKeyDown(int deviceId, char c);
-	virtual void controllerKeyUp(int deviceId, char c);
-	virtual void controllerMotion(int deviceId, int inputId, double x, double y);
+    virtual bool mouseDown(const Vec2& C);
+    virtual void mouseDragged(const Vec2& C);
+    virtual void mouseUp(const Vec2& C);
+    
+    virtual bool touchDown(unsigned int index, const Vec2& C);
+    virtual void touchDragged(unsigned int index, const Vec2& C);
+    virtual void touchUp(unsigned int index, const Vec2& C);
+    
+    virtual void controllerKeyDown(int deviceId, char c);
+    virtual void controllerKeyUp(int deviceId, char c);
+    virtual void controllerMotion(int deviceId, int inputId, double x, double y);
     
     virtual void keyboard(unsigned char inkey);
     virtual void special(int inkey);
@@ -57,14 +57,14 @@ public:
     virtual void reshape(int width, int height);
     
     bool getNeedsKeyboard();
-	void finishTyping();
+    void finishTyping();
 
 protected:
-	void showKeyboard();
-	void hideKeyboard();
+    void showKeyboard();
+    void hideKeyboard();
 
 private:
-	bool needsKeyboard;
+    bool needsKeyboard;
 };
 
 } // end namespace

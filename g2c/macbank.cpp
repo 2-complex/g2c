@@ -41,7 +41,7 @@ void MacBank::writePersistentSerializableWithKey(const Serializable* s, const ch
 
 void MacBank::initDataWithPath(Data* data, const char* path)
 {
-	string fullpath = base_path + directory + path;
+    string fullpath = base_path + directory + path;
     
     FILE* fp = fopen(fullpath.c_str(), "r");
     if( !fp )
@@ -193,47 +193,47 @@ void MacBank::initTextureWithPath(Texture2D* texture, const char* path)
 
 void MacBank::initSoundWithPath(Sound* sound, const char* path)
 {
-	if( endsWith(path, ".wav") || endsWith(path, ".wave") ||
-		endsWith(path, ".WAV") || endsWith(path, ".WAVE") )
-	{
-		Data data;
-		Wave wave;
-		
-		initDataWithPath(&data, path);
-		wave.initWithData(data.array(), data.size());
-		sound->initWithWave(wave);
-	}
-	else
-	{
-		string fullpath = base_path + directory + path;
-		
-		ALenum  error = AL_NO_ERROR;
-		
-		CFURLRef fileURL = CFURLCreateFromFileSystemRepresentation(
-		   kCFAllocatorDefault,
-		   (const UInt8*)fullpath.c_str(),
-		   fullpath.size(),
-		   false);
-		
-		ALsizei size;
-		ALenum format;
-		ALsizei freq;
-		
-		void* data = getOpenALAudioData(fileURL, &size, &format, &freq);
-		
-		CFRelease(fileURL);
-		
-		if((error = alGetError()) != AL_NO_ERROR)
-		{
-			g2cerror("OpenAL error = 0x%x loading audio file: %s\n", error, fullpath.c_str());
-			exit(0);
-		}
-		
-		// Attach Audio Data to OpenAL Buffer
-		alBufferData(sound->getIndex(), format, data, size, freq);
-		
-		free(data);
-	}
+    if( endsWith(path, ".wav") || endsWith(path, ".wave") ||
+        endsWith(path, ".WAV") || endsWith(path, ".WAVE") )
+    {
+        Data data;
+        Wave wave;
+        
+        initDataWithPath(&data, path);
+        wave.initWithData(data.array(), data.size());
+        sound->initWithWave(wave);
+    }
+    else
+    {
+        string fullpath = base_path + directory + path;
+        
+        ALenum  error = AL_NO_ERROR;
+        
+        CFURLRef fileURL = CFURLCreateFromFileSystemRepresentation(
+           kCFAllocatorDefault,
+           (const UInt8*)fullpath.c_str(),
+           fullpath.size(),
+           false);
+        
+        ALsizei size;
+        ALenum format;
+        ALsizei freq;
+        
+        void* data = getOpenALAudioData(fileURL, &size, &format, &freq);
+        
+        CFRelease(fileURL);
+        
+        if((error = alGetError()) != AL_NO_ERROR)
+        {
+            g2cerror("OpenAL error = 0x%x loading audio file: %s\n", error, fullpath.c_str());
+            exit(0);
+        }
+        
+        // Attach Audio Data to OpenAL Buffer
+        alBufferData(sound->getIndex(), format, data, size, freq);
+        
+        free(data);
+    }
 }
 
 void* MacBank::getOpenALAudioData(CFURLRef inFileURL,
