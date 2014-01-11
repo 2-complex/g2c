@@ -47,6 +47,7 @@ public:
     void set(uint8_t* inData, int inWidth, int inHeight, int inBitsPerPixel);
     void flipVertically();
     void swizzleRGB();
+    void resize(int inWidth, int inHeight);
 
     const uint8_t* const getData() const;
     int getWidth() const;
@@ -60,6 +61,7 @@ private:
     int bitsPerPixel;
     
     void mimmic(const Bitmap& b);
+    void sample(double x, double y, double* color) const;
 };
 
 

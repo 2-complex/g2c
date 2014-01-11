@@ -31,8 +31,6 @@ using namespace std;
 namespace g2c {
 
 
-
-
 Bitmap::Bitmap() : data(NULL), width(0), height(0), bitsPerPixel(32)
 {
     
@@ -95,11 +93,104 @@ void Bitmap::swizzleRGB()
         uint8_t r = data[pd*i + 0];
         uint8_t g = data[pd*i + 1];
         uint8_t b = data[pd*i + 2];
-
+		
         data[pd*i + 0] = b;
         data[pd*i + 1] = g;
         data[pd*i + 2] = r;
     }
+}
+
+void Bitmap::sample(double x, double y, double* color) const
+{
+	int i0 = x;
+	int j0 = y;
+	int i1 = x+1;
+	int j1 = y+1;
+	
+	// weights
+	double w00 = (i1 - x) * (j1 - y);
+	double w10 = (x - i0) * (j1 - y);
+	double w01 = (i1 - x) * (y - j0);
+	double w11 = (x - i0) * (y - j0);
+	
+	int p = bitsPerPixel / 8;
+	
+	for( int channel = 0; channel < bitsPerPixel/8; channel++ )
+	{
+		if( i1 < 0 )
+			i1 = 0;
+		if( i1 >= width )
+			i1 = width-1;
+		if( j1 < 0 )
+			j1 = 0;
+		if( j1 >= height )
+			j1 = height-1;
+		
+		if( i0 < 0 )
+			i0 = 0;
+		if( i0 >= width )
+			i0 = width-1;
+		if( j0 < 0 )
+			j0 = 0;
+		if( j0 >= height )
+			j0 = height-1;
+		
+		int index_00 = p * (width * j0 + i0) + channel;
+		int index_10 = p * (width * j0 + i1) + channel;
+		int index_01 = p * (width * j1 + i0) + channel;
+		int index_11 = p * (width * j1 + i1) + channel;
+		
+		color[channel] +=
+			w00 * data[index_00]/255.0 +
+			w10 * data[index_10]/255.0 +
+			w01 * data[index_01]/255.0 +
+			w11 * data[index_11]/255.0 ;
+	}
+}
+
+void Bitmap::resize(int inWidth, int inHeight)
+{
+	uint8_t* newData = (uint8_t*)calloc(inWidth * inHeight * bitsPerPixel / 8, 1);
+	
+	// Uninitialized bitmap becomes a black, transparent, 32-bit image.
+	if( !data )
+	{
+		data = newData;
+		width = inWidth;
+		height = inHeight;
+		bitsPerPixel = 32;
+		return;
+	}
+	
+	int w = width / inWidth;
+	int h = height / inHeight;
+	
+	double sample_w = 1.0 * width / inWidth;
+	double sample_h = 1.0 * height / inHeight;
+	
+	int p = bitsPerPixel / 8;
+	
+	// Otherwise, rescale image by sampling each pixel.
+	for( int j = 0; j < inHeight; j++ )
+	for( int i = 0; i < inWidth; i++ )
+    {
+    	int index = p * (inWidth * j + i);
+    	
+    	double color[4] = {0};
+    	
+    	for( int di = 0; di <= w; di++ )
+    	for( int dj = 0; dj <= h; dj++ )
+			sample(sample_w * i + di, sample_h * j + dj, color);
+    	
+    	for( int c = 0; c < p; c++ )
+	    	newData[index + c] = 255 * color[c] / ((w+1) * (h+1));
+    }
+	
+	free(data);
+	
+	width = inWidth;
+	height = inHeight;
+	data = newData;
 }
 
 void Bitmap::mimmic(const Bitmap& b)
@@ -263,7 +354,7 @@ void Texture2D::initWithImageData(const GLubyte* inData,
         free(data);
     
     int size = width * height * bitsPerPixel / 8;
-    data = (unsigned char*)malloc(size * sizeof(float));
+    data = (uint8_t*)malloc(size * sizeof(float));
     
     if( inData )
         memcpy(data, inData, size);
