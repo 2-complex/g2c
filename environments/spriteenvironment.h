@@ -27,6 +27,7 @@
 #include "scrollenvironment.h"
 
 #include "macbank.h"
+#include "openalplayer.h"
 
 #include <string>
 
@@ -45,6 +46,7 @@ protected:
 	World world;
 	mutable RendererGL1 renderer;
 	MacFileSystemBank bank;
+	OpenALPlayer player;
 	
 	virtual void enables();
 	
