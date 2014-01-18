@@ -24,15 +24,22 @@
 
 namespace g2c {
 
-
-
-
 App::App()
 {
 }
 
 App::~App()
 {
+}
+
+void App::setBank(Bank*)
+{
+	
+}
+
+void App::setPlayer(Player*)
+{
+	
 }
 
 void App::init()
@@ -44,6 +51,10 @@ void App::step(double /*t*/)
 }
 
 void App::draw() const
+{
+}
+
+void App::destroy()
 {
 }
 

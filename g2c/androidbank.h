@@ -32,13 +32,12 @@ namespace g2c {
 
 class AndroidBank : public Bank {
 public:
-    AndroidBank() : env(NULL), loader(NULL), assetManager(NULL) {}
+    AndroidBank() : env(NULL), loader(NULL) {}
     virtual ~AndroidBank() {}
     
     std::string base_path;
     
     void setEnvAndLoader(JNIEnv* env, jobject loader);
-    void setAssetManager(jobject assetManager);
     
     virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
     virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);
@@ -54,7 +53,6 @@ protected:
     
     JNIEnv* env;
     jobject loader;
-    jobject assetManager;
 };
 
 }

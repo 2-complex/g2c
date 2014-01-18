@@ -35,11 +35,6 @@ using namespace std;
 
 namespace g2c {
 
-void AndroidBank::setAssetManager(jobject assetManager)
-{
-    this->assetManager = assetManager;
-}
-
 void AndroidBank::setEnvAndLoader(JNIEnv* env, jobject loader)
 {
     this->env = env;
@@ -58,7 +53,18 @@ void AndroidBank::writePersistentSerializableWithKey(const Serializable* s, cons
 
 void AndroidBank::initDataWithPath(Data* data, const char* path)
 {
-    AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
+	// Get the Loader class.
+    jclass class_Loader = env->FindClass("com.complex.g2c.Loader");
+    
+    // Get the c object representing the java method for getting a string.
+    jmethodID method_getAssetManager = env->GetMethodID(
+        class_Loader, "getAssetManager", "()Landroid/content/res/AssetManager;");
+    
+    jobject localAsssetManager = env->CallObjectMethod(
+    	loader, method_getAssetManager);
+    
+    AAssetManager* manager = AAssetManager_fromJava(env, localAsssetManager);
+    
     assert(NULL != manager);
     
     AAsset* asset = AAssetManager_open(manager, path, AASSET_MODE_UNKNOWN);

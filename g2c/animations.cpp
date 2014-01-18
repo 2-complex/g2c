@@ -24,9 +24,6 @@
 
 namespace g2c {
 
-
-
-
 StopEvents::StopEvents(double instart, double induration) :
     Animation(instart, induration)
 {

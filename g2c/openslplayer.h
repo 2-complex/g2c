@@ -52,6 +52,8 @@ public:
         int bytesPerSample, const uint8_t* data);
     
     virtual void playSound(int soundIndex, int sourceIndex, bool loop, double gain);
+    
+    virtual bool isSourcePlaying(int index);
 
 private:    
     struct ContextInfo {

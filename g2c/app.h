@@ -25,9 +25,10 @@
 
 #include "lin/lin.h"
 
+#include "bank.h"
+#include "player.h"
+
 namespace g2c {
-
-
 
 
 class App {
@@ -35,9 +36,13 @@ public:
     App();
     virtual ~App();
     
+    virtual void setBank(Bank*);
+    virtual void setPlayer(Player*);
+    
     virtual void init();
     virtual void step(double t);
     virtual void draw() const;
+    virtual void destroy();
     
     virtual bool mouseDown(const Vec2& C);
     virtual void mouseDragged(const Vec2& C);

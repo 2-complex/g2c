@@ -284,6 +284,11 @@ void OpenSLPlayer::playSound(int soundIndex, int sourceIndex, bool loop, double 
     }
 }
 
+bool OpenSLPlayer::isSourcePlaying(int index)
+{
+	return false;
+}
+
 
 OpenSLPlayer::Audio::Audio() : buffer(NULL), size(0) {}
 
