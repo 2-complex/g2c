@@ -27,22 +27,28 @@
 
 using namespace std;
 
-namespace g2c {
+namespace g2c
+{
 
 // this callback handler is called every time a buffer finishes playing
 void bqPlayerCallback(SLAndroidSimpleBufferQueueItf bq, void *ptr)
 {
     OpenSLPlayer::SourceInfo* info = (OpenSLPlayer::SourceInfo*)ptr;
     
-    if(bq != info->bqPlayerBufferQueue)
+    if( bq != info->bqPlayerBufferQueue )
     {
-        g2cerror("OpenSL callback called with interface not euqal to buffer queue as expected.\n");
+        g2cerror(
+            "OpenSL callback called with interface"
+            " not euqal to buffer queue as expected.\n");
         exit(0);
     }
 }
 
 
-OpenSLPlayer::OpenSLPlayer() : contextIndex(0) {}
+OpenSLPlayer::OpenSLPlayer()
+    : contextIndex(0)
+{
+}
 
 int OpenSLPlayer::createContext()
 {
@@ -133,7 +139,9 @@ int OpenSLPlayer::createSource()
     map<int, ContextInfo>::iterator itr = contextInfos.find(contextIndex);
     if( itr == contextInfos.end() )
     {
-        g2cerror("Attempt to create source from context that doesn't exist. index=%d\n", contextIndex);
+        g2cerror(
+            "Attempt to create source from context that doesn't exist."
+            " index=%d\n", contextIndex);
         exit(0);
     }
     
@@ -189,7 +197,8 @@ void OpenSLPlayer::destroySource(int index)
     SourceInfo* info(sourceInfos[index]);
     
     // destroy buffer queue audio player object, and invalidate all associated interfaces
-    if (info->bqPlayerObject != NULL) {
+    if( info->bqPlayerObject != NULL )
+    {
         (*info->bqPlayerObject)->Destroy(info->bqPlayerObject);
         info->bqPlayerObject = NULL;
         info->bqPlayerPlay = NULL;
@@ -243,8 +252,13 @@ void OpenSLPlayer::makeContextCurrent(int index)
     contextIndex = index;
 }
 
-void OpenSLPlayer::loadSound(int index, int sampleRate, int numSamples, int numChannels,
-    int bytesPerSample, const uint8_t* data)
+void OpenSLPlayer::loadSound(
+    int index,
+    int sampleRate,
+    int numSamples,
+    int numChannels,
+    int bytesPerSample,
+    const uint8_t* data)
 {
     map<int, Audio*>::iterator itr = audios.find(index);
     if( itr == audios.end() )
@@ -266,31 +280,50 @@ void OpenSLPlayer::loadSound(int index, int sampleRate, int numSamples, int numC
     memcpy(audio->buffer, data, audio->size);
 }
 
-void OpenSLPlayer::playSound(int soundIndex, int sourceIndex, bool loop, double gain)
+void OpenSLPlayer::playSound(
+    int soundIndex,
+    int sourceIndex,
+    bool loop,
+    double gain)
 {
     OpenSLPlayer::Audio* audio = audios[soundIndex];
-    
     OpenSLPlayer::SourceInfo* sourceInfo = sourceInfos[sourceIndex];
     
     if( audio->size > 0 )
     {
         SLresult result;
+
+        result = (*(sourceInfo->bqPlayerBufferQueue))->Clear(
+            sourceInfo->bqPlayerBufferQueue);
+
         result = (*(sourceInfo->bqPlayerBufferQueue))->Enqueue(
             sourceInfo->bqPlayerBufferQueue, audio->buffer, audio->size);
+
         if( SL_RESULT_SUCCESS != result )
-        {
             g2clog("sound failed to play");
-        }
     }
 }
 
 bool OpenSLPlayer::isSourcePlaying(int index)
 {
-	return false;
+    OpenSLPlayer::SourceInfo* sourceInfo = sourceInfos[index];
+    SLAndroidSimpleBufferQueueState state;
+
+    SLresult result = (*(sourceInfo->bqPlayerBufferQueue))->GetState(
+        sourceInfo->bqPlayerBufferQueue, &state);
+    
+    if( SL_RESULT_SUCCESS != result )
+        g2clog("sound failed to play");
+
+    return state.count > 0;
 }
 
 
-OpenSLPlayer::Audio::Audio() : buffer(NULL), size(0) {}
+OpenSLPlayer::Audio::Audio()
+    : buffer(NULL)
+    , size(0)
+{
+}
 
 OpenSLPlayer::Audio::~Audio()
 {
@@ -328,7 +361,7 @@ void OpenSLPlayer::SourceInfo::realize()
     
     // get the buffer queue interface
     result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_BUFFERQUEUE,
-            &bqPlayerBufferQueue);
+        &bqPlayerBufferQueue);
     if( SL_RESULT_SUCCESS != result )
     {
         g2cerror("OpenSL Failed to get player interface.");
@@ -336,7 +369,8 @@ void OpenSLPlayer::SourceInfo::realize()
     }
     
     // register callback on the buffer queue
-    result = (*bqPlayerBufferQueue)->RegisterCallback(bqPlayerBufferQueue, bqPlayerCallback, this);
+    result = (*bqPlayerBufferQueue)->RegisterCallback(
+        bqPlayerBufferQueue, bqPlayerCallback, this);
     if( SL_RESULT_SUCCESS != result )
     {
         g2cerror("OpenSL Failed register callback.");
@@ -346,7 +380,7 @@ void OpenSLPlayer::SourceInfo::realize()
     // get the effect send interface
 
     result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_EFFECTSEND,
-            &bqPlayerEffectSend);
+        &bqPlayerEffectSend);
     if( SL_RESULT_SUCCESS != result )
     {
         g2cerror("OpenSL Failed to get effect send interface.");
@@ -354,7 +388,8 @@ void OpenSLPlayer::SourceInfo::realize()
     }
     
     // get the volume interface
-    result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_VOLUME, &bqPlayerVolume);
+    result = (*bqPlayerObject)->GetInterface(
+        bqPlayerObject, SL_IID_VOLUME, &bqPlayerVolume);
     if( SL_RESULT_SUCCESS != result )
     {
         g2cerror("OpenSL Failed to get volume control interface.");
@@ -370,5 +405,5 @@ void OpenSLPlayer::SourceInfo::realize()
     }
 }
 
-}
+} // end namespace
 

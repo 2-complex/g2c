@@ -65,8 +65,6 @@ size_t Data::size() const
 
 void Bank::initSoundWithPath(Sound* sound, const char* path)
 {
-	g2clog("initSoundWithPath\n");
-	
     if( endsWith(path, ".wav") || endsWith(path, ".wave") ||
         endsWith(path, ".WAV") || endsWith(path, ".WAVE") )
     {
@@ -75,11 +73,7 @@ void Bank::initSoundWithPath(Sound* sound, const char* path)
         
         initDataWithPath(&data, path);
         
-        g2clog("%p %d\n", data.array(), data.size());
-        
         wave.initWithData(data.array(), data.size());
-        
-        g2clog("pass1\n", data.array(), data.size());
         
         sound->initWithWave(wave);
     }
