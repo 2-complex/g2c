@@ -11,14 +11,72 @@ do without carrying implication of ease or difficulty of use.
 Filenames shall be all lower case.
 
 
-Contrary to popular convention, classes may share a file.  In fact classes should share a file when they all depend on each other.
+Contrary to popular convention, classes may share a file.  In fact classes should share a file
+when they all depend on each other.
 
-If class B depends on class A, A may be separated into a file of its own when there is a use-case for A without B.
+If class B depends on class A, A may be separated into a file of its own when there is a use-case
+for A without B.
 
 When a class is defined in a single file of its own, that file is named after the class.
 
 
 Lines of code shall not exceed 100 characters in length.
+
+
+When a line starts to gets long, break it up like this:
+
+returnValue = outerfunction(innerFunction(
+	argument, otherArgument, thirdArgument));
+
+...or...
+
+returnValue = outerfunction(
+	innerFunction(
+		argument,
+		otherArgument,
+		thirdArgument));
+
+Not like this:
+
+returnValue = outerfunction(innerFunction(argument,
+                                          otherArgument,
+                                          thirdArgument));
+
+Same with function prototypes and definitions and so on.
+
+
+Lining things up is okay, like commas in a matrix constructor:
+
+Mat4 m = Mat4(
+	  1,   0,  0,  0,
+	0.5, 0.5,  0,  0,
+	  0,   0, -3,  0
+	  0,   0,  0,  1 );
+
+But not avoid when changing one line might involve tweaking a bunch of lines around,
+such as in a string constant for shadercode, so do this:
+
+string code = "\n"
+	+ "attribute vec3 position;\n"
+	+ "\n"
+	+ "void main()\n"
+	+ "{\n"
+	+ "	gl_Position = vec4(position, 1.0);\n"
+	+ "}\n"
+
+Don't do this:
+
+string code = "                               \n"
+	+ "attribute vec3 position;               \n"
+	+ "                                       \n"
+	+ "void main()                            \n"
+	+ "{                                      \n"
+	+ "	gl_Position = vec4(position, 1.0);    \n"
+	+ "}                                      \n"
+
+It's tempting, but adding a line longer than the column of \n's allows means
+changing each one.  It's cumbersome and clutters up the diff.
+
 
 Braces for control structures and function definitions go on the following line.
 
