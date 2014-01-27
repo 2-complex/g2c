@@ -54,7 +54,7 @@ protected:
 
     std::string directory;
     
-    JVM* jvm;
+    JavaVM* jvm;
     jobject loader;
 };
 

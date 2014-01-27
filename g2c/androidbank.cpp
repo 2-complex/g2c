@@ -47,13 +47,11 @@ AndroidBank::~AndroidBank()
 
 void AndroidBank::setEnvAndLoader(JNIEnv* env, jobject loader)
 {
-    this->env = env;
-
     if( env->GetJavaVM(&jvm) )
     {
         g2cerror("Retrieving java virtual machine from env failed.");
         exit(0);
-    )
+    }
 
     this->loader = loader;
 }
@@ -70,6 +68,8 @@ void AndroidBank::writePersistentSerializableWithKey(const Serializable* s, cons
 
 void AndroidBank::initDataWithPath(Data* data, const char* path)
 {
+    JNIEnv* env = getEnvForCurrentThread();
+
 	// Get the Loader class.
     jclass class_Loader = env->FindClass("com.complex.g2c.Loader");
     
@@ -97,6 +97,8 @@ void AndroidBank::initDataWithPath(Data* data, const char* path)
 
 void AndroidBank::initSerializableWithPath(Serializable* s, const char* path)
 {
+    JNIEnv* env = getEnvForCurrentThread();
+
     string fullpath = base_path + directory + path;
     
     string old_directory = directory;
@@ -134,6 +136,8 @@ void AndroidBank::writeSerializableToPath(const Serializable* s, const char* pat
 
 void AndroidBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
 {
+    JNIEnv* env = getEnvForCurrentThread();
+
     string fullpath = base_path + directory + path;
     
     AndroidBitmapInfo info;
@@ -196,13 +200,14 @@ void AndroidBank::initTextureWithPath(Texture2D* texture, const char* path)
 JNIEnv* AndroidBank::getEnvForCurrentThread()
 {
     JNIEnv* env;
+
     if( jvm == NULL )
     {
         g2cerror("Java virtual machine uninitialized.\n");
         exit(0);
     }
 
-    if( jvm->GetEnv(env, JNI_VERSION_1_4) != JNI_OK )
+    if( jvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_4) != JNI_OK )
     {
         g2cerror("Retrieving java env object unsuccessful.\n");
         exit(0);
