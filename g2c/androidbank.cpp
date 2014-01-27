@@ -35,9 +35,26 @@ using namespace std;
 
 namespace g2c {
 
+AndroidBank::AndroidBank()
+    : jvm(NULL)
+    , loader(NULL)
+{
+}
+
+AndroidBank::~AndroidBank()
+{
+}
+
 void AndroidBank::setEnvAndLoader(JNIEnv* env, jobject loader)
 {
     this->env = env;
+
+    if( env->GetJavaVM(&jvm) )
+    {
+        g2cerror("Retrieving java virtual machine from env failed.");
+        exit(0);
+    )
+
     this->loader = loader;
 }
 
@@ -174,6 +191,30 @@ void AndroidBank::initTextureWithPath(Texture2D* texture, const char* path)
     Bitmap bitmap;
     initBitmapWithPath(&bitmap, path);
     texture->initWithBitmap(bitmap);
+}
+
+JNIEnv* AndroidBank::getEnvForCurrentThread()
+{
+    JNIEnv* env;
+    if( jvm == NULL )
+    {
+        g2cerror("Java virtual machine uninitialized.\n");
+        exit(0);
+    }
+
+    if( jvm->GetEnv(env, JNI_VERSION_1_4) != JNI_OK )
+    {
+        g2cerror("Retrieving java env object unsuccessful.\n");
+        exit(0);
+    }
+
+    if( jvm->AttachCurrentThread(&env, 0) < 0 )
+    {
+        g2cerror("Java virtual machine failed to attach current thread.\n");
+        exit(0);
+    }
+
+    return env;
 }
 
 } // end namespace

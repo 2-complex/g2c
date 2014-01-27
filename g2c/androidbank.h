@@ -30,10 +30,11 @@
 
 namespace g2c {
 
-class AndroidBank : public Bank {
+class AndroidBank : public Bank
+{
 public:
-    AndroidBank() : env(NULL), loader(NULL) {}
-    virtual ~AndroidBank() {}
+    AndroidBank();
+    virtual ~AndroidBank();
     
     std::string base_path;
     
@@ -49,9 +50,11 @@ public:
     virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
 
 protected:
+    JNIEnv* getEnvForCurrentThread();
+
     std::string directory;
     
-    JNIEnv* env;
+    JVM* jvm;
     jobject loader;
 };
 
