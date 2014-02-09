@@ -37,7 +37,6 @@ namespace g2c {
 
 AndroidBank::AndroidBank()
     : jvm(NULL)
-    , loader(NULL)
 {
 }
 
@@ -45,15 +44,13 @@ AndroidBank::~AndroidBank()
 {
 }
 
-void AndroidBank::setEnvAndLoader(JNIEnv* env, jobject loader)
+void AndroidBank::setEnv(JNIEnv* env)
 {
     if( env->GetJavaVM(&jvm) )
     {
         g2cerror("Retrieving java virtual machine from env failed.");
         exit(0);
     }
-
-    this->loader = loader;
 }
 
 void AndroidBank::initPersistentSerializableWithKey(Serializable* s, const char* key)
@@ -70,15 +67,15 @@ void AndroidBank::initDataWithPath(Data* data, const char* path)
 {
     JNIEnv* env = getEnvForCurrentThread();
 
-	// Get the Loader class.
-    jclass class_Loader = env->FindClass("com.complex.g2c.Loader");
+    // Get the Loader class.
+    jclass class_StaticLoader = env->FindClass("com.complex.g2c.StaticLoader");
     
     // Get the c object representing the java method for getting a string.
-    jmethodID method_getAssetManager = env->GetMethodID(
-        class_Loader, "getAssetManager", "()Landroid/content/res/AssetManager;");
+    jmethodID method_getAssetManager = env->GetStaticMethodID(
+        class_StaticLoader, "getAssetManager", "()Landroid/content/res/AssetManager;");
     
-    jobject localAsssetManager = env->CallObjectMethod(
-    	loader, method_getAssetManager);
+    jobject localAsssetManager = env->CallStaticObjectMethod(
+        class_StaticLoader, method_getAssetManager);
     
     AAssetManager* manager = AAssetManager_fromJava(env, localAsssetManager);
     
@@ -105,20 +102,21 @@ void AndroidBank::initSerializableWithPath(Serializable* s, const char* path)
     directory += directoryOfPath(path);
     
     // Get the Loader class.
-    jclass class_Loader = env->FindClass("com.complex.g2c.Loader");
+    jclass class_StaticLoader = env->FindClass("com.complex.g2c.StaticLoader");
     
     // Get the c object representing the java method for getting a string.
-    jmethodID method_getStringFromPath = env->GetMethodID(
-        class_Loader, "getStringFromPath", "(Ljava/lang/String;)Ljava/lang/String;");
+    jmethodID method_getStringFromPath = env->GetStaticMethodID(
+        class_StaticLoader, "getStringFromPath", "(Ljava/lang/String;)Ljava/lang/String;");
     
     // Construct input to java function as a jstring.
     jstring java_path = env->NewStringUTF(fullpath.c_str());
     
     // Call loader java method to get text from file.
-    jstring java_str = (jstring) env->CallObjectMethod(loader, method_getStringFromPath, java_path);
+    jstring java_str = (jstring) env->CallStaticObjectMethod(
+        class_StaticLoader, method_getStringFromPath, java_path);
     
     // Convert to c string.
-    const char *native_str = env->GetStringUTFChars(java_str, NULL);
+    const char* native_str = env->GetStringUTFChars(java_str, NULL);
     
     // Deserialize from c string.
     s->deserialize(native_str);
@@ -145,17 +143,19 @@ void AndroidBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
     int ret;
     
     // Get the Loader class.
-    jclass class_Loader = env->FindClass("com.complex.g2c.Loader");
+    jclass class_StaticLoader = env->FindClass("com.complex.g2c.StaticLoader");
     
     // Get the c object representing the java method for getting a bitmap.
-    jmethodID method_getBitmapFromPath = env->GetMethodID(
-        class_Loader, "getBitmapFromPath", "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
+    jmethodID method_getBitmapFromPath = env->GetStaticMethodID(
+        class_StaticLoader,
+        "getBitmapFromPath",
+        "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
     
     // Construct input to java function as a jstring.
     jstring java_path = env->NewStringUTF(fullpath.c_str());
     
-    jobject java_bitmap = env->CallObjectMethod(
-        loader, method_getBitmapFromPath, java_path);
+    jobject java_bitmap = env->CallStaticObjectMethod(
+        class_StaticLoader, method_getBitmapFromPath, java_path);
     
     if( (ret = AndroidBitmap_getInfo(env, java_bitmap, &info)) < 0 )
     {
@@ -223,6 +223,4 @@ JNIEnv* AndroidBank::getEnvForCurrentThread()
 }
 
 } // end namespace
-
-
 

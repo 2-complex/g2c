@@ -55,6 +55,8 @@ public:
     
     virtual bool isSourcePlaying(int index);
 
+    virtual void stopSource(int index);
+
 private:    
     struct ContextInfo {
         SLObjectItf engineObject;
@@ -62,12 +64,24 @@ private:
         SLObjectItf outputMixObject;
         SLEnvironmentalReverbItf outputMixEnvironmentalReverb; // unused for now.
     };
+
+    class Audio {
+    public:
+        Audio();
+        virtual ~Audio();
+        
+        uint8_t* buffer;
+        unsigned int size;
+    };
     
     class SourceInfo {
     public:
         SourceInfo();
         virtual ~SourceInfo();
         
+        bool loop;
+        Audio* audio;
+
         // buffer queue player interfaces
         SLObjectItf bqPlayerObject;
         SLPlayItf bqPlayerPlay;
@@ -77,15 +91,6 @@ private:
         SLVolumeItf bqPlayerVolume;
         
         void realize();
-    };
-    
-    class Audio {
-    public:
-        Audio();
-        virtual ~Audio();
-        
-        uint8_t* buffer;
-        unsigned int size;
     };
 
     

@@ -33,14 +33,28 @@ namespace g2c
 // this callback handler is called every time a buffer finishes playing
 void bqPlayerCallback(SLAndroidSimpleBufferQueueItf bq, void *ptr)
 {
-    OpenSLPlayer::SourceInfo* info = (OpenSLPlayer::SourceInfo*)ptr;
-    
-    if( bq != info->bqPlayerBufferQueue )
+    OpenSLPlayer::SourceInfo* sourceInfo =
+        reinterpret_cast<OpenSLPlayer::SourceInfo*>(ptr);
+
+    if( bq != sourceInfo->bqPlayerBufferQueue )
     {
         g2cerror(
             "OpenSL callback called with interface"
             " not euqal to buffer queue as expected.\n");
         exit(0);
+    }
+
+    if( sourceInfo->loop )
+    {
+        SLresult result;
+
+        result = (*(sourceInfo->bqPlayerBufferQueue))->Enqueue(
+            sourceInfo->bqPlayerBufferQueue,
+            sourceInfo->audio->buffer,
+            sourceInfo->audio->size);
+
+        if( SL_RESULT_SUCCESS != result )
+            g2clog("sound failed to loop");
     }
 }
 
@@ -288,6 +302,9 @@ void OpenSLPlayer::playSound(
 {
     OpenSLPlayer::Audio* audio = audios[soundIndex];
     OpenSLPlayer::SourceInfo* sourceInfo = sourceInfos[sourceIndex];
+
+    sourceInfo->loop = loop;
+    sourceInfo->audio = audio;
     
     if( audio->size > 0 )
     {
@@ -318,6 +335,20 @@ bool OpenSLPlayer::isSourcePlaying(int index)
     return state.count > 0;
 }
 
+void OpenSLPlayer::stopSource(int index)
+{
+    OpenSLPlayer::SourceInfo* sourceInfo = sourceInfos[index];
+
+    SLresult result;
+
+    sourceInfo->loop = false;
+
+    result = (*(sourceInfo->bqPlayerBufferQueue))->Clear(
+        sourceInfo->bqPlayerBufferQueue);
+
+    if( SL_RESULT_SUCCESS != result )
+        g2clog("source failed to stop");
+}
 
 OpenSLPlayer::Audio::Audio()
     : buffer(NULL)

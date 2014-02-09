@@ -38,7 +38,7 @@ public:
     
     std::string base_path;
     
-    void setEnvAndLoader(JNIEnv* env, jobject loader);
+    void setEnv(JNIEnv* env);
     
     virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
     virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);
@@ -55,7 +55,6 @@ protected:
     std::string directory;
     
     JavaVM* jvm;
-    jobject loader;
 };
 
 }
