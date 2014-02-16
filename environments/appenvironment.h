@@ -25,6 +25,9 @@ protected:
 	virtual void special(unsigned char inkey);
 	
 	virtual void reshape(int width, int height);
+
+	virtual void keyDown(unsigned char inkey);
+	virtual void keyUp(unsigned char inkey);
 	
 	virtual bool mouseDown( const Vec2& C );
 	virtual void mouseDragged( const Vec2& C );

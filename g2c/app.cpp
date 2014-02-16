@@ -70,6 +70,14 @@ void App::special(int /*inkey*/)
 {
 }
 
+void App::keyDown(unsigned char /*inkey*/)
+{
+}
+
+void App::keyUp(unsigned char /*inkey*/)
+{
+}
+
 bool App::mouseDown(const Vec2& /*C*/)
 {
     return false;

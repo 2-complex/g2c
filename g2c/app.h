@@ -43,6 +43,9 @@ public:
     virtual void step(double t);
     virtual void draw() const;
     virtual void destroy();
+
+    virtual void keyDown(unsigned char inkey);
+    virtual void keyUp(unsigned char inkey);
     
     virtual bool mouseDown(const Vec2& C);
     virtual void mouseDragged(const Vec2& C);

@@ -40,7 +40,7 @@ void AppEnvironment::reshape(int w, int h)
 	if(app)
 		app->reshape(w, h);
 	else
-		printf( "AppEnvironment used with no app\n" );
+		g2clog( "AppEnvironment used with no app\n" );
 }
 
 void AppEnvironment::init()
@@ -48,7 +48,7 @@ void AppEnvironment::init()
 	if(app)
 		app->init();
 	else
-		printf( "AppEnvironment used with no app\n" );
+		g2clog( "AppEnvironment used with no app\n" );
 }
 
 void AppEnvironment::step(double t)
@@ -56,7 +56,7 @@ void AppEnvironment::step(double t)
 	if(app)
 		app->step(t);
 	else
-		printf( "AppEnvironment used with no app\n" );
+		g2clog( "AppEnvironment used with no app\n" );
 }
 
 void AppEnvironment::draw() const
@@ -64,7 +64,7 @@ void AppEnvironment::draw() const
 	if(app)
 		app->draw();
 	else
-		printf( "AppEnvironment used with no app\n" );
+		g2clog( "AppEnvironment used with no app\n" );
 }
 
 
@@ -73,7 +73,7 @@ void AppEnvironment::keyboard(unsigned char inkey)
 	if(app)
 		app->keyboard(inkey);
 	else
-		printf( "AppEnvironment used with no app\n" );
+		g2clog( "AppEnvironment used with no app\n" );
 }
 
 void AppEnvironment::special(unsigned char inkey)
@@ -81,7 +81,23 @@ void AppEnvironment::special(unsigned char inkey)
 	if(app)
 		app->special(inkey);
 	else
-		printf( "AppEnvironment used with no app\n" );
+		g2clog( "AppEnvironment used with no app\n" );
+}
+
+void AppEnvironment::keyDown(unsigned char inkey)
+{
+	if(app)
+		app->keyDown(inkey);
+	else
+		g2clog( "AppEnvironment used with no app\n" );
+}
+
+void AppEnvironment::keyUp(unsigned char inkey)
+{
+	if(app)
+		app->keyUp(inkey);
+	else
+		g2clog( "AppEnvironment used with no app\n" );
 }
 
 bool AppEnvironment::mouseDown(const Vec2& C)
@@ -96,7 +112,7 @@ bool AppEnvironment::mouseDown(const Vec2& C)
 		return touchOn;
 	}
 	else
-		printf( "AppEnvironment used with no app\n" );
+		g2clog( "AppEnvironment used with no app\n" );
 	
 	return false;
 }
@@ -111,7 +127,7 @@ void AppEnvironment::mouseDragged(const Vec2& C)
 			app->mouseDragged(C);
 	}
 	else
-		printf( "AppEnvironment used with no app\n" );
+		g2clog( "AppEnvironment used with no app\n" );
 }
 
 void AppEnvironment::mouseUp(const Vec2& C)
@@ -124,5 +140,5 @@ void AppEnvironment::mouseUp(const Vec2& C)
 			app->mouseUp(C);
 	}
 	else
-		printf( "AppEnvironment used with no app\n" );
+		g2clog( "AppEnvironment used with no app\n" );
 }
