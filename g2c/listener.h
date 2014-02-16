@@ -49,42 +49,48 @@ public:
     Listener();
     virtual ~Listener();
     
-    /*    button and motion get called by the like-named glut functions.
+    /*! button get called by the like-named glut function.
         Think twice before overriding if the same job could be done with mouseUp
         mouseDragged mouseDown.*/
     virtual void button( int b, int state, int x, int y );
+
+    /*! motion gets called by the like-named glut function.
+        Think twice before overriding if the same job could be done with mouseUp
+        mouseDragged mouseDown.*/
     virtual void motion( int x, int y );
     
-    /*    keyboard gets called directly by the glut function keyboard.
+    /*! Gets called directly by the glut function keyboard.
         It should be overridden to handle key events.*/
     virtual void keyboard(unsigned char inkey);
     
-    /*    keyDown gets called when a key is first pressed.
+    /*! keyDown gets called when a key is first pressed.
         Override to handle key events.*/
     virtual void keyDown(unsigned char inkey);
     
-    /*    keyUp gets called when a key is released.
+    /*! keyUp gets called when a key is released.
         Override to handle key events.*/
     virtual void keyUp(unsigned char inkey);
 
-    /*    special gets called directly by the glut function special.
+    /*! special gets called directly by the glut function special.
         It should be overridden to handle special keys such as
         arrow keys.*/
     virtual void special(int inkey);
     
-    /*    mouseDown() gets called when the mouse button is first depressed.
+    /*! mouseDown() gets called when the mouse button is first depressed.
         Override mouseDown to implement new mouse click behavior.  Return true
         to stop Environment from interpreting the mouse event and panning the
         camera.*/
     virtual bool mouseDown(const Vec2& C);
     
-    /*  mouseDragged() gets called when the mouse is dragged.*/
+    /*! mouseDragged() gets called when the mouse is dragged.*/
     virtual void mouseDragged(const Vec2& C);
+
+    /*! gets called when the mouse is released.*/
     virtual void mouseUp(const Vec2& C);
     
     bool listening;
     
-    /*    The base-class behavior is to appeal to the delegate if it's non-null
+    /*! The base-class behavior is to appeal to the delegate if it's non-null
         for each virtual function.*/
     Listener* delegate;
 };
