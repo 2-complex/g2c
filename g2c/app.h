@@ -58,6 +58,7 @@ public:
     virtual void controllerKeyDown(int deviceId, char c);
     virtual void controllerKeyUp(int deviceId, char c);
     virtual void controllerMotion(int deviceId, int inputId, double x, double y);
+    virtual void controllerTriggerMotion(int deviceId, int inputId, double x);
     
     virtual void keyboard(unsigned char inkey);
     virtual void special(int inkey);

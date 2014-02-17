@@ -119,6 +119,11 @@ void App::controllerMotion(int deviceId, int inputId, double x, double y)
 
 }
 
+void App::controllerTriggerMotion(int deviceId, int inputId, double x)
+{
+
+}
+
 bool App::getNeedsKeyboard()
 {
     return needsKeyboard;
