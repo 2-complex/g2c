@@ -1,3 +1,4 @@
+*.dSYM
 
 examples/ship
 examples/triangle
