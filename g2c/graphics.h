@@ -40,9 +40,6 @@
 
 namespace g2c {
 
-
-
-
 class Model;
 class Effect;
 class Assumption;
@@ -52,11 +49,14 @@ class Buffer;
 class IndexBuffer;
 class Field;
 
-class Value {
+/*! Uniform properties of Assumptions can be accessed by using the [] operator.  The class Value is
+    made to accomodate assignment of a float, vector, matrix or texture value.*/
+class Value
+{
 public:
     Value();
     Value(const Value& v);
-    ~Value();
+    virtual ~Value();
     
     Value(float t);
     Value(const Vec2& t);
@@ -97,7 +97,8 @@ public:
     
     std::string textureName;
 private:
-    union Data {
+    union Data
+    {
         GLfloat* ptr;
         const Texture* texture;
     } data;
@@ -105,7 +106,12 @@ private:
     int size;
 };
 
-class Effect : public Element {
+/*! Represents a shader program.  Assign shader code to the members vertexCode and framgnetCode,
+    call compile() to compile into a program.  To make the program current, the effect must be
+    make the effect of an Assumption and that assumption must be added to the list of
+    assumptions for a Shape.*/
+class Effect : public Element
+{
 friend class Geometry;
 friend class Shape;
 public:
@@ -150,6 +156,8 @@ private:
     GLuint fragShader;
 };
 
+/*! Maps strings to Values, a Value can be either a float, vector, matrix or texture.  To use,
+    assign values using the [] operator.  Then add to the list of assumptions for a Shape.*/
 class Assumption : public std::map<std::string, Value>,
                    public Element {
 public:
@@ -185,6 +193,9 @@ private:
 };
 
 
+/*! IndexBuffer is a list of integer indices.  Initialize with a vector or array of ints or unsigned
+    shorts, then assign as the indices member of a Geometry.  Three consecutive indices represent a
+    triangle.*/
 class IndexBuffer : public Element {
 friend class Geometry;
 public:
@@ -206,6 +217,19 @@ private:
 };
 
 
+/*! A Field represents a way of stepping through Buffer to get values to assign to an attribute.
+    Each Field has a pointer to a Buffer and a size, stride and offset.  Each of stride, size
+    and offset are measured using numbers as the unit, not bytes, so for instance if the buffer
+    contains position and normal data for each vertex of a large quad like so:
+
+    -100, -100, 0,  0, 0, 1,
+     100, -100, 0,  0, 0, 1,
+     100,  100, 0,  0, 0, 1,
+    -100,  100, 0,  0, 0, 1
+
+    Fields for position and normal attributes would be something along the lines of:
+    positionField = Field(buffer, 3, 0, 6);
+    normalField   = Field(buffer, 3, 3, 6);*/
 class Field : public Element {
 friend class Effect;
 public:
@@ -227,8 +251,14 @@ private:
 };
 
 
-class Geometry : public std::map<std::string, Field>,
-                 public Element {
+/*! Maps the names of vertex attributes to Fields in a buffer encoding those attributes, also
+    contains a pointer to an IndexBuffer which stores triples of indices which connect as
+    triangles.  A Shape uses a Geometry to draw together with the effect and uniforms it assumes 
+    from its assumption list.*/
+class Geometry
+    : public std::map<std::string, Field>
+    , public Element
+{
 friend class Shape;
 public:
     Geometry();
@@ -247,19 +277,32 @@ private:
 };
 
 
+/*! Shape is a Geometry together with a list of assumptions.  To draw, assign the member geometry
+    to a Geometry object, and add assumptions to the assumptions list.  Then call draw().  draw()
+    traverses the list of assumptions and selects an Effect to use, then traverses the assumptions
+    again gathering unifrom parameters.  The geometry is then drawn using the shader in that Effect
+    with the uniforms set to the values encoded in the assumptions list.*/
 class Shape : public Element {
 public:
     Shape();
     
+    /*! Visible flag.  Drawing with visible set to false does nothing.*/
     bool visible;
     
     std::string geometryName;
     std::vector<std::string> assumptionNames;
     
+    /*! A pointer to the Geometry to use when drawing.*/
     Geometry* geometry;
+    
+    /*! A list of pointers to Assumptions.  Shape::draw() iterates through this list and assumes
+        an effect and uniform parameters on that effect before drawing the geometry.*/
     std::list<Assumption*> assumptions;
     
+    /*! Draw the shape.  Iterates through the assumptions to obtain an Effect and any uniform
+        parameters that Effect needs.*/
     void draw() const;
+
     const Value& get(const std::string& uniformName) const;
 
 protected:
@@ -268,7 +311,12 @@ protected:
 };
 
 
-class Model : public Serializable {
+/*! A Model is a collection of Elements.  Element is the common base class of many of the
+    other classes in the graphics library including Element, Texture, Effect, Assumption,
+    Geometry, SHape, Buffer, IndexBuffer, and Field.  If the Elements listed refer to each other
+    then the Model can be serialized.*/
+class Model : public Serializable
+{
 friend class Element;
 friend class Texture2D;
 friend class CubeMap;
@@ -286,9 +334,17 @@ public:
     
     Bank* bank;
     
+    /*! Draws all the Shapes in the model.*/
     void draw() const;
     
+    /*! Add an Element to the model.  Passing true for flagForDelete also adds the
+        element to an internal list of Elements to be deleted when the Model is
+        deleted.*/
     Model& add(Element* element, bool flagForDelete = false);
+    
+    /*! Add an Element to the model.  Passing true for flagForDelete also adds the
+        element to an internal list of Elements to be deleted when the Model is
+        deleted.*/
     Model& add(const Model& element, bool flagForDelete = false);
     
     void makeMaps();

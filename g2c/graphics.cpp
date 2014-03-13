@@ -29,8 +29,6 @@ using namespace std;
 namespace g2c {
 
 
-
-
 Value::Value() : type(NONE)
 {
     data.ptr = NULL;
@@ -130,7 +128,7 @@ void Value::mimmic(const Value& v)
     
     if(type != v.type)
     {
-        printf( "Attempt to set value to incongruous type.\n" );
+        g2cerror( "Attempt to set value to incongruous type.\n" );
         exit(0);
     }
     
@@ -318,11 +316,20 @@ Effect::Effect() : vertShader(0), fragShader(0), program(0)
 Effect::~Effect()
 {
     if( program )
+    {
         glDeleteProgram(program);
+        program = 0;
+    }
     if( vertShader )
+    {
         glDeleteShader(vertShader);
+        vertShader = 0;
+    }
     if( fragShader )
+    {
         glDeleteShader(fragShader);
+        fragShader = 0;
+    }
 }
 
 void Effect::compile()
@@ -388,11 +395,12 @@ void Effect::assume(const map<string, Value>* assumption) const
 bool Effect::loadShaders()
 {
     program = glCreateProgram();
-    
+   
+    const string header = 
 #if defined(ANDROID)
-    const string header = "precision mediump float;\n";
+        "precision mediump float;\n";
 #else
-    const string header = "#ifdef GL_ES\nprecision highp float;\n#endif\n";
+        "#ifdef GL_ES\nprecision highp float;\n#endif\n";
 #endif
     
     loadVertexShader(vertexCode.c_str());

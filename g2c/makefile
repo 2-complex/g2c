@@ -18,9 +18,12 @@ run: current
 	./$(CURRENT) $(CURRENTARGS)
 
 FLAGS = -DGLUT
-GLFLAGS = -framework GLUT -framework OpenGL
-GRAPHICSFLAGS = -framework Cocoa -framework QuartzCore
-AUDIOFLAGS = -framework AudioToolbox -framework Foundation -framework OpenAL
+#GLFLAGS = -framework GLUT -framework OpenGL
+#GRAPHICSFLAGS = -framework Cocoa -framework QuartzCore
+#AUDIOFLAGS = -framework AudioToolbox -framework Foundation -framework OpenAL
+
+GLFLAGS += -L/usr/lib -lglut -lGLU -lGL
+GLINCLUDES += /usr/include ../external
 
 GRAPHICS = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/bank.o $(OBJ_DIR)/macbank.o $(OBJ_DIR)/graphics.o
 SPRITES = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/sound.o $(OBJ_DIR)/player.o $(OBJ_DIR)/openalplayer.o $(OBJ_DIR)/wave.o $(OBJ_DIR)/bank.o $(OBJ_DIR)/macbank.o $(OBJ_DIR)/sprites.o $(OBJ_DIR)/animations.o

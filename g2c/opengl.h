@@ -19,7 +19,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-
 #if IOS
     #include <OpenGLES/ES1/gl.h>
     #include <OpenGLES/ES1/glext.h>
