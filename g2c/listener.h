@@ -20,7 +20,6 @@
 */
 
 
-
 #ifndef _LISTENER_
 #define _LISTENER_
 
@@ -29,8 +28,6 @@
 #include <set>
 
 namespace g2c {
-
-
 
 
 class Listener;
@@ -60,7 +57,7 @@ public:
     virtual void motion( int x, int y );
     
     /*! Gets called directly by the glut function keyboard.
-        It should be overridden to handle key events.*/
+        Override to handle key events.*/
     virtual void keyboard(unsigned char inkey);
     
     /*! keyDown gets called when a key is first pressed.
@@ -87,9 +84,9 @@ public:
 
     /*! gets called when the mouse is released.*/
     virtual void mouseUp(const Vec2& C);
-    
+ 
     bool listening;
-    
+ 
     /*! The base-class behavior is to appeal to the delegate if it's non-null
         for each virtual function.*/
     Listener* delegate;

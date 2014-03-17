@@ -71,7 +71,8 @@ public:
     
     void mimmic(const Value& v);
     
-    enum Type {
+    enum Type
+    {
         NONE,
         FLOAT,
         VEC2,
@@ -172,6 +173,7 @@ protected:
     virtual void handleChild(const parse::Node* n);
 };
 
+/*! Buffers are for storing float data for vertex attributes.*/
 class Buffer : public Element {
 friend class Effect;
 public:

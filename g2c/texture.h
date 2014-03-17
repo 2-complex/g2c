@@ -36,6 +36,8 @@ class Bank;
 class Model;
 class Bitmap;
 
+/*! Represents an uncompressed bitmapped image in CPU memory space.  A Bitmap may be initialized from a
+    file or from raw data in memory.  A Bitmap may be used to populate a Texture object in GPU space.*/
 class Bitmap {
 public:
     Bitmap();
@@ -64,7 +66,7 @@ private:
     void sample(double x, double y, double* color) const;
 };
 
-
+/*! Texture is a base-class for Texture2D and CubeMap.  Functionality common between the two.*/
 class Texture : public Element {
 protected:
     Texture(GLenum target);
