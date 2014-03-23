@@ -5,7 +5,7 @@
 
 #include "iosresourcebank.h"
 #include "sprites.h"
-#include "blank.h"
+#include "bugworldapp.h"
 
 
 using namespace std;
@@ -30,11 +30,11 @@ using namespace g2c;
         
         eaglLayer.opaque = TRUE;
         eaglLayer.drawableProperties =
-		[NSDictionary dictionaryWithObjectsAndKeys: [NSNumber numberWithBool:FALSE],
-		 kEAGLDrawablePropertyRetainedBacking,
-		 kEAGLColorFormatRGBA8,
-		 kEAGLDrawablePropertyColorFormat,
-		 nil];
+			[NSDictionary dictionaryWithObjectsAndKeys: [NSNumber numberWithBool:FALSE],
+														kEAGLDrawablePropertyRetainedBacking,
+														kEAGLColorFormatRGBA8,
+														kEAGLDrawablePropertyColorFormat,
+														nil];
 		
 		// A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
 		// class is used as fallback when it isn't available.
@@ -85,7 +85,7 @@ using namespace g2c;
 	insider = new Insider;
 	firstReshape = true;
 	insider->bank = new IOSResourceBank;
-	Blank* app = new Blank;
+	BugWorldApp* app = new BugWorldApp;
 	
 	app->setBank(insider->bank);
 	

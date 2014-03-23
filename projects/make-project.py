@@ -54,7 +54,7 @@ def go():
 	script_path = os.path.dirname(os.path.realpath(__file__))
 	g2c_dir = os.path.realpath("..")
 
-	blanks_dir = os.path.join(g2c_dir, "projects", "blanks")
+	blanks_dir = os.path.join(g2c_dir, "blanks")
 
 	while not os.path.isdir(blanks_dir):
 		print "Could not find blanks/ directory " + blanks_dir + ".  Where is g2c?"
