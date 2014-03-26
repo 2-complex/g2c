@@ -1,5 +1,4 @@
 
-
 OPTIMIZATION = -O0
 DEBUG = -g3
 ODEBUG = $(DEBUG)
@@ -7,7 +6,6 @@ ODEBUG = $(DEBUG)
 G2C_DIRECTORY = ..
 
 SOURCE_DIR = $(G2C_DIRECTORY)/g2c
-ENVIRONMENTS_DIR = $(G2C_DIRECTORY)/environments
 OBJ_DIR = obj
 
 CURRENT = libg2c.a
@@ -25,42 +23,23 @@ FLAGS = -DGLUT
 GLFLAGS += -L/usr/lib -lglut -lGLU -lGL
 GLINCLUDES += /usr/include ../external
 
-GRAPHICS = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/bank.o $(OBJ_DIR)/macbank.o $(OBJ_DIR)/graphics.o
-SPRITES = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/sound.o $(OBJ_DIR)/player.o $(OBJ_DIR)/openalplayer.o $(OBJ_DIR)/wave.o $(OBJ_DIR)/bank.o $(OBJ_DIR)/macbank.o $(OBJ_DIR)/sprites.o $(OBJ_DIR)/animations.o
+#PLATFORM_BANK = $(OBJ_DIR)/macbank.o
+PLATFORM_BANK = $(OBJ_DIR)/unixbank.o
+
+GRAPHICS = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/bank.o $(PLATFORM_BANK) $(OBJ_DIR)/graphics.o
+SPRITES = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/sound.o $(OBJ_DIR)/player.o $(OBJ_DIR)/wave.o $(OBJ_DIR)/bank.o $(PLATFORM_BANK) $(OBJ_DIR)/sprites.o $(OBJ_DIR)/animations.o
 GAMES = $(SPRITES) $(OBJ_DIR)/graphics.o $(OBJ_DIR)/transforms.o
 
-ENVIRONMENT = $(SOURCE_DIR)/lin/lin.h $(OBJ_DIR)/util.o $(OBJ_DIR)/listener.o $(OBJ_DIR)/environment.o
-ENVIRONMENTS = $(ENVIRONMENT) $(OBJ_DIR)/spriteenvironment.o $(OBJ_DIR)/scrollenvironment.o $(OBJ_DIR)/panenvironment.o $(OBJ_DIR)/appenvironment.o
 APPS = $(OBJ_DIR)/app.o
 
-
-libg2c.a: $(GAMES) $(ENVIRONMENTS) $(APPS)
-	ar rcs libg2c.a $(GAMES) $(ENVIRONMENTS) $(APPS)
+libg2c.a: $(GAMES) $(APPS)
+	ar rcs libg2c.a $(GAMES) $(APPS)
 
 
 $(OBJ_DIR)/listener.o: $(SOURCE_DIR)/listener.cpp $(SOURCE_DIR)/listener.h
 	@mkdir -p $(@D)
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -I$(SOURCE_DIR) -c $(SOURCE_DIR)/listener.cpp -o $(OBJ_DIR)/listener.o -o $(OBJ_DIR)/listener.o
 
-$(OBJ_DIR)/environment.o: $(ENVIRONMENTS_DIR)/environment.cpp $(ENVIRONMENTS_DIR)/environment.h
-	@mkdir -p $(@D)
-	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -I$(SOURCE_DIR) -I$(ENVIRONMENTS_DIR) -c $(ENVIRONMENTS_DIR)/environment.cpp -o $(OBJ_DIR)/environment.o
-
-$(OBJ_DIR)/scrollenvironment.o: $(ENVIRONMENTS_DIR)/scrollenvironment.cpp $(ENVIRONMENTS_DIR)/scrollenvironment.h
-	@mkdir -p $(@D)
-	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -I$(SOURCE_DIR) -I$(ENVIRONMENTS_DIR) -c $(ENVIRONMENTS_DIR)/scrollenvironment.cpp -o $(OBJ_DIR)/scrollenvironment.o
-
-$(OBJ_DIR)/panenvironment.o: $(ENVIRONMENTS_DIR)/panenvironment.cpp $(ENVIRONMENTS_DIR)/panenvironment.h
-	@mkdir -p $(@D)
-	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -I$(SOURCE_DIR) -I$(ENVIRONMENTS_DIR) -c $(ENVIRONMENTS_DIR)/panenvironment.cpp -o $(OBJ_DIR)/panenvironment.o
-
-$(OBJ_DIR)/spriteenvironment.o: $(ENVIRONMENTS_DIR)/spriteenvironment.cpp $(ENVIRONMENTS_DIR)/spriteenvironment.h
-	@mkdir -p $(@D)
-	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -I$(SOURCE_DIR) -I$(ENVIRONMENTS_DIR) -c $(ENVIRONMENTS_DIR)/spriteenvironment.cpp -o $(OBJ_DIR)/spriteenvironment.o
-
-$(OBJ_DIR)/appenvironment.o: $(ENVIRONMENTS_DIR)/appenvironment.cpp $(ENVIRONMENTS_DIR)/appenvironment.h
-	@mkdir -p $(@D)
-	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -I$(SOURCE_DIR) -I$(ENVIRONMENTS_DIR) -c $(ENVIRONMENTS_DIR)/appenvironment.cpp -o $(OBJ_DIR)/appenvironment.o
 
 $(OBJ_DIR)/util.o: $(SOURCE_DIR)/util.cpp $(SOURCE_DIR)/util.h
 	@mkdir -p $(@D)
@@ -109,6 +88,10 @@ $(OBJ_DIR)/bank.o: $(SOURCE_DIR)/bank.cpp $(SOURCE_DIR)/bank.h
 $(OBJ_DIR)/macbank.o: $(SOURCE_DIR)/macbank.cpp $(SOURCE_DIR)/macbank.h
 	@mkdir -p $(@D)
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/macbank.cpp -o $(OBJ_DIR)/macbank.o
+
+$(OBJ_DIR)/unixbank.o: $(SOURCE_DIR)/unixbank.cpp $(SOURCE_DIR)/unixbank.h
+	@mkdir -p $(@D)
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/unixbank.cpp -o $(OBJ_DIR)/unixbank.o
 
 $(OBJ_DIR)/parse.o: $(SOURCE_DIR)/parse.cpp $(SOURCE_DIR)/parse.h
 	@mkdir -p $(@D)
