@@ -33,7 +33,7 @@ GAMES = $(SPRITES) $(OBJ_DIR)/graphics.o $(OBJ_DIR)/transforms.o
 APPS = $(OBJ_DIR)/app.o
 
 libg2c.a: $(GAMES) $(APPS)
-	ar rcs libg2c.a $(GAMES) $(APPS)
+	ar rcs libg2c.a $(OBJ_DIR)/listener.o $(OBJ_DIR)/util.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/parse.o $(OBJ_DIR)/sprites.o $(OBJ_DIR)/sound.o $(OBJ_DIR)/player.o $(OBJ_DIR)/bank.o $(OBJ_DIR)/unixbank.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/wave.o
 
 
 $(OBJ_DIR)/listener.o: $(SOURCE_DIR)/listener.cpp $(SOURCE_DIR)/listener.h
@@ -63,11 +63,11 @@ $(OBJ_DIR)/wave.o: $(SOURCE_DIR)/wave.cpp $(SOURCE_DIR)/wave.h
 
 $(OBJ_DIR)/rendertarget.o: $(SOURCE_DIR)/rendertarget.cpp $(SOURCE_DIR)/rendertarget.h $(SOURCE_DIR)/lin/lin.h
 	@mkdir -p $(@D)
-	c++ $(FLAGS) $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/rendertarget.cpp -o $(OBJ_DIR)/rendertarget.o
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/rendertarget.cpp -o $(OBJ_DIR)/rendertarget.o
 
 $(OBJ_DIR)/transforms.o: $(SOURCE_DIR)/transforms.cpp $(SOURCE_DIR)/transforms.h $(SOURCE_DIR)/lin/lin.h
 	@mkdir -p $(@D)
-	c++ $(FLAGS) $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/transforms.cpp -o $(OBJ_DIR)/transforms.o
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/transforms.cpp -o $(OBJ_DIR)/transforms.o
 
 $(OBJ_DIR)/graphics.o: $(SOURCE_DIR)/graphics.cpp $(SOURCE_DIR)/graphics.h $(SOURCE_DIR)/lin/lin.h
 	@mkdir -p $(@D)

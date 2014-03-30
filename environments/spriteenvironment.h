@@ -26,8 +26,13 @@
 #include "sprites.h"
 #include "scrollenvironment.h"
 
-#include "macbank.h"
+#if __APPLE_CC__
 #include "openalplayer.h"
+#include "macbank.h"
+#else
+#include "unixbank.h"
+#endif
+
 
 #include <string>
 
@@ -45,9 +50,15 @@ public:
 protected:
 	World world;
 	mutable RendererGL1 renderer;
+
+#if __APPLE_CC__
 	MacFileSystemBank bank;
 	OpenALPlayer player;
-	
+#else
+	UnixBank bank;
+	Player player;
+#endif
+
 	virtual void enables();
 	
 	virtual void reshape(int x, int y);

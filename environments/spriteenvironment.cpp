@@ -21,7 +21,6 @@
 
 
 #include "spriteenvironment.h"
-#include "macbank.h"
 
 #include <string>
 

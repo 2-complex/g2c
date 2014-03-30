@@ -24,8 +24,12 @@ FLAGS = -DGLUT
 GRAPHICS_FRAMEWORKS = -framework Cocoa -framework QuartzCore -framework GLUT -framework OpenGL
 AUDIO_FRAMEWORKS = -framework AudioToolbox -framework Foundation -framework OpenAL
 
+GRAPHICS_LIBRARIES = -lGL -lGLU -lGLEW -lglut -lpng
+AUDIO_LIBRARIES =
+
 ENVIRONMENTS =\
 	$(OBJ_DIR)/environment.o\
+	$(OBJ_DIR)/scrollenvironment.o\
 	$(OBJ_DIR)/spriteenvironment.o
 
 LIBG2C = $(G2C_SOURCE_DIR)/libg2c.a
@@ -38,11 +42,12 @@ force_look:
 
 
 $(CURRENT): $(LIBG2C) $(ENVIRONMENTS) $(G2C_SOURCE_DIR)/lin/lin.h $(CURRENT).cpp
-	c++ $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) $(GRAPHICS_FRAMEWORKS) $(AUDIO_FRAMEWORKS)\
+	c++ $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) \
 		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		$(ENVIRONMENTS) \
 		$(LIBG2C) \
-		$(CURRENT).cpp -o $(CURRENT)
+		$(CURRENT).cpp -o $(CURRENT) \
+		$(GRAPHICS_LIBRARIES) $(AUDIO_LIBRARIES)\
 
 $(OBJ_DIR)/environment.o: $(ENVIRONMENTS_DIR)/environment.cpp $(ENVIRONMENTS_DIR)/environment.h
 	@mkdir -p $(@D)
@@ -56,6 +61,13 @@ $(OBJ_DIR)/spriteenvironment.o: $(ENVIRONMENTS_DIR)/spriteenvironment.cpp\
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) \
 		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		-c $(ENVIRONMENTS_DIR)/spriteenvironment.cpp -o $(OBJ_DIR)/spriteenvironment.o
+
+$(OBJ_DIR)/scrollenvironment.o: $(ENVIRONMENTS_DIR)/scrollenvironment.cpp\
+		$(ENVIRONMENTS_DIR)/scrollenvironment.h
+	@mkdir -p $(@D)
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) \
+		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
+		-c $(ENVIRONMENTS_DIR)/scrollenvironment.cpp -o $(OBJ_DIR)/scrollenvironment.o
 
 
 clean:
