@@ -26,8 +26,9 @@
 #include "sprites.h"
 #include "scrollenvironment.h"
 
-#if __APPLE_CC__
 #include "openalplayer.h"
+
+#if __APPLE_CC__
 #include "macbank.h"
 #else
 #include "unixbank.h"
@@ -51,12 +52,12 @@ protected:
 	World world;
 	mutable RendererGL1 renderer;
 
+	OpenALPlayer player;
+
 #if __APPLE_CC__
 	MacFileSystemBank bank;
-	OpenALPlayer player;
 #else
 	UnixBank bank;
-	Player player;
 #endif
 
 	virtual void enables();

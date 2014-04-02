@@ -25,7 +25,7 @@ GRAPHICS_FRAMEWORKS = -framework Cocoa -framework QuartzCore -framework GLUT -fr
 AUDIO_FRAMEWORKS = -framework AudioToolbox -framework Foundation -framework OpenAL
 
 GRAPHICS_LIBRARIES = -lGL -lGLU -lGLEW -lglut -lpng
-AUDIO_LIBRARIES =
+AUDIO_LIBRARIES = -lopenal
 
 ENVIRONMENTS =\
 	$(OBJ_DIR)/environment.o\

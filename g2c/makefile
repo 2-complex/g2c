@@ -16,9 +16,9 @@ run: current
 	./$(CURRENT) $(CURRENTARGS)
 
 FLAGS = -DGLUT
-#GLFLAGS = -framework GLUT -framework OpenGL
-#GRAPHICSFLAGS = -framework Cocoa -framework QuartzCore
-#AUDIOFLAGS = -framework AudioToolbox -framework Foundation -framework OpenAL
+# GLFLAGS = -framework GLUT -framework OpenGL
+# GRAPHICSFLAGS = -framework Cocoa -framework QuartzCore
+# AUDIOFLAGS = -framework AudioToolbox -framework Foundation -framework OpenAL
 
 GLFLAGS += -L/usr/lib -lglut -lGLU -lGL
 GLINCLUDES += /usr/include ../external
@@ -32,14 +32,28 @@ GAMES = $(SPRITES) $(OBJ_DIR)/graphics.o $(OBJ_DIR)/transforms.o
 
 APPS = $(OBJ_DIR)/app.o
 
-libg2c.a: $(GAMES) $(APPS)
-	ar rcs libg2c.a $(OBJ_DIR)/listener.o $(OBJ_DIR)/util.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/parse.o $(OBJ_DIR)/sprites.o $(OBJ_DIR)/sound.o $(OBJ_DIR)/player.o $(OBJ_DIR)/bank.o $(OBJ_DIR)/unixbank.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/wave.o
+OFILES = \
+	$(OBJ_DIR)/listener.o \
+	$(OBJ_DIR)/util.o \
+	$(OBJ_DIR)/serializable.o \
+	$(OBJ_DIR)/parse.o \
+	$(OBJ_DIR)/sprites.o \
+	$(OBJ_DIR)/sound.o \
+	$(OBJ_DIR)/player.o \
+	$(OBJ_DIR)/bank.o \
+	$(OBJ_DIR)/texture.o \
+	$(OBJ_DIR)/wave.o \
+	$(OBJ_DIR)/graphics.o \
+	$(OBJ_DIR)/unixbank.o \
+	$(OBJ_DIR)/openalplayer.o
+
+libg2c.a: $(OFILES)
+	ar rcs libg2c.a $(OFILES) 
 
 
 $(OBJ_DIR)/listener.o: $(SOURCE_DIR)/listener.cpp $(SOURCE_DIR)/listener.h
 	@mkdir -p $(@D)
-	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -I$(SOURCE_DIR) -c $(SOURCE_DIR)/listener.cpp -o $(OBJ_DIR)/listener.o -o $(OBJ_DIR)/listener.o
-
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/listener.cpp -o $(OBJ_DIR)/listener.o
 
 $(OBJ_DIR)/util.o: $(SOURCE_DIR)/util.cpp $(SOURCE_DIR)/util.h
 	@mkdir -p $(@D)
@@ -66,12 +80,12 @@ $(OBJ_DIR)/rendertarget.o: $(SOURCE_DIR)/rendertarget.cpp $(SOURCE_DIR)/renderta
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/rendertarget.cpp -o $(OBJ_DIR)/rendertarget.o
 
 $(OBJ_DIR)/transforms.o: $(SOURCE_DIR)/transforms.cpp $(SOURCE_DIR)/transforms.h $(SOURCE_DIR)/lin/lin.h
-	@mkdir -p $(@D)
+	@mkd	ir -p $(@D)
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/transforms.cpp -o $(OBJ_DIR)/transforms.o
 
 $(OBJ_DIR)/graphics.o: $(SOURCE_DIR)/graphics.cpp $(SOURCE_DIR)/graphics.h $(SOURCE_DIR)/lin/lin.h
 	@mkdir -p $(@D)
-	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c graphics.cpp -o $(OBJ_DIR)/graphics.o
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/graphics.cpp -o $(OBJ_DIR)/graphics.o
 
 $(OBJ_DIR)/texture.o: $(SOURCE_DIR)/texture.cpp $(SOURCE_DIR)/texture.h $(SOURCE_DIR)/element.h
 	@mkdir -p $(@D)
