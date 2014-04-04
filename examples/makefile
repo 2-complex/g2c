@@ -27,9 +27,10 @@ AUDIO_FRAMEWORKS = -framework AudioToolbox -framework Foundation -framework Open
 GRAPHICS_LIBRARIES = -lGL -lGLU -lGLEW -lglut -lpng
 AUDIO_LIBRARIES = -lopenal
 
-ENVIRONMENTS =\
-	$(OBJ_DIR)/environment.o\
-	$(OBJ_DIR)/scrollenvironment.o\
+ENVIRONMENTS = \
+	$(OBJ_DIR)/environment.o \
+	$(OBJ_DIR)/scrollenvironment.o \
+	$(OBJ_DIR)/panenvironment.o \
 	$(OBJ_DIR)/spriteenvironment.o
 
 LIBG2C = $(G2C_SOURCE_DIR)/libg2c.a
@@ -61,6 +62,13 @@ $(OBJ_DIR)/spriteenvironment.o: $(ENVIRONMENTS_DIR)/spriteenvironment.cpp\
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) \
 		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		-c $(ENVIRONMENTS_DIR)/spriteenvironment.cpp -o $(OBJ_DIR)/spriteenvironment.o
+
+$(OBJ_DIR)/panenvironment.o: $(ENVIRONMENTS_DIR)/panenvironment.cpp\
+		$(ENVIRONMENTS_DIR)/panenvironment.h
+	@mkdir -p $(@D)
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) \
+		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
+		-c $(ENVIRONMENTS_DIR)/panenvironment.cpp -o $(OBJ_DIR)/panenvironment.o
 
 $(OBJ_DIR)/scrollenvironment.o: $(ENVIRONMENTS_DIR)/scrollenvironment.cpp\
 		$(ENVIRONMENTS_DIR)/scrollenvironment.h

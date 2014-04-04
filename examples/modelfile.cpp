@@ -8,7 +8,6 @@
 #include "unixbank.h"
 #endif
 
-
 #include <stdio.h>
 
 using namespace g2c;
@@ -32,6 +31,8 @@ private:
 
 void MyPanEnvironment::init()
 {
+	glewInit();
+	
 	model.bank = &bank;
 	
 	bank.initSerializableWithPath(&model, filename);

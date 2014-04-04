@@ -35,15 +35,15 @@ APPS = $(OBJ_DIR)/app.o
 OFILES = \
 	$(OBJ_DIR)/listener.o \
 	$(OBJ_DIR)/util.o \
-	$(OBJ_DIR)/serializable.o \
 	$(OBJ_DIR)/parse.o \
-	$(OBJ_DIR)/sprites.o \
+	$(OBJ_DIR)/serializable.o \
 	$(OBJ_DIR)/sound.o \
 	$(OBJ_DIR)/player.o \
 	$(OBJ_DIR)/bank.o \
 	$(OBJ_DIR)/texture.o \
-	$(OBJ_DIR)/wave.o \
+	$(OBJ_DIR)/sprites.o \
 	$(OBJ_DIR)/graphics.o \
+	$(OBJ_DIR)/wave.o \
 	$(OBJ_DIR)/unixbank.o \
 	$(OBJ_DIR)/openalplayer.o
 
@@ -125,4 +125,5 @@ $(OBJ_DIR)/animations.o: $(SOURCE_DIR)/animations.cpp $(SOURCE_DIR)/animations.h
 
 clean:
 	-rm $(OBJ_DIR)/*.o
+	-rm libg2c.a
 
