@@ -32,8 +32,6 @@ using namespace std;
 namespace g2c {
 
 
-
-
 Serializable::Property::Property(PropertyType type, const std::string& name, long offset) :
     type(type),
     name(name),

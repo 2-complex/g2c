@@ -33,8 +33,13 @@ const std::string TAB("  ");
 namespace g2c {
 
 
-
-
+/*! Serializable has methods serialize() which returns a string representation of the object
+    and deserialize(const string&) which takes a string representation as an argument and populates
+    the members to match the representation.  Subclasses can override various functions to control
+    the output of serialize() and the interpretation in deserialize().  There are a few ways of doing
+    this.  One way is to override serialize() and deserialize() directly.  However doing this
+    requires that the subclass own the entire job of serializing, there are other virtual functions
+    that require less work.*/
 class Serializable {
     enum PropertyType {
         kInt,
