@@ -125,4 +125,6 @@ $(OBJ_DIR)/animations.o: $(SOURCE_DIR)/animations.cpp $(SOURCE_DIR)/animations.h
 
 clean:
 	-rm $(OBJ_DIR)/*.o
+	-rm libg2c.a
+
 
