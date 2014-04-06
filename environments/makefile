@@ -50,7 +50,7 @@ $(OBJ_DIR)/appenvironment.o: appenvironment.cpp appenvironment.h
 	@mkdir -p $(@D)
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) \
 		-I$(G2C_SOURCE_DIR) \
-		-c scrollenvironment.cpp -o $(OBJ_DIR)/appenvironment.o
+		-c appenvironment.cpp -o $(OBJ_DIR)/appenvironment.o
 
 libenvironments.a: $(OFILES)
 	ar rcs libenvironments.a $(OFILES)

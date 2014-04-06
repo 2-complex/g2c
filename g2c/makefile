@@ -22,10 +22,9 @@ ifeq ($(UNAME), Linux)
 endif
 
 
-APPS = $(OBJ_DIR)/app.o
-
 OFILES = \
 	$(OBJ_DIR)/listener.o \
+	$(OBJ_DIR)/app.o \
 	$(OBJ_DIR)/util.o \
 	$(OBJ_DIR)/parse.o \
 	$(OBJ_DIR)/serializable.o \
@@ -34,6 +33,7 @@ OFILES = \
 	$(OBJ_DIR)/bank.o \
 	$(OBJ_DIR)/texture.o \
 	$(OBJ_DIR)/sprites.o \
+	$(OBJ_DIR)/transforms.o \
 	$(OBJ_DIR)/graphics.o \
 	$(OBJ_DIR)/wave.o \
 	$(PLATFORM_BANK) \
@@ -72,7 +72,7 @@ $(OBJ_DIR)/rendertarget.o: $(SOURCE_DIR)/rendertarget.cpp $(SOURCE_DIR)/renderta
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/rendertarget.cpp -o $(OBJ_DIR)/rendertarget.o
 
 $(OBJ_DIR)/transforms.o: $(SOURCE_DIR)/transforms.cpp $(SOURCE_DIR)/transforms.h $(SOURCE_DIR)/lin/lin.h
-	@mkd	ir -p $(@D)
+	@mkdir -p $(@D)
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/transforms.cpp -o $(OBJ_DIR)/transforms.o
 
 $(OBJ_DIR)/graphics.o: $(SOURCE_DIR)/graphics.cpp $(SOURCE_DIR)/graphics.h $(SOURCE_DIR)/lin/lin.h
