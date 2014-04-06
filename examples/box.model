@@ -6,7 +6,7 @@
     {
       'type' : 'Texture',
       'name' : 'spots',
-      'file' : 'spots.png',
+      'file' : 'ladybug.png',
       'unit' : 0,
     },
     {

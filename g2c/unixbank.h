@@ -19,25 +19,37 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#if IOS
-    #include <OpenGLES/ES1/gl.h>
-    #include <OpenGLES/ES1/glext.h>
-    #include <OpenGLES/ES2/gl.h>
-    #include <OpenGLES/ES2/glext.h>
 
-#elif ANDROID
-    #include <GLES/gl.h>
-    #include <GLES/glext.h>
-    #include <GLES2/gl2.h>
-    #include <GLES2/gl2ext.h>
-#else
+#ifndef _UNIX_BANK_
+#define _UNIX_BANK_
 
-    #ifdef __APPLE_CC__
-        #include <glut/glut.h>
-    #else
-	#include <GL/glew.h>
-        #include <GL/freeglut.h>
-        #include <GL/freeglut_ext.h>
-    #endif
+#include "bank.h"
+
+#include <queue>
+
+namespace g2c {
+
+class UnixBank : public Bank {
+public:
+    UnixBank() {}
+    virtual ~UnixBank() {}
+    
+    std::string base_path;
+
+    virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
+    virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);
+    virtual void initDataWithPath(Data* data, const char* path);
+    virtual void initSerializableWithPath(Serializable* s, const char* path);
+    virtual void writeSerializableToPath(const Serializable* s, const char* path);
+    virtual void initTextureWithPath(Texture2D* texture, const char* path);
+    virtual void initBitmapWithPath(Bitmap* bitmap, const char* path);
+    virtual void initSoundWithPath(Sound* sound, const char* path);
+
+protected:
+    std::string directory;
+};
+
+} // end namespace
+
 #endif
 

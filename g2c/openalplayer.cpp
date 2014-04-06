@@ -43,14 +43,19 @@ int OpenALPlayer::createContext()
     alcDeviceRefCounter++;
     
     info.context = alcCreateContext(info.device, 0);
-    
-    ALenum  error = AL_NO_ERROR;
-    if((error = alGetError()) != AL_NO_ERROR)
+
+    if ( !info.context )
     {
-        g2cerror("OpenAL error in context initialization: 0x%x\n", error);
-        exit(0);
+        // On linux this returns an error, but the sound plays.
+        // So, we check to make sure the context is null before retrieving the error.
+        ALenum  error = AL_NO_ERROR;
+        if((error = alGetError()) != AL_NO_ERROR)
+        {
+            g2cerror("OpenAL error in context initialization: 0x%x\n", error);
+            exit(0);
+        }
     }
-    
+
     int index = 1;
     while( contextInfo.find(index)!=contextInfo.end() )
         index++;

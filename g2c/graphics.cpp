@@ -394,7 +394,12 @@ void Effect::assume(const map<string, Value>* assumption) const
 
 bool Effect::loadShaders()
 {
+    g2clog("before glCreateProgram\n");
+    
+    g2clog("glcreateprogram = %p\n", glCreateProgram);    
+
     program = glCreateProgram();
+    g2clog("after glCreateProgram\n");
    
     const string header = 
 #if defined(ANDROID)
@@ -559,7 +564,9 @@ void Effect::handleChild(const parse::Node* n)
     
     if( !(fragmentCode=="" || vertexCode=="") )
     {
-        loadShaders();
+	g2clog("%s\n", fragmentCode.c_str());
+	g2clog("%s\n", vertexCode.c_str());        
+	loadShaders();
     }
 }
 
