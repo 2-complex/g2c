@@ -31,7 +31,7 @@ private:
 
 void MyPanEnvironment::init()
 {
-	glewInit();
+	initOpenGL();
 	
 	model.bank = &bank;
 	

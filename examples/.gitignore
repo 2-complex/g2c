@@ -1,0 +1,12 @@
+
+*.dSYM
+
+modelfile
+serialize
+ship
+sound
+sprite
+text
+triangle
+worldfile
+

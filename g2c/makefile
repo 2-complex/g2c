@@ -9,26 +9,18 @@ SOURCE_DIR = $(G2C_DIRECTORY)/g2c
 OBJ_DIR = obj
 
 CURRENT = libg2c.a
-
 current: $(CURRENT)
 
-run: current
-	./$(CURRENT) $(CURRENTARGS)
+UNAME := $(shell uname)
 
-FLAGS = -DGLUT
-# GLFLAGS = -framework GLUT -framework OpenGL
-# GRAPHICSFLAGS = -framework Cocoa -framework QuartzCore
-# AUDIOFLAGS = -framework AudioToolbox -framework Foundation -framework OpenAL
+ifeq ($(UNAME), Darwin)
+	PLATFORM_BANK = $(OBJ_DIR)/macbank.o
+endif
 
-GLFLAGS += -L/usr/lib -lglut -lGLU -lGL
-GLINCLUDES += /usr/include ../external
+ifeq ($(UNAME), Linux)
+	PLATFORM_BANK = $(OBJ_DIR)/unixbank.o
+endif
 
-#PLATFORM_BANK = $(OBJ_DIR)/macbank.o
-PLATFORM_BANK = $(OBJ_DIR)/unixbank.o
-
-GRAPHICS = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/bank.o $(PLATFORM_BANK) $(OBJ_DIR)/graphics.o
-SPRITES = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/sound.o $(OBJ_DIR)/player.o $(OBJ_DIR)/wave.o $(OBJ_DIR)/bank.o $(PLATFORM_BANK) $(OBJ_DIR)/sprites.o $(OBJ_DIR)/animations.o
-GAMES = $(SPRITES) $(OBJ_DIR)/graphics.o $(OBJ_DIR)/transforms.o
 
 APPS = $(OBJ_DIR)/app.o
 
@@ -44,11 +36,11 @@ OFILES = \
 	$(OBJ_DIR)/sprites.o \
 	$(OBJ_DIR)/graphics.o \
 	$(OBJ_DIR)/wave.o \
-	$(OBJ_DIR)/unixbank.o \
+	$(PLATFORM_BANK) \
 	$(OBJ_DIR)/openalplayer.o
 
 libg2c.a: $(OFILES)
-	ar rcs libg2c.a $(OFILES) 
+	ar rcs libg2c.a $(OFILES)
 
 
 $(OBJ_DIR)/listener.o: $(SOURCE_DIR)/listener.cpp $(SOURCE_DIR)/listener.h
@@ -124,6 +116,7 @@ $(OBJ_DIR)/animations.o: $(SOURCE_DIR)/animations.cpp $(SOURCE_DIR)/animations.h
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/animations.cpp -o $(OBJ_DIR)/animations.o
 
 clean:
-	-rm $(OBJ_DIR)/*.o
-	-rm libg2c.a
+	-rm -f $(OBJ_DIR)/*.o
+	-rm -f libg2c.a
+
 
