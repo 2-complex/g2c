@@ -46,8 +46,8 @@ $(CURRENT): $(LIBG2C) $(ENVIRONMENTS) $(G2C_SOURCE_DIR)/lin/lin.h $(CURRENT).cpp
 	c++ $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) \
 		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		$(ENVIRONMENTS) \
-		$(LIBG2C) \
 		$(CURRENT).cpp -o $(CURRENT) \
+		$(LIBG2C) \
 		$(GRAPHICS_LIBRARIES) $(AUDIO_LIBRARIES)\
 
 $(OBJ_DIR)/environment.o: $(ENVIRONMENTS_DIR)/environment.cpp $(ENVIRONMENTS_DIR)/environment.h

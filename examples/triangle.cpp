@@ -1,5 +1,6 @@
 
 #include "environment.h"
+#include "brafix.h"
 
 class MyEnvironment : public Environment {
 protected:

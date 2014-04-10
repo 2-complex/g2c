@@ -20,7 +20,6 @@
 */
 
 
-
 #ifndef _SPRITES_
 #define _SPRITES_
 

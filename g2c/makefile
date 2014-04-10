@@ -16,32 +16,19 @@ run: current
 	./$(CURRENT) $(CURRENTARGS)
 
 FLAGS = -DGLUT
-# GLFLAGS = -framework GLUT -framework OpenGL
-# GRAPHICSFLAGS = -framework Cocoa -framework QuartzCore
-# AUDIOFLAGS = -framework AudioToolbox -framework Foundation -framework OpenAL
-
-GLFLAGS += -L/usr/lib -lglut -lGLU -lGL
-GLINCLUDES += /usr/include ../external
-
-#PLATFORM_BANK = $(OBJ_DIR)/macbank.o
-PLATFORM_BANK = $(OBJ_DIR)/unixbank.o
-
-GRAPHICS = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/bank.o $(PLATFORM_BANK) $(OBJ_DIR)/graphics.o
-SPRITES = $(OBJ_DIR)/parse.o $(OBJ_DIR)/serializable.o $(OBJ_DIR)/texture.o $(OBJ_DIR)/sound.o $(OBJ_DIR)/player.o $(OBJ_DIR)/wave.o $(OBJ_DIR)/bank.o $(PLATFORM_BANK) $(OBJ_DIR)/sprites.o $(OBJ_DIR)/animations.o
-GAMES = $(SPRITES) $(OBJ_DIR)/graphics.o $(OBJ_DIR)/transforms.o
-
-APPS = $(OBJ_DIR)/app.o
 
 OFILES = \
-	$(OBJ_DIR)/listener.o \
+	$(OBJ_DIR)/brafix.o \
 	$(OBJ_DIR)/util.o \
-	$(OBJ_DIR)/parse.o \
+	$(OBJ_DIR)/listener.o \
 	$(OBJ_DIR)/serializable.o \
+	$(OBJ_DIR)/parse.o \
 	$(OBJ_DIR)/sound.o \
 	$(OBJ_DIR)/player.o \
 	$(OBJ_DIR)/bank.o \
 	$(OBJ_DIR)/texture.o \
 	$(OBJ_DIR)/sprites.o \
+	$(OBJ_DIR)/transforms.o \
 	$(OBJ_DIR)/graphics.o \
 	$(OBJ_DIR)/wave.o \
 	$(OBJ_DIR)/unixbank.o \
@@ -50,6 +37,11 @@ OFILES = \
 libg2c.a: $(OFILES)
 	ar rcs libg2c.a $(OFILES) 
 
+
+
+$(OBJ_DIR)/brafix.o: $(SOURCE_DIR)/brafix.cpp $(SOURCE_DIR)/brafix.h
+	@mkdir -p $(@D)
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/brafix.cpp -o $(OBJ_DIR)/brafix.o
 
 $(OBJ_DIR)/listener.o: $(SOURCE_DIR)/listener.cpp $(SOURCE_DIR)/listener.h
 	@mkdir -p $(@D)
@@ -80,7 +72,7 @@ $(OBJ_DIR)/rendertarget.o: $(SOURCE_DIR)/rendertarget.cpp $(SOURCE_DIR)/renderta
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/rendertarget.cpp -o $(OBJ_DIR)/rendertarget.o
 
 $(OBJ_DIR)/transforms.o: $(SOURCE_DIR)/transforms.cpp $(SOURCE_DIR)/transforms.h $(SOURCE_DIR)/lin/lin.h
-	@mkd	ir -p $(@D)
+	@mkdir -p $(@D)
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/transforms.cpp -o $(OBJ_DIR)/transforms.o
 
 $(OBJ_DIR)/graphics.o: $(SOURCE_DIR)/graphics.cpp $(SOURCE_DIR)/graphics.h $(SOURCE_DIR)/lin/lin.h
@@ -122,6 +114,7 @@ $(OBJ_DIR)/sprites.o: $(SOURCE_DIR)/sprites.cpp $(SOURCE_DIR)/sprites.h
 $(OBJ_DIR)/animations.o: $(SOURCE_DIR)/animations.cpp $(SOURCE_DIR)/animations.h
 	@mkdir -p $(@D)
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/animations.cpp -o $(OBJ_DIR)/animations.o
+
 
 clean:
 	-rm $(OBJ_DIR)/*.o
