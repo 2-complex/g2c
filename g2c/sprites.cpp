@@ -24,6 +24,7 @@
 
 #include <assert.h>
 
+
 using namespace std;
 
 namespace g2c {

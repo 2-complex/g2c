@@ -1,6 +1,8 @@
 
 #include "spriteenvironment.h"
 
+#include "brafix.h"
+
 using namespace std;
 
 class ShipEnvironment : public SpriteEnvironment {
@@ -8,6 +10,7 @@ public:
 	ShipEnvironment();
 
 private:
+	BValue v;
 	Sprite ship;
 	Actor enterprise;
 	

@@ -40,7 +40,7 @@ OFILES = \
 	$(OBJ_DIR)/openalplayer.o
 
 libg2c.a: $(OFILES)
-	ar rcs libg2c.a $(OFILES)
+	ar rcs libg2c.a $(OFILES) 
 
 
 $(OBJ_DIR)/listener.o: $(SOURCE_DIR)/listener.cpp $(SOURCE_DIR)/listener.h
