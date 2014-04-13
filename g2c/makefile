@@ -23,9 +23,9 @@ endif
 
 
 OFILES = \
+	$(OBJ_DIR)/util.o \
 	$(OBJ_DIR)/listener.o \
 	$(OBJ_DIR)/app.o \
-	$(OBJ_DIR)/util.o \
 	$(OBJ_DIR)/parse.o \
 	$(OBJ_DIR)/serializable.o \
 	$(OBJ_DIR)/sound.o \
