@@ -18,7 +18,6 @@ run: current
 FLAGS = -DGLUT
 
 OFILES = \
-	$(OBJ_DIR)/brafix.o \
 	$(OBJ_DIR)/util.o \
 	$(OBJ_DIR)/listener.o \
 	$(OBJ_DIR)/serializable.o \
