@@ -22,10 +22,10 @@ void TetrahedronEnvironment::init()
 
     float vertexArray[] =
     {
-        0.0, 1.0, 0.0,
+        1.0, 0.0, 0.0,
         -0.5, 0.86603, 0.0,
         -0.5, -0.86603, 0.0,
-        0.0, 0.0, 2.0
+        0.0, 0.0, 1.414
     };
 
     int indexArray[] =
