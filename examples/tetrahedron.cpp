@@ -22,10 +22,10 @@ void TetrahedronEnvironment::init()
 
     float vertexArray[] =
     {
-        1.0, 0.0, 0.0,
-        -0.5, 0.86603, 0.0,
-        -0.5, -0.86603, 0.0,
-        0.0, 0.0, 1.414
+         1.0,  0.0,     -0.25 * 1.41421,
+        -0.5,  0.86603, -0.25 * 1.41421,
+        -0.5, -0.86603, -0.25 * 1.41421,
+         0.0,  0.0,      0.75 * 1.41421
     };
 
     int indexArray[] =
@@ -43,7 +43,7 @@ void TetrahedronEnvironment::init()
     geometry.indices = indexBuffer;
 
     effect.vertexCode = 
-        "\n\n"
+        "\n"
         "uniform mat4 modelView;\n"
         "uniform mat4 projection;\n"
         "\n"
