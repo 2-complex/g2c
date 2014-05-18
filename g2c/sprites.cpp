@@ -625,7 +625,10 @@ Node* Node::findChild(const string& name) const
 
 void Node::draw() const
 {
-    drawInTree(getMatrix(), getColor());
+    if( visible() )
+    {
+        drawInTree(getMatrix(), getColor());
+    }
 }
 
 void Node::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
@@ -633,7 +636,7 @@ void Node::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
     for(vector<Node*>::const_iterator itr = children.begin(); itr!=children.end(); itr++)
     {
         Node* node = *itr;
-        
+
         if( node->visible() )
         {
             node->drawInTree(
@@ -1210,19 +1213,22 @@ void RendererGL2::drawMesh(const Mesh* mesh,
     glActiveTexture(GL_TEXTURE0 + texture->getUnit());
     glBindTexture(GL_TEXTURE_2D, texture->getIndex());
     glUniform1i(textureLocation, texture->getUnit());
-    
+
     GLuint gltype = GL_TRIANGLES;
     int dimension = 3;
-    
+
     if( mesh->elementType == Mesh::kLines )
     {
         gltype = GL_LINES;
         dimension = 2;
     }
-    
+
     glDrawElements(gltype, mesh->numberOfElements*dimension, GL_UNSIGNED_SHORT, 0);
-    
+
     glDisableVertexAttribArray(positionLocation);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glActiveTexture(GL_TEXTURE0);
     glUseProgram(0);
 }
 
@@ -1631,15 +1637,15 @@ void Actor::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 {
     Mat4 matrix(worldMatrix);
     Mat3 texMatrix;
-    
+
     if( sprite )
     {
         matrix = matrix * sprite->getOffsetMatrix(0.0, 0.0, 1.0);
         texMatrix = sprite->getTexMatrix(frame());
     }
-    
+
     Sprite::renderer->drawMesh(mesh, matrix, texMatrix, worldColor, sprite);
-    
+
     if( Sprite::drawLines )
         collisionPolygon().drawInTree(worldMatrix, worldColor);
 }
@@ -2031,7 +2037,7 @@ void World::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 {
     if( !Sprite::renderer )
     {
-        g2cerror( "Attempt to draw with no renderer world: %s\n", name.c_str() );
+        g2cerror( "Attempt to draw with no renderer. World: %s\n", name.c_str() );
         exit(0);
     }
     Node::drawInTree(worldMatrix * getMatrix(), worldColor * getColor());
