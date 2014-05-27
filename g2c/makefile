@@ -33,6 +33,7 @@ OFILES = \
 	$(OBJ_DIR)/bank.o \
 	$(OBJ_DIR)/texture.o \
 	$(OBJ_DIR)/sprites.o \
+	$(OBJ_DIR)/animations.o \
 	$(OBJ_DIR)/transforms.o \
 	$(OBJ_DIR)/graphics.o \
 	$(OBJ_DIR)/wave.o \

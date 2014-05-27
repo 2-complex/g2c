@@ -360,18 +360,18 @@ void Texture2D::initWithImageData(const GLubyte* inData,
     
     if( data )
         free(data);
-    
+
     int size = width * height * bitsPerPixel / 8;
-    data = (uint8_t*)malloc(size * sizeof(float));
-    
+    data = (uint8_t*)malloc(size * sizeof(uint8_t));
+
     if( inData )
         memcpy(data, inData, size);
     else
         memset(data, 0, size);
-    
+
     GLenum format = (bitsPerPixel == 24) ? GL_RGB : GL_RGBA;
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-    
+
     if(mipmaps)
     {
         glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
