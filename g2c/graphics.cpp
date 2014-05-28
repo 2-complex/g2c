@@ -394,12 +394,7 @@ void Effect::assume(const map<string, Value>* assumption) const
 
 bool Effect::loadShaders()
 {
-    g2clog("before glCreateProgram\n");
-    
-    g2clog("glcreateprogram = %p\n", glCreateProgram);    
-
     program = glCreateProgram();
-    g2clog("after glCreateProgram\n");
    
     const string header = 
 #if defined(ANDROID)
@@ -474,7 +469,8 @@ bool Effect::compileShader(GLuint *shader, GLenum type, const char* code)
     {
         GLchar *log = (GLchar *)malloc(logLength);
         glGetShaderInfoLog(*shader, logLength, &logLength, log);
-        g2clog("Shader compile log:\n%s", log);
+	if( logLength )
+        	g2clog("Shader compile log:\n%s", log);
         free(log);
     }
     
