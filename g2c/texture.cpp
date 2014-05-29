@@ -31,7 +31,11 @@ using namespace std;
 namespace g2c {
 
 
-Bitmap::Bitmap() : data(NULL), width(0), height(0), bitsPerPixel(32)
+Bitmap::Bitmap()
+	: data(NULL)
+	, width(0)
+	, height(0)
+	, bitsPerPixel(32)
 {
     
 }
@@ -45,10 +49,11 @@ Bitmap::Bitmap(const Bitmap& b) :
     mimmic(b);
 }
 
-void Bitmap::set(uint8_t* inData,
-                 int inWidth,
-                 int inHeight,
-                 int inBitsPerPixel)
+void Bitmap::set(
+	uint8_t* inData,
+	int inWidth,
+    int inHeight,
+    int inBitsPerPixel)
 {
     width = inWidth;
     height = inHeight;
@@ -100,7 +105,10 @@ void Bitmap::swizzleRGB()
     }
 }
 
-void Bitmap::sample(double x, double y, double* color) const
+void Bitmap::sample(
+	double x,
+	double y,
+	double* color) const
 {
 	int i0 = x;
 	int j0 = y;
@@ -474,12 +482,13 @@ void CubeMap::initWithImageData(const GLubyte* inDataPositiveX,
     }
 }
 
-void CubeMap::initWithBitmaps(const Bitmap& bitmapPositiveX,
-                              const Bitmap& bitmapNegativeX,
-                              const Bitmap& bitmapPositiveY,
-                              const Bitmap& bitmapNegativeY,
-                              const Bitmap& bitmapPositiveZ,
-                              const Bitmap& bitmapNegativeZ)
+void CubeMap::initWithBitmaps(
+	const Bitmap& bitmapPositiveX,
+	const Bitmap& bitmapNegativeX,
+	const Bitmap& bitmapPositiveY,
+	const Bitmap& bitmapNegativeY,
+	const Bitmap& bitmapPositiveZ,
+	const Bitmap& bitmapNegativeZ)
 {
     int w = bitmapPositiveX.getWidth();
     if( w != bitmapPositiveX.getWidth() || w != bitmapPositiveX.getHeight() ||

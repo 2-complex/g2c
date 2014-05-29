@@ -23,23 +23,23 @@
 #ifndef _SPRITES_
 #define _SPRITES_
 
-#include <vector>
-#include <string>
-#include <set>
-#include <map>
-
-#include "opengl.h"
-
-#include "util.h"
-#include "lin/lin.h"
-
 #include "listener.h"
 #include "parse.h"
 #include "serializable.h"
 #include "bank.h"
 #include "texture.h"
-
 #include "sound.h"
+
+#include "util.h"
+#include "lin/lin.h"
+
+#include "opengl.h"
+
+#include <vector>
+#include <string>
+#include <set>
+#include <map>
+
 
 namespace g2c {
     class Color;
@@ -173,7 +173,7 @@ namespace g2c {
         void clearTookMouseDown();
     };
     
-    /*! Mesh represents a collection of planar triangles or line segments to be drawn on the screen.
+    /*! Mesh represents a collection of triangles or line segments in 2D.
         To draw a mesh, populate positions and vertices */
     class Mesh {
     public:

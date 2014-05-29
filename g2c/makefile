@@ -9,19 +9,25 @@ SOURCE_DIR = $(G2C_DIRECTORY)/g2c
 OBJ_DIR = obj
 
 CURRENT = libg2c.a
-
 current: $(CURRENT)
 
-run: current
-	./$(CURRENT) $(CURRENTARGS)
+UNAME := $(shell uname)
 
-FLAGS = -DGLUT
+ifeq ($(UNAME), Darwin)
+	PLATFORM_BANK = $(OBJ_DIR)/macbank.o
+endif
+
+ifeq ($(UNAME), Linux)
+	PLATFORM_BANK = $(OBJ_DIR)/unixbank.o
+endif
+
 
 OFILES = \
 	$(OBJ_DIR)/util.o \
 	$(OBJ_DIR)/listener.o \
-	$(OBJ_DIR)/serializable.o \
+	$(OBJ_DIR)/app.o \
 	$(OBJ_DIR)/parse.o \
+	$(OBJ_DIR)/serializable.o \
 	$(OBJ_DIR)/sound.o \
 	$(OBJ_DIR)/player.o \
 	$(OBJ_DIR)/bank.o \
@@ -30,17 +36,12 @@ OFILES = \
 	$(OBJ_DIR)/transforms.o \
 	$(OBJ_DIR)/graphics.o \
 	$(OBJ_DIR)/wave.o \
-	$(OBJ_DIR)/unixbank.o \
+	$(PLATFORM_BANK) \
 	$(OBJ_DIR)/openalplayer.o
 
 libg2c.a: $(OFILES)
 	ar rcs libg2c.a $(OFILES) 
 
-
-
-$(OBJ_DIR)/brafix.o: $(SOURCE_DIR)/brafix.cpp $(SOURCE_DIR)/brafix.h
-	@mkdir -p $(@D)
-	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/brafix.cpp -o $(OBJ_DIR)/brafix.o
 
 $(OBJ_DIR)/listener.o: $(SOURCE_DIR)/listener.cpp $(SOURCE_DIR)/listener.h
 	@mkdir -p $(@D)
@@ -114,8 +115,8 @@ $(OBJ_DIR)/animations.o: $(SOURCE_DIR)/animations.cpp $(SOURCE_DIR)/animations.h
 	@mkdir -p $(@D)
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/animations.cpp -o $(OBJ_DIR)/animations.o
 
-
 clean:
-	-rm $(OBJ_DIR)/*.o
-	-rm libg2c.a
+	-rm -f $(OBJ_DIR)/*.o
+	-rm -f libg2c.a
+
 

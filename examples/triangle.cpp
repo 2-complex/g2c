@@ -1,8 +1,8 @@
 
 #include "environment.h"
-#include "brafix.h"
 
-class MyEnvironment : public Environment {
+class MyEnvironment : public Environment
+{
 protected:
 	void draw() const;
 };
