@@ -471,7 +471,8 @@ bool Effect::compileShader(GLuint *shader, GLenum type, const char* code)
     {
         GLchar *log = (GLchar *)malloc(logLength);
         glGetShaderInfoLog(*shader, logLength, &logLength, log);
-        g2clog("Shader compile log:\n%s", log);
+	if( logLength )
+        	g2clog("Shader compile log:\n%s", log);
         free(log);
     }
 
