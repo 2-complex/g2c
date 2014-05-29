@@ -26,7 +26,7 @@ EXES = \
 	worldfile
 
 
-LIBENVIRONMENTS = $(ENVIRONMENTS_DIR)/environments.a
+LIBENVIRONMENTS = $(ENVIRONMENTS_DIR)/libenvironments.a
 LIBG2C = $(G2C_SOURCE_DIR)/libg2c.a
 
 $(LIBG2C): force_look
@@ -44,7 +44,7 @@ $(CURRENT): $(LIBG2C) $(LIBENVIRONMENTS) $(G2C_SOURCE_DIR)/lin/lin.h $(CURRENT).
 		$(CURRENT).cpp -o $(CURRENT) \
 		$(LIBENVIRONMENTS) \
 		$(LIBG2C) \
-		$(GRAPHICS_LIBRARIES) $(AUDIO_LIBRARIES)
+		$(GRAPHICS_LIBRARIES) $(AUDIO_LIBRARIES)\
 
 clean:
 	-rm -f $(EXES)

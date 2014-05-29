@@ -345,17 +345,18 @@ void Effect::addAttributesFromProgram()
     glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxNameLength);
     glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &numberAttributes);
     char* name = new char[maxNameLength];
-    
+
     GLsizei length = 0;
-     GLint size = 0;
-     GLenum type = 0;
-    
+    GLint size = 0;
+    GLenum type = 0;
+
     for( int i = 0; i < numberAttributes; i++ )
     {
         glGetActiveAttrib(program, i, maxNameLength, &length, &size, &type, name);
         addAttribute(name);
     }
-     delete[] name;
+
+    delete[] name;
 }
 
 void Effect::addUniformsFromProgram()
@@ -376,7 +377,8 @@ void Effect::addUniformsFromProgram()
         glGetActiveUniform(program, i, maxNameLength, &length, &size, &type, name);
         addUniform(name);
     }
-     delete[] name;
+
+    delete[] name;
 }
 
 void Effect::assume(const map<string, Value>* assumption) const
@@ -394,26 +396,21 @@ void Effect::assume(const map<string, Value>* assumption) const
 
 bool Effect::loadShaders()
 {
-    g2clog("before glCreateProgram\n");
-    
-    g2clog("glcreateprogram = %p\n", glCreateProgram);    
-
     program = glCreateProgram();
-    g2clog("after glCreateProgram\n");
-   
+
     const string header = 
 #if defined(ANDROID)
         "precision mediump float;\n";
 #else
         "#ifdef GL_ES\nprecision highp float;\n#endif\n";
 #endif
-    
+
     loadVertexShader(vertexCode.c_str());
     loadFragmentShader((header+fragmentCode).c_str());
-    
+
     if (!linkProgram())
         return false;
-    
+
     return true;
 }
 
@@ -463,28 +460,29 @@ void Effect::disableEnabledAttributes() const
 bool Effect::compileShader(GLuint *shader, GLenum type, const char* code)
 {
     GLint status;
-    
+
     *shader = glCreateShader(type);
     glShaderSource(*shader, 1, &code, NULL);
     glCompileShader(*shader);
-    
+
     GLint logLength;
     glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength);
     if( logLength > 0 )
     {
         GLchar *log = (GLchar *)malloc(logLength);
         glGetShaderInfoLog(*shader, logLength, &logLength, log);
-        g2clog("Shader compile log:\n%s", log);
+	if( logLength )
+        	g2clog("Shader compile log:\n%s", log);
         free(log);
     }
-    
+
     glGetShaderiv(*shader, GL_COMPILE_STATUS, &status);
     if( !status )
     {
         glDeleteShader(*shader);
         return false;
     }
-    
+
     return true;
 }
 
@@ -565,7 +563,7 @@ void Effect::handleChild(const parse::Node* n)
     if( !(fragmentCode=="" || vertexCode=="") )
     {
 	g2clog("%s\n", fragmentCode.c_str());
-	g2clog("%s\n", vertexCode.c_str());        
+	g2clog("%s\n", vertexCode.c_str());
 	loadShaders();
     }
 }
@@ -575,17 +573,16 @@ Assumption::Assumption() : effect(NULL), active(true)
     type = "Assumption";
 }
 
-
 string Assumption::serializeElements(string indent) const
 {
     string r = Serializable::serializeElements(indent);
-    
+
     if( effect )
         r += TAB + indent + "'effect' : '" + effect->name + "',\n";
-    
+
     for(const_iterator itr = begin(); itr!=end(); itr++)
         r += TAB + indent + "'" + itr->first + "' : " + itr->second.toString() + ",\n";
-    
+
     return r;
 }
 

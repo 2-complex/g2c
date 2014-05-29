@@ -28,9 +28,6 @@
 
 namespace g2c {
 
-
-
-
 class Element : public Serializable {
 public:
 };
