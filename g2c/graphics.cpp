@@ -1405,14 +1405,18 @@ void Model::handleChild(const parse::Node* n)
             
             t->initWithParseNode(element);
             add(t, true);
-            
+
             if( elementType == "Texture2D" ||
                 elementType == "Texture" )
             {
                 if( newTexture->file != "" )
+                {
+                    printf( "something %p %p %s\n", this, newTexture, newTexture->file.c_str() );
                     bank->initTextureWithPath(newTexture, newTexture->file.c_str());
+                    printf( "something2\n" );
+                }
             }
-            
+
             if( elementType == "CubeMap" )
             {
                 if( newCubeMap->positiveXFile != "" &&
@@ -1444,6 +1448,7 @@ void Model::handleChild(const parse::Node* n)
                         negativeZBitmap);
                 }
             }
+            printf( "things2\n" );
         }
     }
 }

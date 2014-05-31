@@ -26,7 +26,7 @@ EXES = \
 	worldfile
 
 
-LIBENVIRONMENTS = $(ENVIRONMENTS_DIR)/environments.a
+LIBENVIRONMENTS = $(ENVIRONMENTS_DIR)/libenvironments.a
 LIBG2C = $(G2C_SOURCE_DIR)/libg2c.a
 
 $(LIBG2C): force_look

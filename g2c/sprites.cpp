@@ -129,29 +129,113 @@ void ColorProperty::initWithParseNode(const parse::Node* n)
 {
     VectorProperty<DoubleProperty> v;
     v.initWithParseNode(n);
-    
+
     if( v.size() > 0 )
         r = v[0]();
-    
+
     if( v.size() > 1 )
         g = v[1]();
-    
+
     if( v.size() > 2 )
         b = v[2]();
-    
+
     if( v.size() > 3 )
         a = v[3]();
 }
 
+Sampler::Sampler()
+{
+}
+
+Sampler::~Sampler()
+{
+}
+
+Mat3 Sampler::getTexMatrix(int frame) const
+{
+    return Mat3();
+}
 
 
-Sprite::Sprite() : numberOfRows(1),
-                   numberOfColumns(1),
-                   center(false),
-                   flipRows(false)
+Rectangle::Rectangle()
+    : x0(0.0)
+    , y0(0.0)
+    , x1(1.0)
+    , y1(1.0)
+{
+}
+
+Rectangle::~Rectangle()
+{
+}
+
+std::string Rectangle::serialize(std::string indent) const
+{
+    VectorProperty<DoubleProperty> v;
+    v.push_back(x0);
+    v.push_back(y0);
+    v.push_back(x1);
+    v.push_back(y1);
+    return flattenWhitespace(v.serialize(indent).c_str());
+}
+
+void Rectangle::initWithParseNode(const parse::Node* n)
+{
+    VectorProperty<DoubleProperty> v;
+    v.initWithParseNode(n);
+
+    if( v.size() > 0 )
+        x0 = v[0]();
+
+    if( v.size() > 1 )
+        y0 = v[1]();
+
+    if( v.size() > 2 )
+        x1 = v[2]();
+
+    if( v.size() > 3 )
+        y1 = v[3]();
+}
+
+RectangleList::RectangleList()
+{
+    type = "RectangleList";
+    addProperty("Rectangles", Rectangles);
+}
+
+RectangleList::~RectangleList()
+{
+}
+
+Mat3 RectangleList::getTexMatrix(int frame) const
+{
+    int n = Rectangles.size();
+
+    if( frame == 0 )
+    {
+        g2cerror("RectangleList used with no Rectangles.  Returning idenitity matrix.");
+        return Mat3();
+    }
+
+    frame = ( ( frame % n ) + n ) % n;
+    const Rectangle& Rectangle( Rectangles[frame] );
+
+    // Matrix that transforms the unit square to the Rectangle.
+    return Mat3(
+        Rectangle.x1 - Rectangle.x0, 0.0, 0.0,
+        0.0, Rectangle.y1 - Rectangle.y0, 0.0,
+        Rectangle.x0, Rectangle.y0, 1.0 );
+}
+
+Sprite::Sprite()
+    : sampler(NULL)
+    , numberOfRows(1)
+    , numberOfColumns(1)
+    , center(false)
+    , flipRows(false)
 {
     type = "Sprite";
-    
+
     addProperty("file", file);
     addProperty("numberOfRows", numberOfRows);
     addProperty("numberOfColumns", numberOfColumns);
@@ -168,11 +252,11 @@ Mat4 Sprite::getOffsetMatrix(double x, double y, double k) const
 {
     double w = width / numberOfColumns(),
            h = height / numberOfRows();
-    
+
     Vec2 offset(x, y);
     if( center() )
         offset -= 0.5 * k * Vec2(w, h);
-    
+
     return Mat4(
         k*w, 0.0, 0.0, 0.0,
         0.0, k*h, 0.0, 0.0,
@@ -184,16 +268,17 @@ Mat3 Sprite::getTexMatrix(int frame) const
 {
     int c = numberOfColumns();
     int r = numberOfRows();
-    
+
     double i = (frame % c + c) % c,
            j = ((frame / c) % r + r) % r;
-    
+
     if( flipRows() )
         j = numberOfRows() - j - 1;
-    
-    return Mat3(1.0 / c, 0.0, 0.0,
-                 0.0, 1.0 / r, 0.0,
-                i / c, j / r, 1.0);
+
+    return Mat3(
+        1.0 / c, 0.0     , 0.0,
+        0.0    , 1.0 / r , 0.0,
+        i / c  , j / r   , 1.0 );
 }
 
 void Sprite::handleChild(const parse::Node* n)
@@ -316,7 +401,7 @@ void Font::drawString(const Mat4& M,
     }
 }
 
-Polygon Font::stringRectangle(double k, const char* s, const string& justification) const
+Polygon Font::stringRectangleangle(double k, const char* s, const string& justification) const
 {
     double left = 0.0, right = 0.0, bottom = 0.0,
         top = k * (lineHeight + lineBottom);
@@ -848,6 +933,7 @@ Mat4 Node::getWorldMatrix() const
 {
     if(parent)
         return parent->getWorldMatrix() * getMatrix();
+
     return Mat4();
 }
 
@@ -865,7 +951,7 @@ Actor* Node::actorInClick(const Mat4& worldMatrix, const Vec2& C)
     
     for(vector<Node*>::reverse_iterator itr = children.rbegin(); itr!=children.rend(); itr++)
     {
-        Actor* n = (*itr)->actorInClick(worldMatrix * n->getMatrix(), C);
+        Actor* n = (*itr)->actorInClick(worldMatrix * getMatrix(), C);
         if( n )
             return n;
     }
@@ -1062,14 +1148,14 @@ void RendererGL2::init()
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), quad->positions, GL_STREAM_DRAW);
-    
+
     glGenBuffers(1, &indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(short), quad->indices, GL_STREAM_DRAW);
-    
+
     glGenBuffers(1, &polygonBuffer);
     glGenBuffers(1, &polygonIndexBuffer);
-    
+
     const char* vertexCode = "\n"
         "    attribute vec3 position;\n"
         "    uniform mat4 matrix;\n"
@@ -1929,11 +2015,11 @@ Polygon Text::collisionPolygon() const
     }
     if( font )
     {
-        R = (font->stringRectangle(k, s.c_str(), justification) + position);
+        R = (font->stringRectangleangle(k, s.c_str(), justification) + position);
     }
     else
     {
-        g2cerror( "Attempt to compute string rectangle with no font.\n" );
+        g2cerror( "Attempt to compute string Rectangleangle with no font.\n" );
         exit(0);
     }
     
