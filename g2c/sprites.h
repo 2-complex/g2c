@@ -370,7 +370,7 @@ namespace g2c {
         explicit Actor(Sprite* insprite);
         virtual ~Actor();
         
-        Sprite* sprite;
+        Sampler* sprite;
         Mesh* mesh;
         
         /*! The x coordinate where to draw on the screen.  Modifying x changes position. */
@@ -436,7 +436,7 @@ namespace g2c {
         
         virtual std::string serializeElements(std::string indent) const;
         virtual void handleChild(const parse::Node* n);
-        
+
         virtual Polygon collisionPolygon() const;
         
         // Methods of listener.
@@ -450,9 +450,9 @@ namespace g2c {
     public:
         Integer();
         Integer(Font* infont, int* inptr);
-        
+
         int* ptr;
-        
+
         /*! Draws an image of the c++ string s using the characters in font. */
         virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
     };
@@ -467,7 +467,14 @@ namespace g2c {
         Sampler();
         virtual ~Sampler();
 
-        virtual Mat3 getTexMatrix(int frame = 0) const;
+        virtual Mat4 getOffsetMatrix(double x = 0.0, double y = 0.0, double k = 1.0) const;
+        virtual Mat3 getTexMatrix(int frame = 0) const= 0;
+
+        virtual double getWidth() const= 0;
+        virtual double getHeight() const= 0;
+        virtual bool getCenter() const= 0;
+
+        virtual Polygon getCollisionPolygon() const = 0;
     };
 
 
@@ -528,8 +535,11 @@ namespace g2c {
         Sampler* sampler;
         static Renderer* renderer;
 
-        virtual Mat4 getOffsetMatrix(double x = 0.0, double y = 0.0, double k = 1.0) const;
         virtual Mat3 getTexMatrix(int frame = 0) const;
+        virtual double getWidth() const;
+        virtual double getHeight() const;
+        virtual bool getCenter() const;
+        virtual Polygon getCollisionPolygon() const;
 
     protected:
         virtual std::string serializeElements(std::string indent = "") const;

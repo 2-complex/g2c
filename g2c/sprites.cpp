@@ -111,7 +111,6 @@ void Vec3Property::initWithParseNode(const parse::Node* n)
 }
 
 
-
 ColorProperty::ColorProperty() {}
 ColorProperty::ColorProperty(const Color& c) : Color(c) {}
 
@@ -151,11 +150,21 @@ Sampler::~Sampler()
 {
 }
 
-Mat3 Sampler::getTexMatrix(int frame) const
+Mat4 Sampler::getOffsetMatrix(double x, double y, double k) const
 {
-    return Mat3();
-}
+    double w = getWidth(),
+           h = getHeight();
 
+    Vec2 offset(x, y);
+    if( getCenter() )
+        offset -= 0.5 * k * Vec2(w, h);
+
+    return Mat4(
+        k*w, 0.0, 0.0, 0.0,
+        0.0, k*h, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        offset.x, offset.y, 0.0, 1.0);
+}
 
 Rectangle::Rectangle()
     : x0(0.0)
@@ -248,22 +257,6 @@ Sprite::~Sprite()
 {
 }
 
-Mat4 Sprite::getOffsetMatrix(double x, double y, double k) const
-{
-    double w = width / numberOfColumns(),
-           h = height / numberOfRows();
-
-    Vec2 offset(x, y);
-    if( center() )
-        offset -= 0.5 * k * Vec2(w, h);
-
-    return Mat4(
-        k*w, 0.0, 0.0, 0.0,
-        0.0, k*h, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0,
-        offset.x, offset.y, 0.0, 1.0);
-}
-
 Mat3 Sprite::getTexMatrix(int frame) const
 {
     int c = numberOfColumns();
@@ -279,6 +272,26 @@ Mat3 Sprite::getTexMatrix(int frame) const
         1.0 / c, 0.0     , 0.0,
         0.0    , 1.0 / r , 0.0,
         i / c  , j / r   , 1.0 );
+}
+
+double Sprite::getWidth() const
+{
+    return width / numberOfColumns();
+}
+
+double Sprite::getHeight() const
+{
+    return height / numberOfRows();
+}
+
+bool Sprite::getCenter() const
+{
+    return center;
+}
+
+Polygon Sprite::getCollisionPolygon() const
+{
+    return polygon;
 }
 
 void Sprite::handleChild(const parse::Node* n)
@@ -1764,22 +1777,24 @@ Polygon Actor::collisionPolygon() const
     }
     else if( sprite )
     {
-        double w = k() * sprite->width / sprite->numberOfColumns(),
-               h = k() * sprite->height / sprite->numberOfRows();
-        
-        if( !sprite->polygon.empty() )
+        double w = k() * sprite->getWidth(),
+               h = k() * sprite->getHeight();
+
+        Polygon samplerPoly( sprite->getCollisionPolygon() );
+
+        if( !samplerPoly.empty() )
         {
-            R = k() * sprite->polygon + position;
-            if( sprite->center() )
+            R = k() * samplerPoly + position;
+            if( sprite->getCenter() )
                 R -= 0.5 * Vec2(w, h);
         }
         else
-        {    
+        {
             double x0 = position.x, x1 = position.x+w, y0 = position.y, y1 = position.y+h;
             
             R.add(x0, y0).add(x1, y0).add(x1, y1).add(x0, y1);
             
-            if( sprite->center() )
+            if( sprite->getCenter() )
                 R -= 0.5 * Vec2(w, h);
         }
     }
