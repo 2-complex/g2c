@@ -186,13 +186,9 @@ void MacFileSystemBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
 
 void MacBank::initTextureWithPath(Texture2D* texture, const char* path)
 {
-    printf( "initTextureWithPath 0\n" );
     Bitmap bitmap;
-    printf( "initTextureWithPath 1\n" );
     initBitmapWithPath(&bitmap, path);
-    printf( "initTextureWithPath 3\n" );
     texture->initWithBitmap(bitmap);
-    printf( "initTextureWithPath 4\n" );
 }
 
 void MacBank::initSoundWithPath(Sound* sound, const char* path)

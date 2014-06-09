@@ -394,12 +394,7 @@ void Effect::assume(const map<string, Value>* assumption) const
 
 bool Effect::loadShaders()
 {
-    g2clog("before glCreateProgram\n");
-    
-    g2clog("glcreateprogram = %p\n", glCreateProgram);    
-
     program = glCreateProgram();
-    g2clog("after glCreateProgram\n");
    
     const string header = 
 #if defined(ANDROID)
@@ -1233,7 +1228,7 @@ void Model::resolveNames()
             }
         }
     }
-    
+
     // Iterate through geometries.  Geometries have an index buffer and a map to fields.  Each 
     // field has a name of a buffer that needs to be resolved.
     for(map<string, Geometry*>::iterator itr = geometries.begin(); itr!=geometries.end(); itr++)
@@ -1374,35 +1369,35 @@ void Model::handleChild(const parse::Node* n)
         {
             parse::Node* element = *itr;
             string elementType = getType(element);
-            
+
             Texture2D* newTexture = NULL;
             CubeMap* newCubeMap = NULL;
             Element* t = NULL;
-            
+
             if( elementType == "Texture" || elementType == "Texture2D" )
                 t = newTexture = new Texture2D;
-            
+
             if( elementType == "Assumption" )
                 t = new Assumption;
-            
+
             if( elementType == "Buffer" )
                 t = new Buffer;
-            
+
             if( elementType == "CubeMap" )
                 t = newCubeMap = new CubeMap;
-            
+
             if( elementType == "IndexBuffer" )
                 t = new IndexBuffer;
-            
+
             if( elementType == "Effect" )
                 t = new Effect;
-            
+
             if( elementType == "Geometry" )
                 t = new Geometry;
-            
+
             if( elementType == "Shape" )
                 t = new Shape;
-            
+
             t->initWithParseNode(element);
             add(t, true);
 
@@ -1411,9 +1406,7 @@ void Model::handleChild(const parse::Node* n)
             {
                 if( newTexture->file != "" )
                 {
-                    printf( "something %p %p %s\n", this, newTexture, newTexture->file.c_str() );
                     bank->initTextureWithPath(newTexture, newTexture->file.c_str());
-                    printf( "something2\n" );
                 }
             }
 
@@ -1448,7 +1441,6 @@ void Model::handleChild(const parse::Node* n)
                         negativeZBitmap);
                 }
             }
-            printf( "things2\n" );
         }
     }
 }
