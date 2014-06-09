@@ -144,6 +144,8 @@ void ColorProperty::initWithParseNode(const parse::Node* n)
 
 Sampler::Sampler()
 {
+    type = "Sampler";
+    addProperty("file", file);
 }
 
 Sampler::~Sampler()
@@ -245,7 +247,6 @@ Sprite::Sprite()
 {
     type = "Sprite";
 
-    addProperty("file", file);
     addProperty("numberOfRows", numberOfRows);
     addProperty("numberOfColumns", numberOfColumns);
     addProperty("center", center);
@@ -704,10 +705,10 @@ void Node::removeAndDelete(Node* t)
     delete t;
 }
 
-void Node::removeSprite(const Sprite* s)
+void Node::removeSampler(const Sampler* sampler)
 {    
     for(vector<Node*>::const_iterator itr = children.begin(); itr!=children.end(); itr++)
-        (*itr)->removeSprite(s);
+        (*itr)->removeSampler(sampler);
 }
 
 Node* Node::findChild(const string& name) const
@@ -1680,14 +1681,23 @@ Polygon::DrawType Polygon::getDrawType() const
     return drawType;
 }
 
-Actor::Actor() : sprite(NULL), mesh(NULL), x(position.x), y(position.y)
+Actor::Actor()
+    : sampler(NULL)
+    , mesh(NULL)
+    , sprite(sampler)
+    , x(position.x)
+    , y(position.y)
 {
     init();
 }
 
-Actor::Actor(Sprite* insprite) : mesh(NULL), x(position.x), y(position.y)
+Actor::Actor(Sampler* insampler)
+    : mesh(NULL)
+    , sprite(sampler)
+    , x(position.x)
+    , y(position.y)
 {
-    sprite = insprite;
+    sampler = insampler;
     init();
 }
 
@@ -1710,7 +1720,7 @@ void Actor::init()
     addProperty("rotation", rotation);
     addProperty("frame", frame);
     addProperty("color", color);
-    addProperty("spriteName", spriteName);
+    addProperty("samplerName", samplerName);
 }
 
 Mat4 Actor::getMatrix() const
@@ -1724,12 +1734,12 @@ Mat4 Actor::getMatrix() const
                  x, y, 0, 1);
 }
 
-void Actor::removeSprite(const Sprite* s)
+void Actor::removeSampler(const Sampler* s)
 {
-    if( sprite == s )
-        sprite = NULL;
+    if( sampler == s )
+        sampler = NULL;
     
-    Node::removeSprite(s);
+    Node::removeSampler(s);
 }
 
 void Actor::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
@@ -1737,33 +1747,33 @@ void Actor::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
     Mat4 matrix(worldMatrix);
     Mat3 texMatrix;
 
-    if( sprite )
+    if( sampler )
     {
-        matrix = matrix * sprite->getOffsetMatrix(0.0, 0.0, 1.0);
-        texMatrix = sprite->getTexMatrix(frame());
+        matrix = matrix * sampler->getOffsetMatrix(0.0, 0.0, 1.0);
+        texMatrix = sampler->getTexMatrix(frame());
     }
 
-    Sprite::renderer->drawMesh(mesh, matrix, texMatrix, worldColor, sprite);
+    Sprite::renderer->drawMesh(mesh, matrix, texMatrix, worldColor, sampler);
 
     if( Sprite::drawLines )
         collisionPolygon().drawInTree(worldMatrix, worldColor);
 }
 
 
-map<Actor*, string> gActorToSpriteName;
-map<Text*, string> gTextToFontName;
+static map<Actor*, string> gActorToSamplerName;
+static map<Text*, string> gTextToFontName;
 
 void Actor::handleChild(const parse::Node* n)
 {
     Node::handleChild(n);
-    
+
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if(value)
     {
-        if(n_name == "spriteName")
-            gActorToSpriteName[this] = value->data.s;
+        if(n_name == "samplerName")
+            gActorToSamplerName[this] = value->data.s;
     }
 }
 
@@ -1775,17 +1785,17 @@ Polygon Actor::collisionPolygon() const
     {
         R = k() * polygon + position;
     }
-    else if( sprite )
+    else if( sampler )
     {
-        double w = k() * sprite->getWidth(),
-               h = k() * sprite->getHeight();
+        double w = k() * sampler->getWidth(),
+               h = k() * sampler->getHeight();
 
-        Polygon samplerPoly( sprite->getCollisionPolygon() );
+        Polygon samplerPoly( sampler->getCollisionPolygon() );
 
         if( !samplerPoly.empty() )
         {
             R = k() * samplerPoly + position;
-            if( sprite->getCenter() )
+            if( sampler->getCenter() )
                 R -= 0.5 * Vec2(w, h);
         }
         else
@@ -1794,7 +1804,7 @@ Polygon Actor::collisionPolygon() const
             
             R.add(x0, y0).add(x1, y0).add(x1, y1).add(x0, y1);
             
-            if( sprite->getCenter() )
+            if( sampler->getCenter() )
                 R -= 0.5 * Vec2(w, h);
         }
     }
@@ -1818,29 +1828,32 @@ Actor* Actor::actorInClick(const Mat4& worldMatrix, const Vec2& C)
     return NULL;
 }
 
-Button::Button() : baseFrame(0),
-                   depressed(false),
-                   handler(NULL),
-                   enabled(true)
+Button::Button()
+    : baseFrame(0)
+    , depressed(false)
+    , handler(NULL)
+    , enabled(true)
 {
     type = "Button";
 }
 
-Button::Button(Sprite* insprite) : Actor(insprite),
-                                   baseFrame(0),
-                                   depressed(false),
-                                   handler(NULL),
-                                   enabled(true)
+Button::Button(Sampler* insampler)
+    : Actor(insampler)
+    , baseFrame(0)
+    , depressed(false)
+    , handler(NULL)
+    , enabled(true)
 {
     type = "Button";
     frame = 0;
 }
 
-Button::Button(Sprite* insprite, int baseFrame) : Actor(insprite),
-                                                  baseFrame(baseFrame),
-                                                  depressed(false),
-                                                  handler(NULL),
-                                                  enabled(true)
+Button::Button(Sampler* insampler, int baseFrame)
+    : Actor(insampler)
+    , baseFrame(baseFrame)
+    , depressed(false)
+    , handler(NULL)
+    , enabled(true)
 {
     type = "Button";
     frame = baseFrame;
@@ -1848,9 +1861,9 @@ Button::Button(Sprite* insprite, int baseFrame) : Actor(insprite),
 
 void Button::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 {
-    if( !sprite )
+    if( !sampler )
     {
-        g2cerror( "Button %s drawing with null sprite.\n", name.c_str() );
+        g2cerror( "Button %s drawing with null sampler.\n", name.c_str() );
         exit(0);
     }
     
@@ -2089,10 +2102,10 @@ World::World() : bank(NULL), soundInitted(false)
     context = new Context(player);
     context->makeCurrent();
     destroySoundQueue();
-    
+
     type = "World";
-    
-    addProperty("sprites", sprites);
+
+    addProperty("samplers", samplers);
     addProperty("sounds", sounds);
 }
 
@@ -2100,10 +2113,10 @@ World::~World()
 {
     if( !soundInitted )
         delete player;
-    
+
     delete context;
 
-    for(vector<Sprite*>::iterator itr = sprites.begin(); itr!=sprites.end(); itr++)
+    for(vector<Sampler*>::iterator itr = samplers.begin(); itr!=samplers.end(); itr++)
         delete *itr;
 
     for(vector<Sound*>::iterator itr = sounds.begin(); itr!=sounds.end(); itr++)
@@ -2159,24 +2172,24 @@ void World::resize(int width, int height)
         -1.0, -1.0, 0.0, 1.0);
 }
 
-void World::addSprite(Sprite* sprite)
+void World::addSampler(Sampler* sampler)
 {
-    sprites.push_back(sprite);
+    samplers.push_back(sampler);
 }
 
-void World::removeSprite(const Sprite* sprite)
+void World::removeSampler(const Sampler* sampler)
 {
-    int n = sprites.size();
+    int n = samplers.size();
     int j = 0;
     for(int i = 0; i < n; i++)
-        if(sprites[i] != sprite)
+        if(samplers[i] != sampler)
         {
-            sprites[j] = sprites[i];
+            samplers[j] = samplers[i];
             j++;
         }
-    sprites.resize(j);
+    samplers.resize(j);
     
-    Node::removeSprite(sprite);
+    Node::removeSampler(sampler);
 }
 
 bool World::mouseDown(const Vec2& C)
@@ -2198,35 +2211,34 @@ void World::initWithPath(const char* path)
 
 void World::initWithParseNode(const parse::Node* n)
 {
-    gActorToSpriteName.clear();
+    gActorToSamplerName.clear();
     gTextToFontName.clear();
-    
+
     Node::initWithParseNode(n);
-    
-    updateSpriteMap();
+
+    updateSamplerMap();
     updateSoundMap();
-    
     updateNodeMap();
-    
-    for(map<Actor*, string>::iterator itr = gActorToSpriteName.begin();
-        itr != gActorToSpriteName.end();
+
+    for(map<Actor*, string>::iterator itr = gActorToSamplerName.begin();
+        itr != gActorToSamplerName.end();
         itr++)
     {
-        const string& spriteName(itr->second);
-        if( spriteName != "" )
+        const string& samplerName(itr->second);
+        if( samplerName != "" )
         {
-            map<string, Sprite*>::iterator mitr = spriteMap.find(spriteName);
-            if( mitr != spriteMap.end() )
-                itr->first->sprite = mitr->second;
+            map<string, Sampler*>::iterator mitr = samplerMap.find(samplerName);
+            if( mitr != samplerMap.end() )
+                itr->first->sampler = mitr->second;
             else
             {
-                g2cerror( "Actor %s requested sprite not found: %s\n",
-                        itr->first->name.c_str(), spriteName.c_str() );
+                g2cerror( "Actor %s requested sampler not found: %s\n",
+                    itr->first->name.c_str(), samplerName.c_str() );
                 exit(0);
             }
         }
     }
-    
+
     for(map<Text*, string>::iterator itr = gTextToFontName.begin();
         itr != gTextToFontName.end();
         itr++)
@@ -2234,20 +2246,20 @@ void World::initWithParseNode(const parse::Node* n)
         const string& fontName(itr->second);
         if( fontName != "" )
         {
-            map<string, Sprite*>::iterator mitr = spriteMap.find(fontName);
-            if( mitr != spriteMap.end() )
+            map<string, Sampler*>::iterator mitr = samplerMap.find(fontName);
+            if( mitr != samplerMap.end() )
                 itr->first->font = (Font*)(mitr->second);
         }
     }
 }
 
-void World::updateSpriteMap()
+void World::updateSamplerMap()
 {
-    spriteMap.clear();
-    for(vector<Sprite*>::iterator itr = sprites.begin(); itr!=sprites.end(); itr++)
+    samplerMap.clear();
+    for(vector<Sampler*>::iterator itr = samplers.begin(); itr!=samplers.end(); itr++)
     {
-        Sprite* sprite = *itr;
-        spriteMap[sprite->name] = sprite;
+        Sampler* sampler = *itr;
+        samplerMap[sampler->name] = sampler;
     }
 }
 
@@ -2282,35 +2294,40 @@ void World::handleChild(const parse::Node* n)
     
     if( value )
     {
-        if( n_name == "sprites" )
+        if( n_name == "samplers" )
         {
             for(vector<parse::Node*>::const_iterator itr = value->children.begin();
                 itr!=value->children.end();
                 itr++)
             {
                 string type = getType(*itr);
-                Sprite* sprite = NULL;
-                
-                if(type=="Sprite")
-                    sprite = new Sprite();
-                else if(type == "Font")
-                    sprite = new Font();
+                Sampler* sampler = NULL;
+
+                if( type == "Sprite" )
+                {
+                    sampler = new Sprite();
+                }
+                else if( type == "Font" )
+                {
+                    sampler = new Font();
+                }
                 else
                 {
-                    g2cerror("Object in sprite list must be type Sprite or Font.\n");
+                    g2cerror("Object in sampler list must be type Sprite or Font.\n");
                     exit(0);
                 }
-                
-                if( sprite )
+
+                if( sampler )
                 {
-                    sprite->initWithParseNode(*itr);
-                    sprites.push_back(sprite);
-                    deleteResources.push_back(sprite);
-                    
-                    bank->initTextureWithPath(sprite, sprite->file().c_str());
+                    sampler->initWithParseNode(*itr);
+
+                    samplers.push_back(sampler);
+                    deleteResources.push_back(sampler);
+
+                    bank->initTextureWithPath(sampler, sampler->file().c_str());
                 }
             }
-            
+
             handled = true;
         }
         
@@ -2354,7 +2371,7 @@ void World::clear()
 {
     clearChildren();
     
-    sprites.clear();
+    samplers.clear();
     sounds.clear();
     
     for( vector<Serializable*>::iterator itr = deleteResources.begin();
@@ -2410,10 +2427,10 @@ Node* World::getNode(const string& name)
     return NULL;
 }
 
-Sprite* World::getSprite(const string& name)
+Sampler* World::getSampler(const string& name)
 {
-    map<string, Sprite*>::iterator itr = spriteMap.find(name);
-    if( itr != spriteMap.end() )
+    map<string, Sampler*>::iterator itr = samplerMap.find(name);
+    if( itr != samplerMap.end() )
         return itr->second;
     return NULL;
 }
