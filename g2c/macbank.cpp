@@ -62,29 +62,13 @@ void MacBank::initDataWithPath(Data* data, const char* path)
 
 void MacBank::initSerializableWithPath(Serializable* s, const char* path)
 {
-    string fullpath = base_path + directory + path;
-    
-    FILE* fp = fopen(fullpath.c_str(), "r");
-    if( !fp )
-    {
-        g2cerror( "serializable file not found: %s\n", fullpath.c_str() );
-        exit(0);
-    }
-    
-    fseek(fp, 0, SEEK_END);
-    int size = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-    char* data = (char*)malloc(size+1);
-    data[size] = 0;
-    fread(data, 1, size, fp);
-    fclose(fp);
-    
+    Data data;
+    initDataWithPath(&data, path);
+
     string old_directory = directory;
     directory += directoryOfPath(path);
-    s->deserialize(data);
+    s->deserialize((char*)data.array());
     directory = old_directory;
-    
-    free(data);
 }
 
 void MacBank::writeSerializableToPath(const Serializable* s, const char* path)
