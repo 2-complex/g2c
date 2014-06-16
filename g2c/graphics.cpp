@@ -347,15 +347,15 @@ void Effect::addAttributesFromProgram()
     char* name = new char[maxNameLength];
     
     GLsizei length = 0;
-     GLint size = 0;
-     GLenum type = 0;
+    GLint size = 0;
+    GLenum type = 0;
     
     for( int i = 0; i < numberAttributes; i++ )
     {
         glGetActiveAttrib(program, i, maxNameLength, &length, &size, &type, name);
         addAttribute(name);
     }
-     delete[] name;
+    delete[] name;
 }
 
 void Effect::addUniformsFromProgram()
@@ -421,7 +421,7 @@ void Effect::bindAttributeToField(const string& name, const Field& field) const
         exit(0);
     }
     glBindBuffer(GL_ARRAY_BUFFER, field.buffer->index);
-    
+
     map<string, GLint>::const_iterator itr = attributeLocationMap.find(name);
     if(itr == attributeLocationMap.end())
     {
@@ -543,25 +543,23 @@ string Effect::serializeElements(string indent) const
 void Effect::handleChild(const parse::Node* n)
 {
     Serializable::handleChild(n);
-    
+
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if( n_name == "vertexCode" )
     {
         vertexCode = value->data.s;
     }
-    
+
     if( n_name == "fragmentCode" )
     {
         fragmentCode = value->data.s;
     }
-    
+
     if( !(fragmentCode=="" || vertexCode=="") )
     {
-	g2clog("%s\n", fragmentCode.c_str());
-	g2clog("%s\n", vertexCode.c_str());        
-	loadShaders();
+        loadShaders();
     }
 }
 
@@ -1041,15 +1039,15 @@ void Shape::draw() const
 {
     if(!visible)
         return;
-    
+
     if(!geometry)
     {
         g2cerror( "Shape drawn with no geometry.\n" );
         exit(0);
     }
-    
+
     const Effect* effect = NULL;
-    
+
     // Search through assumptions looking for effect.
     for(list<Assumption*>::const_reverse_iterator itr = assumptions.rbegin();
         itr!=assumptions.rend();
@@ -1061,17 +1059,17 @@ void Shape::draw() const
             break;
         }
     }
-    
+
     // If we didn't find an effect, bail.
     if(!effect)
     {
         g2cerror( "Shape %s drawn with no effect.\n", name.c_str() );
         exit(0);
     }
-    
+
     // If we did find an effect, use it.
     effect->use();
-    
+
     // Iterate through the assumptions and assume the uniforms in them.
     for(list<Assumption*>::const_iterator itr = assumptions.begin();
         itr!=assumptions.end();
@@ -1080,11 +1078,11 @@ void Shape::draw() const
         if( (*itr)->active )
             effect->assume(*itr);
     }
-    
+
     geometry->bindAttributes(effect);
     geometry->draw();
     effect->disableEnabledAttributes();
-    
+
     glUseProgram(0);
 }
 
