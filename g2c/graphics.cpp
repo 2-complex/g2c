@@ -355,6 +355,7 @@ void Effect::addAttributesFromProgram()
         glGetActiveAttrib(program, i, maxNameLength, &length, &size, &type, name);
         addAttribute(name);
     }
+
     delete[] name;
 }
 
@@ -363,20 +364,21 @@ void Effect::addUniformsFromProgram()
     int maxNameLength, numberUniforms;
     glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxNameLength);
     glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &numberUniforms);
-    
+
     char* name = new char[maxNameLength+1];
     memset(name, 0, maxNameLength+1);
-    
+
     GLsizei length = 0;
-     GLint size = 0;
-     GLenum type = 0;
-    
+    GLint size = 0;
+    GLenum type = 0;
+
     for( int i = 0; i < numberUniforms; i++ )
     {
         glGetActiveUniform(program, i, maxNameLength, &length, &size, &type, name);
         addUniform(name);
     }
-     delete[] name;
+
+    delete[] name;
 }
 
 void Effect::assume(const map<string, Value>* assumption) const
@@ -639,10 +641,11 @@ void Assumption::handleChild(const parse::Node* n)
             break;
             
             case 16:
-                (*this)[n_name] = Mat4(v[0], v[1], v[2], v[3],
-                                       v[4], v[5], v[6], v[7],
-                                       v[8], v[9], v[10], v[11],
-                                       v[12], v[13], v[14], v[15]);
+                (*this)[n_name] = Mat4(
+                    v[0], v[1], v[2], v[3],
+                    v[4], v[5], v[6], v[7],
+                    v[8], v[9], v[10], v[11],
+                    v[12], v[13], v[14], v[15]);
             break;
             
             default:
@@ -1151,7 +1154,7 @@ void Model::draw() const
 Model& Model::add(Element* element, bool flagForDelete)
 {
     elements.push_back(element);
-    
+
     if( element->type == "Effect" )
         effects[element->name] = (Effect*)element;
     else if( element->type == "Assumption" )
@@ -1171,10 +1174,10 @@ Model& Model::add(Element* element, bool flagForDelete)
         g2cerror( "Element not inserted" );
         exit(0);
     }
-    
+
     if(flagForDelete)
         deleteMe.insert(element);
-    
+
     return *this;
 }
 
@@ -1423,7 +1426,7 @@ void Model::handleChild(const parse::Node* n)
                            negativeYBitmap,
                            positiveZBitmap,
                            negativeZBitmap;
-                    
+
                     bank->initBitmapWithPath(&positiveXBitmap, newCubeMap->positiveXFile.c_str());
                     bank->initBitmapWithPath(&negativeXBitmap, newCubeMap->negativeXFile.c_str());
                     bank->initBitmapWithPath(&positiveYBitmap, newCubeMap->positiveYFile.c_str());

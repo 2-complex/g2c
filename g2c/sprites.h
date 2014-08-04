@@ -331,6 +331,7 @@ namespace g2c {
         void reverse();
         void setVertices(const std::vector<Vec2>& p);
         std::vector<Vec2> getVertices() const;
+        std::vector<int> getTriangleIndices() const;
         
         DrawType getDrawType() const;
         void setDrawType(DrawType inDrawType);

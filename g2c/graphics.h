@@ -333,28 +333,28 @@ friend class Field;
 public:
     Model();
     virtual ~Model();
-    
+
     Bank* bank;
-    
+
     /*! Draws all the Shapes in the model.*/
     void draw() const;
-    
+
     /*! Add an Element to the model.  Passing true for flagForDelete also adds the
         element to an internal list of Elements to be deleted when the Model is
         deleted.*/
     Model& add(Element* element, bool flagForDelete = false);
-    
+
     /*! Add an Element to the model.  Passing true for flagForDelete also adds the
         element to an internal list of Elements to be deleted when the Model is
         deleted.*/
     Model& add(const Model& element, bool flagForDelete = false);
-    
+
     void makeMaps();
     void compileEffects();
     void resolveNames();
-    
+
     std::vector<std::string> include;
-    
+
     std::map<std::string, Texture*> textures;
     std::map<std::string, Assumption*> assumptions;
     std::map<std::string, Effect*> effects;
@@ -362,11 +362,11 @@ public:
     std::map<std::string, IndexBuffer*> indexBuffers;
     std::map<std::string, Geometry*> geometries;
     std::map<std::string, Shape*> shapes;
-    
+
 protected:
     std::set<Element*> deleteMe;
     std::vector<Element*> elements;
-    
+
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void deserialize(const std::string& s);
     virtual void handleChild(const parse::Node* n);

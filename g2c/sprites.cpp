@@ -298,7 +298,7 @@ Polygon Sprite::getCollisionPolygon() const
 void Sprite::handleChild(const parse::Node* n)
 {
     string n_name = n->data.s;
-    parse::Node* value = n->data.value;
+    // parse::Node* value = n->data.value;
     
     Serializable::handleChild(n);
 }
@@ -1564,36 +1564,36 @@ void Polygon::triangulate() const
     // This algorithm runs in worst case O(n^3).
     int n = size();
     vector<int> p(n);
-    
+
     int i = 0, k = 0;
-    
+
     // Cache the indices of the polygon.
     for( i = 0; i < n; i++ )
         p[i] = i;
-    
+
     // Iterate through the indices.
     for( i = 0; i < n && n > 2; i++ )
     {
         // Consider triangle i, i+1, i+2 candidate for being an ear.
         const Vec2 &a(vertices[p[i]]), &b(vertices[p[(i+1) % n]]), &c(vertices[p[(i+2) % n]]);
         Mat2 T(b-a, c-a);
-        
+
         // If it's going clockwise, it's not an ear.
         if( T.det() < 0.0 )
             continue;
-        
+
         // If another point of the polygon is inside, it's not an ear.
         bool empty = true;
         for( int j = (i+3)%n; j!=i; j=(j+1)%n )
         {
-            Vec2 v = T * vertices[p[j]] + a;
+            Vec2 v = T.inverse() * (vertices[p[j]] - a);
             if( v.x > 0.0 && v.y > 0.0 && v.y + v.x < 1.0 )
             {
                 empty = false;
                 break;
             }
         }
-        
+
         // If empty is true, at this point, it is an ear, and we remove the
         // middle point from p, and add the triangle to indices.
         if( empty )
@@ -1609,6 +1609,62 @@ void Polygon::triangulate() const
             n--;
         }
     }
+}
+
+vector<int> Polygon::getTriangleIndices() const
+{
+    vector<int> indices;
+
+    // This algorithm runs in worst case O(n^3).
+    int n = size();
+    vector<int> p(n);
+
+    int i = 0;
+
+    // Cache the indices of the polygon.
+    for( i = 0; i < n; i++ )
+        p[i] = i;
+
+    // Iterate through the indices.
+    for( i = 0; i < n && n > 2; i++ )
+    {
+        // Consider triangle i, i+1, i+2 candidate for being an ear.
+        const Vec2 &a(vertices[p[i]]), &b(vertices[p[(i+1) % n]]), &c(vertices[p[(i+2) % n]]);
+        Mat2 T(b-a, c-a);
+
+        // If it's going clockwise, it's not an ear.
+        if( T.det() < 0.0 )
+            continue;
+
+        // If another point of the polygon is inside, it's not an ear.
+        bool empty = true;
+        for( int j = (i+3)%n; j!=i; j=(j+1)%n )
+        {
+            Vec2 v = T.inverse() * (vertices[p[j]] - a);
+            if( v.x > 0.0 && v.y > 0.0 && v.y + v.x < 1.0 )
+            {
+                empty = false;
+                break;
+            }
+        }
+
+        // If empty is true, at this point, it is an ear, and we remove the
+        // middle point from p, and add the triangle to indices.
+        if( empty )
+        {
+            indices.push_back( p[i] );
+            indices.push_back( p[(i+1)%n] );
+            indices.push_back( p[(i+2)%n] );
+
+            for( int j = (i+1)%n; j < n-1; j++ )
+                p[j] = p[j+1];
+            
+            i = -1; // Recall i++ happens at the end of the loop-body.
+            n--;
+        }
+    }
+
+    return indices;
 }
 
 void Polygon::handleChild(const parse::Node* n)
