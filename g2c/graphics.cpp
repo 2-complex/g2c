@@ -345,11 +345,11 @@ void Effect::addAttributesFromProgram()
     glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxNameLength);
     glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &numberAttributes);
     char* name = new char[maxNameLength];
-    
+
     GLsizei length = 0;
     GLint size = 0;
     GLenum type = 0;
-    
+
     for( int i = 0; i < numberAttributes; i++ )
     {
         glGetActiveAttrib(program, i, maxNameLength, &length, &size, &type, name);
@@ -364,14 +364,14 @@ void Effect::addUniformsFromProgram()
     int maxNameLength, numberUniforms;
     glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxNameLength);
     glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &numberUniforms);
-
+    
     char* name = new char[maxNameLength+1];
     memset(name, 0, maxNameLength+1);
-
+    
     GLsizei length = 0;
-    GLint size = 0;
-    GLenum type = 0;
-
+     GLint size = 0;
+     GLenum type = 0;
+    
     for( int i = 0; i < numberUniforms; i++ )
     {
         glGetActiveUniform(program, i, maxNameLength, &length, &size, &type, name);
@@ -397,20 +397,20 @@ void Effect::assume(const map<string, Value>* assumption) const
 bool Effect::loadShaders()
 {
     program = glCreateProgram();
-   
+
     const string header = 
 #if defined(ANDROID)
         "precision mediump float;\n";
 #else
         "#ifdef GL_ES\nprecision highp float;\n#endif\n";
 #endif
-    
+
     loadVertexShader(vertexCode.c_str());
     loadFragmentShader((header+fragmentCode).c_str());
-    
+
     if (!linkProgram())
         return false;
-    
+
     return true;
 }
 
@@ -423,7 +423,7 @@ void Effect::bindAttributeToField(const string& name, const Field& field) const
         exit(0);
     }
     glBindBuffer(GL_ARRAY_BUFFER, field.buffer->index);
-
+    
     map<string, GLint>::const_iterator itr = attributeLocationMap.find(name);
     if(itr == attributeLocationMap.end())
     {
@@ -460,28 +460,29 @@ void Effect::disableEnabledAttributes() const
 bool Effect::compileShader(GLuint *shader, GLenum type, const char* code)
 {
     GLint status;
-    
+
     *shader = glCreateShader(type);
     glShaderSource(*shader, 1, &code, NULL);
     glCompileShader(*shader);
-    
+
     GLint logLength;
     glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength);
     if( logLength > 0 )
     {
         GLchar *log = (GLchar *)malloc(logLength);
         glGetShaderInfoLog(*shader, logLength, &logLength, log);
-        g2clog("Shader compile log:\n%s", log);
+        if( logLength )
+            g2clog("Shader compile log:\n%s", log);
         free(log);
     }
-    
+
     glGetShaderiv(*shader, GL_COMPILE_STATUS, &status);
     if( !status )
     {
         glDeleteShader(*shader);
         return false;
     }
-    
+
     return true;
 }
 
@@ -545,23 +546,23 @@ string Effect::serializeElements(string indent) const
 void Effect::handleChild(const parse::Node* n)
 {
     Serializable::handleChild(n);
-
+    
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-
+    
     if( n_name == "vertexCode" )
     {
         vertexCode = value->data.s;
     }
-
+    
     if( n_name == "fragmentCode" )
     {
         fragmentCode = value->data.s;
     }
-
+    
     if( !(fragmentCode=="" || vertexCode=="") )
     {
-        loadShaders();
+	loadShaders();
     }
 }
 
@@ -570,17 +571,16 @@ Assumption::Assumption() : effect(NULL), active(true)
     type = "Assumption";
 }
 
-
 string Assumption::serializeElements(string indent) const
 {
     string r = Serializable::serializeElements(indent);
-    
+
     if( effect )
         r += TAB + indent + "'effect' : '" + effect->name + "',\n";
-    
+
     for(const_iterator itr = begin(); itr!=end(); itr++)
         r += TAB + indent + "'" + itr->first + "' : " + itr->second.toString() + ",\n";
-    
+
     return r;
 }
 
@@ -643,9 +643,9 @@ void Assumption::handleChild(const parse::Node* n)
             case 16:
                 (*this)[n_name] = Mat4(
                     v[0], v[1], v[2], v[3],
-                    v[4], v[5], v[6], v[7],
-                    v[8], v[9], v[10], v[11],
-                    v[12], v[13], v[14], v[15]);
+                                       v[4], v[5], v[6], v[7],
+                                       v[8], v[9], v[10], v[11],
+                                       v[12], v[13], v[14], v[15]);
             break;
             
             default:
@@ -1042,15 +1042,15 @@ void Shape::draw() const
 {
     if(!visible)
         return;
-
+    
     if(!geometry)
     {
         g2cerror( "Shape drawn with no geometry.\n" );
         exit(0);
     }
-
+    
     const Effect* effect = NULL;
-
+    
     // Search through assumptions looking for effect.
     for(list<Assumption*>::const_reverse_iterator itr = assumptions.rbegin();
         itr!=assumptions.rend();
@@ -1062,17 +1062,17 @@ void Shape::draw() const
             break;
         }
     }
-
+    
     // If we didn't find an effect, bail.
     if(!effect)
     {
         g2cerror( "Shape %s drawn with no effect.\n", name.c_str() );
         exit(0);
     }
-
+    
     // If we did find an effect, use it.
     effect->use();
-
+    
     // Iterate through the assumptions and assume the uniforms in them.
     for(list<Assumption*>::const_iterator itr = assumptions.begin();
         itr!=assumptions.end();
@@ -1081,11 +1081,11 @@ void Shape::draw() const
         if( (*itr)->active )
             effect->assume(*itr);
     }
-
+    
     geometry->bindAttributes(effect);
     geometry->draw();
     effect->disableEnabledAttributes();
-
+    
     glUseProgram(0);
 }
 
@@ -1154,7 +1154,7 @@ void Model::draw() const
 Model& Model::add(Element* element, bool flagForDelete)
 {
     elements.push_back(element);
-
+    
     if( element->type == "Effect" )
         effects[element->name] = (Effect*)element;
     else if( element->type == "Assumption" )
@@ -1174,10 +1174,10 @@ Model& Model::add(Element* element, bool flagForDelete)
         g2cerror( "Element not inserted" );
         exit(0);
     }
-
+    
     if(flagForDelete)
         deleteMe.insert(element);
-
+    
     return *this;
 }
 
@@ -1229,7 +1229,7 @@ void Model::resolveNames()
             }
         }
     }
-
+    
     // Iterate through geometries.  Geometries have an index buffer and a map to fields.  Each 
     // field has a name of a buffer that needs to be resolved.
     for(map<string, Geometry*>::iterator itr = geometries.begin(); itr!=geometries.end(); itr++)
@@ -1370,47 +1370,45 @@ void Model::handleChild(const parse::Node* n)
         {
             parse::Node* element = *itr;
             string elementType = getType(element);
-
+            
             Texture2D* newTexture = NULL;
             CubeMap* newCubeMap = NULL;
             Element* t = NULL;
-
+            
             if( elementType == "Texture" || elementType == "Texture2D" )
                 t = newTexture = new Texture2D;
-
+            
             if( elementType == "Assumption" )
                 t = new Assumption;
-
+            
             if( elementType == "Buffer" )
                 t = new Buffer;
-
+            
             if( elementType == "CubeMap" )
                 t = newCubeMap = new CubeMap;
-
+            
             if( elementType == "IndexBuffer" )
                 t = new IndexBuffer;
-
+            
             if( elementType == "Effect" )
                 t = new Effect;
-
+            
             if( elementType == "Geometry" )
                 t = new Geometry;
-
+            
             if( elementType == "Shape" )
                 t = new Shape;
-
+            
             t->initWithParseNode(element);
             add(t, true);
-
+            
             if( elementType == "Texture2D" ||
                 elementType == "Texture" )
             {
                 if( newTexture->file != "" )
-                {
                     bank->initTextureWithPath(newTexture, newTexture->file.c_str());
-                }
             }
-
+            
             if( elementType == "CubeMap" )
             {
                 if( newCubeMap->positiveXFile != "" &&
@@ -1426,7 +1424,7 @@ void Model::handleChild(const parse::Node* n)
                            negativeYBitmap,
                            positiveZBitmap,
                            negativeZBitmap;
-
+                    
                     bank->initBitmapWithPath(&positiveXBitmap, newCubeMap->positiveXFile.c_str());
                     bank->initBitmapWithPath(&negativeXBitmap, newCubeMap->negativeXFile.c_str());
                     bank->initBitmapWithPath(&positiveYBitmap, newCubeMap->positiveYFile.c_str());

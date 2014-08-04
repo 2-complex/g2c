@@ -1,4 +1,3 @@
-
 *.dSYM
 
 modelfile
@@ -8,5 +7,6 @@ sound
 sprite
 text
 triangle
+tetrahedron
 worldfile
 

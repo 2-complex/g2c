@@ -23,9 +23,9 @@ endif
 
 
 OFILES = \
+	$(OBJ_DIR)/util.o \
 	$(OBJ_DIR)/listener.o \
 	$(OBJ_DIR)/app.o \
-	$(OBJ_DIR)/util.o \
 	$(OBJ_DIR)/parse.o \
 	$(OBJ_DIR)/serializable.o \
 	$(OBJ_DIR)/sound.o \
@@ -41,7 +41,7 @@ OFILES = \
 	$(OBJ_DIR)/openalplayer.o
 
 libg2c.a: $(OFILES)
-	ar rcs libg2c.a $(OFILES)
+	ar rcs libg2c.a $(OFILES) 
 
 
 $(OBJ_DIR)/listener.o: $(SOURCE_DIR)/listener.cpp $(SOURCE_DIR)/listener.h

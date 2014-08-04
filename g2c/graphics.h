@@ -109,7 +109,7 @@ private:
 
 /*! Represents a shader program.  Assign shader code to the members vertexCode and framgnetCode,
     call compile() to compile into a program.  To make the program current, the effect must be
-    make the effect of an Assumption and that assumption must be added to the list of
+    made the effect of an Assumption, and that assumption must be added to the list of
     assumptions for a Shape.*/
 class Effect : public Element
 {
@@ -157,10 +157,55 @@ private:
     GLuint fragShader;
 };
 
-/*! Maps strings to Values, a Value can be either a float, vector, matrix or texture.  To use,
-    assign values using the [] operator.  Then add to the list of assumptions for a Shape.*/
-class Assumption : public std::map<std::string, Value>,
-                   public Element {
+/*! When a Shape draws, it appeals to its list of assumptions to determine which Effect to use
+    and also what parameters to provide to that Effect.
+
+    Assumption is a map of strings to Values, a Value can be either a float, vector, matrix or
+    texture.  Assumptions also have a member pointer to an Effect which is optional.  To use
+    an Assumption, assign values using the [] operator.  Then add to the list of assumptions
+    for a Shape.
+
+
+    Assumption Use Case 1:  An Assumption can represent a camera in a scene.  In this case,
+    Effects in the scene would have have uniform matrices like this:
+
+    uniform mat4 model;
+    uniform mat4 model_IT;
+    uniform mat4 viewProjection; 
+
+    Then an assumption representing the camera might be initialized like this:
+
+    Assumption camera;
+    camera["model"] = Mat4(...);
+    camera["model_IT"] = Mat4(...).inverse().transpose();
+    camera["viewProjection"] = lookAt(...) * perspective(...);
+
+    All shapes would need to add that Assumption to their assumptions list:
+    
+    Shape cube;
+    cube.assumptions.push_back(camera);
+
+
+    Assumption Use Case 2:  An Assumption can represent a material.  Since a material is a
+    combination of shader, texture, and other parameters, Assumptions have an effect member variable for this purpose.
+    To make a material as an assumption, assign its effect member variable and any uniform
+    parameters it needs.
+
+    Assumption wood;
+    wood.effect = phongEffect;
+    wood["phongCoefficient"] = 0.4;
+    wood["texture"] = woodTexture;
+
+    Shapes that are meant to be textured with that material add it to their assumptions list.
+
+    Shape cube;
+    cube.assumptions.push_back(camera);
+    cube.assumptions.push_back(wood);
+    */
+class Assumption
+    : public std::map<std::string, Value>
+    , public Element
+{
 public:
     Assumption();
     
@@ -230,8 +275,8 @@ private:
     -100,  100, 0,  0, 0, 1
 
     Fields for position and normal attributes would be something along the lines of:
-    positionField = Field(buffer, 3, 0, 6);
-    normalField   = Field(buffer, 3, 3, 6);*/
+    positionField = Field(buffer, 3, 6, 0);
+    normalField   = Field(buffer, 3, 6, 3);*/
 class Field : public Element {
 friend class Effect;
 public:
@@ -279,8 +324,8 @@ private:
 };
 
 
-/*! Shape is a Geometry together with a list of assumptions.  To draw, assign the member geometry
-    to a Geometry object, and add assumptions to the assumptions list.  Then call draw().  draw()
+/*! Shape connects a Geometry with a list of Assumptions.  To draw, assign the member geometry
+    to a Geometry object, and add Assumptions to the assumptions list.  Then call draw().  draw()
     traverses the list of assumptions and selects an Effect to use, then traverses the assumptions
     again gathering unifrom parameters.  The geometry is then drawn using the shader in that Effect
     with the uniforms set to the values encoded in the assumptions list.*/

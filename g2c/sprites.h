@@ -20,27 +20,26 @@
 */
 
 
-
 #ifndef _SPRITES_
 #define _SPRITES_
-
-#include <vector>
-#include <string>
-#include <set>
-#include <map>
-
-#include "opengl.h"
-
-#include "util.h"
-#include "lin/lin.h"
 
 #include "listener.h"
 #include "parse.h"
 #include "serializable.h"
 #include "bank.h"
 #include "texture.h"
-
 #include "sound.h"
+
+#include "util.h"
+#include "lin/lin.h"
+
+#include "opengl.h"
+
+#include <vector>
+#include <string>
+#include <set>
+#include <map>
+
 
 namespace g2c {
     class Color;
@@ -175,9 +174,8 @@ namespace g2c {
         void clearTookMouseDown();
     };
     
-    /*! Mesh represents a collection of planar triangles or line segments to be drawn on the screen.
-        To draw a mesh, populate positions and vertices, then use a Renderer implementation's drawMesh()
-        function. */
+    /*! Mesh represents a collection of triangles or line segments in 2D.  To draw a mesh, populate positions and vertices,
+        then use a Renderer implementation's drawMesh() function. */
     class Mesh
     {
     public:
@@ -210,27 +208,27 @@ namespace g2c {
     public:
         Renderer();
         virtual ~Renderer();
-
+        
         Mat4 projection;
-
+    
     protected:
         mutable GLfloat fv[16];
         Mesh* quad;
-
+        
     public:
         /*! Overridden to initialize the renderer.*/
         virtual void init() = 0;
-
+        
         /*! Overridden to draw a Mesh object.  If mesh is NULL, drawMesh must still draw a default
             unit square.   */
         virtual void drawMesh(
             const Mesh* mesh,
-            const Mat4& matrix,
-            const Mat3& texMatrix,
-            const Color& color,
-            const Texture* texture) const = 0;
+                              const Mat4& matrix,
+                              const Mat3& texMatrix,
+                              const Color& color,
+                              const Texture* texture) const = 0;
     };
-
+    
     /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 1
         collection.  The draw function in this will work in desktop OpenGL or in OpenGL ES 1.
         
@@ -244,12 +242,12 @@ namespace g2c {
         virtual void init();
         virtual void drawMesh(
             const Mesh* mesh,
-            const Mat4& matrix,
-            const Mat3& texMatrix,
-            const Color& color,
-            const Texture* texture) const;
+                              const Mat4& matrix,
+                              const Mat3& texMatrix,
+                              const Color& color,
+                              const Texture* texture) const;
     };
-
+    
     /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 2
         collection.  The draw function in this will work in desktop OpenGL or in OpenGL ES 2.
         
@@ -274,12 +272,12 @@ namespace g2c {
         GLuint texMatrixLocation;
         GLuint polygonBuffer;
         GLuint polygonIndexBuffer;
-
+        
         Texture2D* defaultTexture;
-
+        
     public:
         virtual void init();
-
+        
     protected:
         bool initialized;
         virtual void drawMesh(const Mesh* m,
@@ -351,16 +349,16 @@ namespace g2c {
         void update() const;
         void triangulate() const;
     };
-
+    
     /*! An Actor represents 2D graphics on the screen, typically a sprite at a particular location
         with a current frame of animation.  Several actors might use the same Sampler object to
         draw.  For instance, a game with a lot of visually identical bullets on the screen would
         draw several Actors all pointing to the same bullet Sprite.
-
+        
         An Actor has a pointer to a Sampler and also a Mesh.  Actor::draw() draws the mesh using
         the sampler to select a matrix in a texture.  If no Mesh is specified, a default square
         mesh is used.
-
+        
         Actors can be positioned and scaled using x,y, and k, also a frame of animation that is
         current.  The frame gets used to compute texture coordiates when drawing the mesh. */
     class Actor : public Node
@@ -438,7 +436,7 @@ namespace g2c {
         
         virtual std::string serializeElements(std::string indent) const;
         virtual void handleChild(const parse::Node* n);
-
+        
         virtual Polygon collisionPolygon() const;
         
         // Methods of listener.
@@ -452,13 +450,13 @@ namespace g2c {
     public:
         Integer();
         Integer(Font* infont, int* inptr);
-
+        
         int* ptr;
-
+        
         /*! Draws an image of the c++ string s using the characters in font. */
         virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
     };
-
+    
     /*! A Sampler is a texture together with a method by which a texture is sampled to draw
         a quad on the sreen.  Override getTexMatrix() to return a matrix representing the
         transformation of a unit quad [(0,0), (1,1)] to the quad in the texture to be sampled
@@ -513,10 +511,10 @@ namespace g2c {
     /*! A Sprite represnts a texture on the GPU whose image is a rectangular array of animation
         frames.  For instance a chracter in a side-scroller could use a Sprite to hold all the
         possible poses.
-
+        
         Sprite can be initialized by using the functions of its parent class Texture2D to load in a
         Bitmap and then setting numberOfRows and numberOfColumns.
-
+        
         The class Actor is made to draw a Sprite on the screen with specific coordinates and current
         animation frames. */
     class Sprite : public Sampler
@@ -524,26 +522,26 @@ namespace g2c {
     public:
         Sprite();
         virtual ~Sprite();
-
+        
         IntProperty numberOfColumns;
         IntProperty numberOfRows;
-
+        
         BoolProperty center;
         BoolProperty flipRows;
-
+        
         Polygon polygon;
-
+        
         static bool drawLines;
 
         Sampler* sampler;
         static Renderer* renderer;
-
+        
         virtual Mat3 getTexMatrix(int frame = 0) const;
         virtual double getWidth() const;
         virtual double getHeight() const;
         virtual bool getCenter() const;
         virtual Polygon getCollisionPolygon() const;
-
+        
     protected:
         virtual std::string serializeElements(std::string indent = "") const;
         virtual void handleChild(const parse::Node* n);
@@ -560,7 +558,7 @@ namespace g2c {
         
         To implement a behaviour for the button when pressed, subclass ButtonHandler, override
         click() function, and then set the button's handler element to an instance of that
-        subclass. */
+        subclass.*/
     class Button : public Actor {
     public:
         Button();
@@ -605,7 +603,7 @@ namespace g2c {
     class Font : public Sprite {
     public:
         Font();
-
+        
         std::vector<double> widths;
         std::vector<double> lefts;
         double lineHeight;
@@ -613,7 +611,7 @@ namespace g2c {
         double widthScale;
         double spacing;
         char baseChar;
-
+        
         double charWidth(char c) const;
         double charLeft(char c) const;
         double lineWidth(double k, const char* s, int startIndex) const;
@@ -635,14 +633,16 @@ namespace g2c {
         virtual void handleChild(const parse::Node* n);
     };
     
-    class Layer : public Node {
+    /* ! Layer is a type of Node meant to contain a group of similarly drawn objects.  Layer's
+         color and matrix property determine */
+    class Layer : public Node
+    {
     public:
         Layer();
         virtual ~Layer() {}
-        
+
         Mat4Property matrix;
-        ColorProperty color;
-        
+
         virtual Mat4 getMatrix() const;
     };
     
@@ -736,7 +736,7 @@ namespace g2c {
     private:
         int referenceCounter;
     };
-
+    
     class Animator {
     public:
         Animator();
