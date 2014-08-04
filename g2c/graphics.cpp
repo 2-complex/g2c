@@ -561,9 +561,7 @@ void Effect::handleChild(const parse::Node* n)
     
     if( !(fragmentCode=="" || vertexCode=="") )
     {
-	g2clog("%s\n", fragmentCode.c_str());
-	g2clog("%s\n", vertexCode.c_str());
-	loadShaders();
+        loadShaders();
     }
 }
 
