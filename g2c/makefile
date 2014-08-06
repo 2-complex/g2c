@@ -33,6 +33,7 @@ OFILES = \
 	$(OBJ_DIR)/bank.o \
 	$(OBJ_DIR)/texture.o \
 	$(OBJ_DIR)/sprites.o \
+	$(OBJ_DIR)/rendererg.o \
 	$(OBJ_DIR)/transforms.o \
 	$(OBJ_DIR)/graphics.o \
 	$(OBJ_DIR)/wave.o \
@@ -110,6 +111,10 @@ $(OBJ_DIR)/serializable.o: $(SOURCE_DIR)/serializable.cpp $(SOURCE_DIR)/serializ
 $(OBJ_DIR)/sprites.o: $(SOURCE_DIR)/sprites.cpp $(SOURCE_DIR)/sprites.h
 	@mkdir -p $(@D)
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/sprites.cpp -o $(OBJ_DIR)/sprites.o
+
+$(OBJ_DIR)/rendererg.o: $(SOURCE_DIR)/rendererg.cpp $(SOURCE_DIR)/rendererg.h
+	@mkdir -p $(@D)
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/rendererg.cpp -o $(OBJ_DIR)/rendererg.o
 
 $(OBJ_DIR)/animations.o: $(SOURCE_DIR)/animations.cpp $(SOURCE_DIR)/animations.h
 	@mkdir -p $(@D)

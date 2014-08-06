@@ -175,12 +175,14 @@ namespace g2c {
     
     /*! Mesh represents a collection of triangles or line segments in 2D.
         To draw a mesh, populate positions and vertices */
-    class Mesh {
+    class Mesh
+    {
     public:
         Mesh();
         virtual ~Mesh();
         
-        enum ElementType {
+        enum ElementType
+        {
             kTriangles,
             kLines
         };
@@ -219,11 +221,12 @@ namespace g2c {
         
         /*! Overridden to draw a Mesh object.  If mesh is NULL, drawMesh must still draw a default
             unit square.   */
-        virtual void drawMesh(const Mesh* mesh,
-                              const Mat4& matrix,
-                              const Mat3& texMatrix,
-                              const Color& color,
-                              const Texture* texture) const = 0;
+        virtual void drawMesh(
+            const Mesh* mesh,
+            const Mat4& matrix,
+            const Mat3& texMatrix,
+            const Color& color,
+            const Texture* texture) const = 0;
     };
     
     /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 1
@@ -237,22 +240,23 @@ namespace g2c {
         ~RendererGL1();
         
         virtual void init();
-        virtual void drawMesh(const Mesh* mesh,
-                              const Mat4& matrix,
-                              const Mat3& texMatrix,
-                              const Color& color,
-                              const Texture* texture) const;
+        virtual void drawMesh(
+            const Mesh* mesh,
+            const Mat4& matrix,
+            const Mat3& texMatrix,
+            const Color& color,
+            const Texture* texture) const;
     };
     
     /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 2
         collection.  The draw function in this will work in desktop OpenGL or in OpenGL ES 2.
-        
+
         Set Sprite::renderer to an instance of RendererGL2 to and call init().  Then all meshes
         will draw using it.*/
     class RendererGL2 : public Renderer {
     public:
         RendererGL2();
-        ~RendererGL2();
+        virtual ~RendererGL2();
         
     private:
         GLuint buffer,
@@ -276,11 +280,12 @@ namespace g2c {
         
     protected:
         bool initialized;
-        virtual void drawMesh(const Mesh* m,
-                              const Mat4& matrix,
-                              const Mat3& texMatrix,
-                              const Color& color,
-                              const Texture* texture) const;
+        virtual void drawMesh(
+            const Mesh* m,
+            const Mat4& matrix,
+            const Mat3& texMatrix,
+            const Color& color,
+            const Texture* texture) const;
     };
     
     
@@ -331,11 +336,11 @@ namespace g2c {
                         
         virtual void handleChild(const parse::Node* n);
         virtual std::string serializeElements(std::string indent = "") const;
-        
+
         VectorProperty<Vec2Property> vertices;
-        
+
         virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
-        
+
     private:
         mutable Mesh* mesh;
         DrawType drawType;
@@ -344,9 +349,9 @@ namespace g2c {
         void update() const;
         void triangulate() const;
     };
-    
+
     /*! An Actor represents 2D graphics on the screen, typically a sprite at
-        a particular 2D location with a current frame of animation.  Several actors
+        a particular location with a current frame of animation.  Several actors
         might use the same Sprite.  For instance, a sprite might be a picture of a bullet,
         and a game with lots of bullets on the screen at the same time would use several
         Actors all pointing to the same Sprite.
