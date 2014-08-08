@@ -4,7 +4,8 @@
 
 #include <stdio.h>
 
-class MySpriteEnvironment : public SpriteEnvironment {
+class MySpriteEnvironment : public SpriteEnvironment
+{
 public:
 	char* filename;
 
@@ -21,7 +22,7 @@ void MySpriteEnvironment::init()
 int main(int argc, char** args)
 {
 	MySpriteEnvironment e;
-	
+
 	e.filename = (char*)"bug.world";
 	if( argc > 1 )
 		e.filename = args[1];

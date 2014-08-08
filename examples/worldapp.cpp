@@ -1,30 +1,15 @@
 
+#include "worldapp.h"
+
 #include "appenvironment.h"
 #include "sprites.h"
-#include "macbank.h"
-#include "openalplayer.h"
 
 #include "transforms.h"
 
 using namespace g2c;
 
-
-class WorldApp : public App
-{
-public:
-    virtual void setBank(Bank* inBank);
-
-    virtual void init();
-    virtual void reshape(int width, int height);
-    virtual void draw() const;
-    virtual void destroy();
-
-private:
-    Bank* bank;
-    World* world;
-    Renderer* renderer;
-};
-
+WorldApp::WorldApp() {}
+WorldApp::~WorldApp() {}
 
 void WorldApp::setBank(Bank* inBank)
 {
@@ -38,6 +23,8 @@ void WorldApp::reshape(int width, int height)
 
 void WorldApp::init()
 {
+    glewInit();
+
     world = new World;
     renderer =  new RendererGL2;
     renderer->init();
@@ -54,7 +41,6 @@ void WorldApp::init()
     g2clog( "%s\n", world->serialize().c_str() );
 }
 
-
 void WorldApp::draw() const
 {
 	world->draw();
@@ -65,29 +51,5 @@ void WorldApp::destroy()
 {
 	delete world;
 	delete renderer;
-}
-
-
-int main(int argc, char** args)
-{
-    AppEnvironment environment;
-    WorldApp app;
-
-    environment.initWindow("World", 800, 600);
-
-    MacFileSystemBank* bank = new MacFileSystemBank;
-    OpenALPlayer* player = new OpenALPlayer;
-
-    app.setBank(bank);
-    app.setPlayer(player);
-
-    environment.app = &app;
-
-    environment.mainLoop();
-
-    delete bank;
-    delete player;
-
-    return 0;
 }
 

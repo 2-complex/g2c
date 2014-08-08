@@ -184,25 +184,26 @@ namespace g2c {
             kTriangles,
             kLines
         };
-        
-        int numberOfVertices;
-        int numberOfElements;
-        
+
         void resize(int inNumberOfVertices, int inNumberOfElements);
-        
+
         ElementType elementType;
-        
-        float* positions;
-        short* indices;
+
+        std::vector<float> positions;
+        std::vector<short> indices;
+
+        int numberOfVertices() const;
+        int numberOfElements() const;
     };
     
     /*! Renderer is an abstract base-class whose virtual methods define how a Mesh shall be drawn.
         Subclasses of Renderer represent a scheme for drawing a mesh in a particular graphics
         library.
-        
+
         To implement a renderer, implement init() and drawMesh().  Whichever renderer
         Sprite::renderer is set to gets used to draw all sprite graphics.  */
-    class Renderer {
+    class Renderer
+    {
     public:
         Renderer();
         virtual ~Renderer();
@@ -231,7 +232,8 @@ namespace g2c {
         
         Set Sprite::renderer to an instance of RendererGL1 to and call init().  Then all meshes
         will draw using it.*/
-    class RendererGL1 : public Renderer {
+    class RendererGL1 : public Renderer
+    {
     public:
         RendererGL1();
         ~RendererGL1();
