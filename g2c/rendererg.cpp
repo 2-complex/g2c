@@ -19,7 +19,7 @@ RendererG::~RendererG()
 
 void RendererG::init()
 {
-    quadBuffer = quad->vertices;
+    quadBuffer = quad->positions;
     quadIndexBuffer = quad->indices;
 
     const char* vertexCode = "\n"
