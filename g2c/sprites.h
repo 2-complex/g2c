@@ -184,14 +184,14 @@ namespace g2c {
             kTriangles,
             kLines
         };
-        
+
         int numberOfVertices;
         int numberOfElements;
         
         void resize(int inNumberOfVertices, int inNumberOfElements);
-        
+
         ElementType elementType;
-        
+
         float* positions;
         short* indices;
     };
@@ -199,7 +199,7 @@ namespace g2c {
     /*! Renderer is an abstract base-class whose virtual methods define how a Mesh shall be drawn.
         Subclasses of Renderer represent a scheme for drawing a mesh in a particular graphics
         library.
-        
+
         To implement a renderer, implement init() and drawMesh().  Whichever renderer
         Sprite::renderer is set to gets used to draw all sprite graphics.  */
     class Renderer {

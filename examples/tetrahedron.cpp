@@ -18,8 +18,6 @@ class TetrahedronEnvironment : public PanEnvironment
 
 void TetrahedronEnvironment::init()
 {
-    glewInit();
-
     float vertexArray[] =
     {
          1.0,  0.0,     -0.25 * 1.41421,
