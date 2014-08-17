@@ -1020,15 +1020,14 @@ void RendererGL1::drawMesh(const Mesh* mesh,
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
-    
+
     glVertexPointer(3, GL_FLOAT, 0, positions);
     glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-    
-    g2clog("%d %d %d %p\n", gltype, dimension * mesh->numberOfElements(), GL_UNSIGNED_SHORT, indices);
+
     glDrawElements(gltype, dimension * mesh->numberOfElements(), GL_UNSIGNED_SHORT, indices);
-    
+
     delete[] texCoords;
-    
+
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     
