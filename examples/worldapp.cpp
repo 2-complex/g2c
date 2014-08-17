@@ -13,18 +13,16 @@ WorldApp::~WorldApp() {}
 
 void WorldApp::setBank(Bank* inBank)
 {
-	this->bank = inBank;
+    this->bank = inBank;
 }
 
 void WorldApp::reshape(int width, int height)
 {
-	renderer->projection = orthographic(0, width, 0, height, -1, 1);
+    renderer->projection = orthographic(0, width, 0, height, -1, 1);
 }
 
 void WorldApp::init()
 {
-    glewInit();
-
     world = new World;
     renderer =  new RendererGL2;
     renderer->init();
@@ -43,13 +41,13 @@ void WorldApp::init()
 
 void WorldApp::draw() const
 {
-	world->draw();
+    world->draw();
 }
 
 
 void WorldApp::destroy()
 {
-	delete world;
-	delete renderer;
+    delete world;
+    delete renderer;
 }
 
