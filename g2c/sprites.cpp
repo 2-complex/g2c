@@ -881,51 +881,51 @@ void Node::clearTookMouseDown()
 }
 
 
-Mesh::Mesh() : elementType(kTriangles),
-               numberOfVertices(0),
-               numberOfElements(0),
-               positions(NULL),
-               indices(NULL)
+Mesh::Mesh() : elementType(kTriangles)
 {
-    
 }
 
 Mesh::~Mesh()
 {
-    if(positions)
-        delete[] positions;
-    if(indices)
-        delete[] indices;
 }
 
 void Mesh::resize(int inNumberOfVertices, int inNumberOfElements)
 {
-    if(positions)
-        delete[] positions;
-    if(indices)
-        delete[] indices;
+    int sd = 3;
+    if( elementType == kLines )
+        sd = 2;
     
-    numberOfVertices = inNumberOfVertices;
-    numberOfElements = inNumberOfElements;
+    positions.resize(inNumberOfVertices * 3);
+    indices.resize(inNumberOfElements * sd);
+}
+
+int Mesh::numberOfVertices() const
+{
+    return positions.size() / 3; 
+}
+
+int Mesh::numberOfElements() const
+{
+    int sd = 3;
+    if( elementType == kLines )
+        sd = 2;
     
-    int sd = (elementType == kTriangles) ? 3 : 2;
-    
-    positions = new float[3 * numberOfVertices];
-    indices = new short[sd * numberOfElements];
+    return indices.size() / sd; 
 }
 
 Renderer::Renderer()
 {
     quad = new Mesh;
-    
-    quad->resize(4, 2);
     quad->elementType = Mesh::kTriangles;
-    
+
     const float temp_positions[] = { 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0 };
     const short temp_indices[] = { 0, 1, 2,  0, 2, 3 };
-    
-    memcpy(quad->positions, temp_positions, sizeof(temp_positions));
-    memcpy(quad->indices, temp_indices, sizeof(temp_indices));
+
+    for(int i = 0; i < sizeof(temp_positions)/sizeof(float); i++)
+    	quad->positions.push_back(temp_positions[i]);
+
+    for(int i = 0; i < sizeof(temp_indices)/sizeof(short); i++)
+        quad->indices.push_back(temp_indices[i]);
 }
 
 Renderer::~Renderer()
@@ -953,8 +953,9 @@ void RendererGL1::drawMesh(const Mesh* mesh,
 {
 #if !defined(STUB_GL1)
 
-    if( !mesh ) mesh = quad;
-    
+    if( !mesh )
+        mesh = quad;
+
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
@@ -989,13 +990,13 @@ void RendererGL1::drawMesh(const Mesh* mesh,
         dimension = 2;
     }
     
-    const short* indices = mesh->indices;
-    const float* positions = mesh->positions;
-    
+    const short* indices = &(mesh->indices[0]);
+    const float* positions = &(mesh->positions[0]);
+
     // Determine the size of the positions array from
     // the maximum index in indices.
     int size = 0;
-    for(int e = 0; e < dimension * mesh->numberOfElements; e++)
+    for(int e = 0; e < dimension * mesh->numberOfElements(); e++)
     {
         int i = indices[e];
         if( i > size )
@@ -1023,7 +1024,8 @@ void RendererGL1::drawMesh(const Mesh* mesh,
     glVertexPointer(3, GL_FLOAT, 0, positions);
     glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
     
-    glDrawElements(gltype, dimension*mesh->numberOfElements, GL_UNSIGNED_SHORT, indices);
+    g2clog("%d %d %d %p\n", gltype, dimension * mesh->numberOfElements(), GL_UNSIGNED_SHORT, indices);
+    glDrawElements(gltype, dimension * mesh->numberOfElements(), GL_UNSIGNED_SHORT, indices);
     
     delete[] texCoords;
     
@@ -1053,7 +1055,7 @@ RendererGL2::~RendererGL2()
         glDeleteShader(vertexShader);
     if( fragmentShader )
         glDeleteShader(fragmentShader);
-    
+
     if( defaultTexture )
         delete defaultTexture;
 }
@@ -1062,11 +1064,11 @@ void RendererGL2::init()
 {
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), quad->positions, GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), &(quad->positions[0]), GL_STREAM_DRAW);
     
     glGenBuffers(1, &indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(short), quad->indices, GL_STREAM_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(short), &(quad->indices[0]), GL_STREAM_DRAW);
     
     glGenBuffers(1, &polygonBuffer);
     glGenBuffers(1, &polygonIndexBuffer);
@@ -1184,10 +1186,10 @@ void RendererGL2::drawMesh(const Mesh* mesh,
     {
         glBindBuffer(GL_ARRAY_BUFFER, polygonBuffer);
         glBufferData(GL_ARRAY_BUFFER,
-            mesh->numberOfVertices*3*sizeof(float), mesh->positions, GL_STREAM_DRAW);
+            mesh->numberOfVertices()*3*sizeof(float), &(mesh->positions[0]), GL_STREAM_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, polygonIndexBuffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-            mesh->numberOfElements*3*sizeof(short), mesh->indices, GL_STREAM_DRAW);
+            mesh->numberOfElements()*3*sizeof(short), &(mesh->indices[0]), GL_STREAM_DRAW);
     }
     
     glUseProgram(program);
@@ -1224,7 +1226,7 @@ void RendererGL2::drawMesh(const Mesh* mesh,
         dimension = 2;
     }
 
-    glDrawElements(gltype, mesh->numberOfElements*dimension, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(gltype, mesh->numberOfElements()*dimension, GL_UNSIGNED_SHORT, 0);
 
     glDisableVertexAttribArray(positionLocation);
 
