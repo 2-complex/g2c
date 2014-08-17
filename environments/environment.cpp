@@ -77,6 +77,10 @@ void Environment::display()
 {
 	if( !initted )
 	{
+#if GLUT && !__APPLE_CC__
+		glewInit();
+#endif
+
 		init();
 		initted = true;
 	}
