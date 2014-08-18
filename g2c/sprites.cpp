@@ -129,16 +129,16 @@ void ColorProperty::initWithParseNode(const parse::Node* n)
 {
     VectorProperty<DoubleProperty> v;
     v.initWithParseNode(n);
-
+    
     if( v.size() > 0 )
         r = v[0]();
-
+    
     if( v.size() > 1 )
         g = v[1]();
-
+    
     if( v.size() > 2 )
         b = v[2]();
-
+    
     if( v.size() > 3 )
         a = v[3]();
 }
@@ -157,11 +157,11 @@ Mat4 Sampler::getOffsetMatrix(int frame, double x, double y, double k) const
 {
     double w = getWidth(frame),
            h = getHeight(frame);
-
+    
     Vec2 offset(x, y);
     if( getCenter(frame) )
         offset -= 0.5 * k * Vec2(w, h);
-
+    
     return Mat4(
         k*w, 0.0, 0.0, 0.0,
         0.0, k*h, 0.0, 0.0,
@@ -240,17 +240,17 @@ Mat3 Sprite::getTexMatrix(int frame) const
 {
     int c = numberOfColumns();
     int r = numberOfRows();
-
+    
     double i = (frame % c + c) % c,
            j = ((frame / c) % r + r) % r;
-
+    
     if( flipRows() )
         j = numberOfRows() - j - 1;
-
+    
     return Mat3(
         1.0 / c, 0.0     , 0.0,
-        0.0    , 1.0 / r , 0.0,
-        i / c  , j / r   , 1.0 );
+                 0.0, 1.0 / r, 0.0,
+                i / c, j / r, 1.0);
 }
 
 double Sprite::getWidth(int frame) const
@@ -479,7 +479,7 @@ void Font::drawString(const Mat4& M,
     }
 }
 
-Polygon Font::stringRectangleangle(double k, const char* s, const string& justification) const
+Polygon Font::stringRectangle(double k, const char* s, const string& justification) const
 {
     double left = 0.0, right = 0.0, bottom = 0.0,
         top = k * (lineHeight + lineBottom);
@@ -1044,51 +1044,51 @@ void Node::clearTookMouseDown()
 }
 
 
-Mesh::Mesh() : elementType(kTriangles),
-               numberOfVertices(0),
-               numberOfElements(0),
-               positions(NULL),
-               indices(NULL)
+Mesh::Mesh() : elementType(kTriangles)
 {
-    
 }
 
 Mesh::~Mesh()
 {
-    if(positions)
-        delete[] positions;
-    if(indices)
-        delete[] indices;
 }
 
 void Mesh::resize(int inNumberOfVertices, int inNumberOfElements)
 {
-    if(positions)
-        delete[] positions;
-    if(indices)
-        delete[] indices;
+    int sd = 3;
+    if( elementType == kLines )
+        sd = 2;
     
-    numberOfVertices = inNumberOfVertices;
-    numberOfElements = inNumberOfElements;
+    positions.resize(inNumberOfVertices * 3);
+    indices.resize(inNumberOfElements * sd);
+}
+
+int Mesh::numberOfVertices() const
+{
+    return positions.size() / 3; 
+}
+
+int Mesh::numberOfElements() const
+{
+    int sd = 3;
+    if( elementType == kLines )
+        sd = 2;
     
-    int sd = (elementType == kTriangles) ? 3 : 2;
-    
-    positions = new float[3 * numberOfVertices];
-    indices = new short[sd * numberOfElements];
+    return indices.size() / sd; 
 }
 
 Renderer::Renderer()
 {
     quad = new Mesh;
-    
-    quad->resize(4, 2);
     quad->elementType = Mesh::kTriangles;
-    
+
     const float temp_positions[] = { 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0 };
     const short temp_indices[] = { 0, 1, 2,  0, 2, 3 };
-    
-    memcpy(quad->positions, temp_positions, sizeof(temp_positions));
-    memcpy(quad->indices, temp_indices, sizeof(temp_indices));
+
+    for(int i = 0; i < sizeof(temp_positions)/sizeof(float); i++)
+    	quad->positions.push_back(temp_positions[i]);
+
+    for(int i = 0; i < sizeof(temp_indices)/sizeof(short); i++)
+        quad->indices.push_back(temp_indices[i]);
 }
 
 Renderer::~Renderer()
@@ -1116,8 +1116,9 @@ void RendererGL1::drawMesh(const Mesh* mesh,
 {
 #if !defined(STUB_GL1)
 
-    if( !mesh ) mesh = quad;
-    
+    if( !mesh )
+        mesh = quad;
+
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
@@ -1152,13 +1153,13 @@ void RendererGL1::drawMesh(const Mesh* mesh,
         dimension = 2;
     }
     
-    const short* indices = mesh->indices;
-    const float* positions = mesh->positions;
-    
+    const short* indices = &(mesh->indices[0]);
+    const float* positions = &(mesh->positions[0]);
+
     // Determine the size of the positions array from
     // the maximum index in indices.
     int size = 0;
-    for(int e = 0; e < dimension * mesh->numberOfElements; e++)
+    for(int e = 0; e < dimension * mesh->numberOfElements(); e++)
     {
         int i = indices[e];
         if( i > size )
@@ -1182,14 +1183,14 @@ void RendererGL1::drawMesh(const Mesh* mesh,
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
-    
+
     glVertexPointer(3, GL_FLOAT, 0, positions);
     glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-    
-    glDrawElements(gltype, dimension*mesh->numberOfElements, GL_UNSIGNED_SHORT, indices);
-    
+
+    glDrawElements(gltype, dimension * mesh->numberOfElements(), GL_UNSIGNED_SHORT, indices);
+
     delete[] texCoords;
-    
+
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     
@@ -1216,7 +1217,7 @@ RendererGL2::~RendererGL2()
         glDeleteShader(vertexShader);
     if( fragmentShader )
         glDeleteShader(fragmentShader);
-    
+
     if( defaultTexture )
         delete defaultTexture;
 }
@@ -1225,15 +1226,15 @@ void RendererGL2::init()
 {
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), quad->positions, GL_STREAM_DRAW);
-
+    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), &(quad->positions[0]), GL_STREAM_DRAW);
+    
     glGenBuffers(1, &indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(short), quad->indices, GL_STREAM_DRAW);
-
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(short), &(quad->indices[0]), GL_STREAM_DRAW);
+    
     glGenBuffers(1, &polygonBuffer);
     glGenBuffers(1, &polygonIndexBuffer);
-
+    
     const char* vertexCode = "\n"
         "    attribute vec3 position;\n"
         "    uniform mat4 matrix;\n"
@@ -1324,11 +1325,12 @@ void RendererGL2::init()
     initialized = true;
 }
 
-void RendererGL2::drawMesh(const Mesh* mesh,
-                           const Mat4& matrix,
-                           const Mat3& texMatrix,
-                           const Color& color,
-                           const Texture* texture) const
+void RendererGL2::drawMesh(
+    const Mesh* mesh,
+    const Mat4& matrix,
+    const Mat3& texMatrix,
+    const Color& color,
+    const Texture* texture) const
 {
     if( !initialized )
     {
@@ -1336,7 +1338,8 @@ void RendererGL2::drawMesh(const Mesh* mesh,
         exit(0);
     }
     
-    if( !mesh ) mesh = quad;
+    if( !mesh )
+        mesh = quad;
     
     if( mesh == quad )
     {
@@ -1347,10 +1350,10 @@ void RendererGL2::drawMesh(const Mesh* mesh,
     {
         glBindBuffer(GL_ARRAY_BUFFER, polygonBuffer);
         glBufferData(GL_ARRAY_BUFFER,
-            mesh->numberOfVertices*3*sizeof(float), mesh->positions, GL_STREAM_DRAW);
+            mesh->numberOfVertices()*3*sizeof(float), &(mesh->positions[0]), GL_STREAM_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, polygonIndexBuffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-            mesh->numberOfElements*3*sizeof(short), mesh->indices, GL_STREAM_DRAW);
+            mesh->numberOfElements()*3*sizeof(short), &(mesh->indices[0]), GL_STREAM_DRAW);
     }
     
     glUseProgram(program);
@@ -1387,7 +1390,7 @@ void RendererGL2::drawMesh(const Mesh* mesh,
         dimension = 2;
     }
 
-    glDrawElements(gltype, mesh->numberOfElements*dimension, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(gltype, mesh->numberOfElements()*dimension, GL_UNSIGNED_SHORT, 0);
 
     glDisableVertexAttribArray(positionLocation);
 
@@ -1628,24 +1631,24 @@ void Polygon::triangulate() const
     // This algorithm runs in worst case O(n^3).
     int n = size();
     vector<int> p(n);
-
+    
     int i = 0, k = 0;
-
+    
     // Cache the indices of the polygon.
     for( i = 0; i < n; i++ )
         p[i] = i;
-
+    
     // Iterate through the indices.
     for( i = 0; i < n && n > 2; i++ )
     {
         // Consider triangle i, i+1, i+2 candidate for being an ear.
         const Vec2 &a(vertices[p[i]]), &b(vertices[p[(i+1) % n]]), &c(vertices[p[(i+2) % n]]);
         Mat2 T(b-a, c-a);
-
+        
         // If it's going clockwise, it's not an ear.
         if( T.det() < 0.0 )
             continue;
-
+        
         // If another point of the polygon is inside, it's not an ear.
         bool empty = true;
         for( int j = (i+3)%n; j!=i; j=(j+1)%n )
@@ -1657,7 +1660,7 @@ void Polygon::triangulate() const
                 break;
             }
         }
-
+        
         // If empty is true, at this point, it is an ear, and we remove the
         // middle point from p, and add the triangle to indices.
         if( empty )
@@ -1858,7 +1861,7 @@ void Actor::removeSampler(const Sampler* s)
 {
     if( sampler == s )
         sampler = NULL;
-
+    
     Node::removeSampler(s);
 }
 
@@ -1886,10 +1889,10 @@ static map<Text*, string> gTextToFontName;
 void Actor::handleChild(const parse::Node* n)
 {
     Node::handleChild(n);
-
+    
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-
+    
     if(value)
     {
         if(n_name == "samplerName")
@@ -1909,7 +1912,7 @@ Polygon Actor::collisionPolygon() const
     {
         double w = k() * sampler->getWidth(frame),
                h = k() * sampler->getHeight(frame);
-
+        
         Polygon samplerPoly( sampler->getCollisionPolygon(frame) );
 
         if( !samplerPoly.empty() )
@@ -1919,7 +1922,7 @@ Polygon Actor::collisionPolygon() const
                 R -= 0.5 * Vec2(w, h);
         }
         else
-        {
+        {    
             double x0 = position.x, x1 = position.x+w, y0 = position.y, y1 = position.y+h;
             
             R.add(x0, y0).add(x1, y0).add(x1, y1).add(x0, y1);
@@ -2163,11 +2166,11 @@ Polygon Text::collisionPolygon() const
     }
     if( font )
     {
-        R = (font->stringRectangleangle(k, s.c_str(), justification) + position);
+        R = (font->stringRectangle(k, s.c_str(), justification) + position);
     }
     else
     {
-        g2cerror( "Attempt to compute string Rectangleangle with no font.\n" );
+        g2cerror( "Attempt to compute string rectangle with no font.\n" );
         exit(0);
     }
     
@@ -2222,9 +2225,9 @@ World::World() : bank(NULL), soundInitted(false)
     context = new Context(player);
     context->makeCurrent();
     destroySoundQueue();
-
+    
     type = "World";
-
+    
     addProperty("samplers", samplers);
     addProperty("sounds", sounds);
 }
@@ -2233,7 +2236,7 @@ World::~World()
 {
     if( !soundInitted )
         delete player;
-
+    
     delete context;
 
     for(vector<Sampler*>::iterator itr = samplers.begin(); itr!=samplers.end(); itr++)
@@ -2333,13 +2336,13 @@ void World::initWithParseNode(const parse::Node* n)
 {
     gActorToSamplerName.clear();
     gTextToFontName.clear();
-
+    
     Node::initWithParseNode(n);
-
+    
     updateSamplerMap();
     updateSoundMap();
     updateNodeMap();
-
+    
     for(map<Actor*, string>::iterator itr = gActorToSamplerName.begin();
         itr != gActorToSamplerName.end();
         itr++)
@@ -2358,7 +2361,7 @@ void World::initWithParseNode(const parse::Node* n)
             }
         }
     }
-
+    
     for(map<Text*, string>::iterator itr = gTextToFontName.begin();
         itr != gTextToFontName.end();
         itr++)
@@ -2422,12 +2425,12 @@ void World::handleChild(const parse::Node* n)
             {
                 string type = getType(*itr);
                 Sampler* sampler = NULL;
-
-                if( type == "Sprite" )
+                
+                if(type=="Sprite")
                 {
                     sampler = new Sprite();
                 }
-                else if( type == "Font" )
+                else if(type == "Font")
                 {
                     sampler = new Font();
                 }
@@ -2436,18 +2439,18 @@ void World::handleChild(const parse::Node* n)
                     g2cerror("Object in sampler list must be type Sprite or Font.\n");
                     exit(0);
                 }
-
+                
                 if( sampler )
                 {
                     sampler->initWithParseNode(*itr);
-
+                    
                     samplers.push_back(sampler);
                     deleteResources.push_back(sampler);
 
                     bank->initTextureWithPath(sampler, sampler->file().c_str());
                 }
             }
-
+            
             handled = true;
         }
         

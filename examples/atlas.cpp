@@ -64,7 +64,7 @@ void AtlasEnvironment::init()
 
     sherman.sampler = &treeAtlas;
 
-    sherman.position.set(100, 100);
+    sherman.position.set(300, 300);
 }
 
 void AtlasEnvironment::draw() const

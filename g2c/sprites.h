@@ -186,25 +186,26 @@ namespace g2c {
             kTriangles,
             kLines
         };
-        
-        int numberOfVertices;
-        int numberOfElements;
-        
+
         void resize(int inNumberOfVertices, int inNumberOfElements);
-        
+
         ElementType elementType;
-        
-        float* positions;
-        short* indices;
+
+        std::vector<float> positions;
+        std::vector<short> indices;
+
+        int numberOfVertices() const;
+        int numberOfElements() const;
     };
     
     /*! Renderer is an abstract base-class whose virtual methods define how a Mesh shall be drawn.
         Subclasses of Renderer represent a scheme for drawing a mesh in a particular graphics
         library.
-        
+
         To implement a renderer, implement init() and drawMesh().  Whichever renderer
-        Mesh::renderer is set to gets used to draw all textured mesh graphics.  */
-    class Renderer {
+        Sprite::renderer is set to gets used to draw all sprite graphics.  */
+    class Renderer
+    {
     public:
         Renderer();
         virtual ~Renderer();
@@ -234,7 +235,8 @@ namespace g2c {
         
         Set Mesh::renderer to an instance of RendererGL1 to and call init().  Then all meshes
         will draw using it.*/
-    class RendererGL1 : public Renderer {
+    class RendererGL1 : public Renderer
+    {
     public:
         RendererGL1();
         ~RendererGL1();
@@ -523,7 +525,7 @@ namespace g2c {
         static bool drawLines;
 
         static Renderer* renderer;
-
+        
         virtual Mat3 getTexMatrix(int frame = 0) const;
         virtual double getWidth(int frame = 0) const;
         virtual double getHeight(int frame = 0) const;
@@ -534,7 +536,7 @@ namespace g2c {
         virtual std::string serializeElements(std::string indent = "") const;
         virtual void handleChild(const parse::Node* n);
     };
-
+    
 
     /*! An Atlas is a texture which is subdivided into rectangular images to be sampled by an
         Actor.  Here, a frame of animation references a rectangle in the list.*/
@@ -625,19 +627,21 @@ namespace g2c {
         double charLeft(char c) const;
         double lineWidth(double k, const char* s, int startIndex) const;
         std::vector<std::pair<int, int> > lineIndices(const char* s) const;
-        void drawString(const Mat4& M,
-                        const Color& color,
-                        double x,
-                        double y,
-                        double k,
-                        const char* s,
-                        const std::string& justification = "left") const;
-        Polygon stringRectangleangle(double k,
-                                const char* s,
-                                const std::string& justification = "left") const;
-        
+        void drawString(
+            const Mat4& M,
+            const Color& color,
+            double x,
+            double y,
+            double k,
+            const char* s,
+            const std::string& justification = "left") const;
+        Polygon stringRectangle(
+            double k,
+            const char* s,
+            const std::string& justification = "left") const;
+
         void getWidthsFromBitmap(const Bitmap& bitmap);
-        
+
         virtual std::string serializeElements(std::string indent = "") const;
         virtual void handleChild(const parse::Node* n);
     };
