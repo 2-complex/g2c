@@ -88,12 +88,13 @@ void MacBank::initTextureWithCGImage(Texture2D* texture, CGImageRef image)
 {
     int width = CGImageGetWidth(image);
     int height = CGImageGetHeight(image);
-    
+
     if(((width-1)&width) != 0 || ((height-1)&height) != 0)
         g2clog( "WARNING: texture dimensions not a power of two: %s.\n",
                 texture->name.c_str() );
-    
-    if(image) {
+
+    if(image)
+    {
         GLubyte* data = (GLubyte*)calloc(width * height * 4, sizeof(GLubyte));
         CGContextRef context = CGBitmapContextCreate(data, width, height, 8, 4 * width,
                                                      CGImageGetColorSpace(image),

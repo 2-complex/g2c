@@ -11,24 +11,24 @@ AppEnvironment::~AppEnvironment() {}
 
 void AppEnvironment::enables()
 {
-    glEnable(GL_TEXTURE_2D);
-	
-	glEnable(GL_ALPHA);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);                        // enables a light (we need that aparently)
-	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 0);  // sets lighting to one-sided
-	
-	glEnable(GL_COLOR_MATERIAL);
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE); // ?
-	
-	glCullFace(GL_NONE);
+	glEnable(GL_TEXTURE_2D);
+
+    glEnable(GL_ALPHA);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);                        // enables a light (we need that aparently)
+    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 0);  // sets lighting to one-sided
+
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE); // ?
+
+    glCullFace(GL_NONE);
 	
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }

@@ -39,7 +39,8 @@
 
 using namespace g2c;
 
-class SpriteEnvironment : public ScrollEnvironment {
+class SpriteEnvironment : public ScrollEnvironment
+{
 public:
 	SpriteEnvironment();
 	virtual ~SpriteEnvironment();
