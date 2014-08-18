@@ -44,7 +44,7 @@
           "rotation" : 1.047197,
           "k" : 0.7,
           "frame" : 0,
-          "spriteName" : "ladybug"
+          "samplerName" : "ladybug"
         },
         {
           "type" : "Actor",
@@ -57,12 +57,12 @@
           "rotation" : -1.047197,
           "k" : 1.7,
           "frame" : 0,
-          "spriteName" : "ladybug"
+          "samplerName" : "ladybug"
         }
       ]
     }
   ],
-  "sprites" : [
+  "samplers" : [
     {
       "type" : "Sprite",
       "name" : "ladybug",

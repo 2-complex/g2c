@@ -112,7 +112,6 @@ void Vec3Property::initWithParseNode(const parse::Node* n)
 }
 
 
-
 ColorProperty::ColorProperty() {}
 ColorProperty::ColorProperty(const Color& c) : Color(c) {}
 
@@ -144,16 +143,88 @@ void ColorProperty::initWithParseNode(const parse::Node* n)
         a = v[3]();
 }
 
+Sampler::Sampler()
+{
+    type = "Sampler";
+    addProperty("file", file);
+}
 
+Sampler::~Sampler()
+{
+}
 
-Sprite::Sprite() : numberOfRows(1),
-                   numberOfColumns(1),
-                   center(false),
-                   flipRows(false)
+Mat4 Sampler::getOffsetMatrix(int frame, double x, double y, double k) const
+{
+    double w = getWidth(frame),
+           h = getHeight(frame);
+    
+    Vec2 offset(x, y);
+    if( getCenter(frame) )
+        offset -= 0.5 * k * Vec2(w, h);
+    
+    return Mat4(
+        k*w, 0.0, 0.0, 0.0,
+        0.0, k*h, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        offset.x, offset.y, 0.0, 1.0);
+}
+
+Rectangle::Rectangle()
+    : x0(0.0)
+    , y0(0.0)
+    , x1(1.0)
+    , y1(1.0)
+{
+}
+
+Rectangle::Rectangle(double x0, double y0, double x1, double y1)
+    : x0(x0)
+    , y0(y0)
+    , x1(x1)
+    , y1(y1)
+{
+}
+
+Rectangle::~Rectangle()
+{
+}
+
+std::string Rectangle::serialize(std::string indent) const
+{
+    VectorProperty<DoubleProperty> v;
+    v.push_back(x0);
+    v.push_back(y0);
+    v.push_back(x1);
+    v.push_back(y1);
+    return flattenWhitespace(v.serialize(indent).c_str());
+}
+
+void Rectangle::initWithParseNode(const parse::Node* n)
+{
+    VectorProperty<DoubleProperty> v;
+    v.initWithParseNode(n);
+
+    if( v.size() > 0 )
+        x0 = v[0]();
+
+    if( v.size() > 1 )
+        y0 = v[1]();
+
+    if( v.size() > 2 )
+        x1 = v[2]();
+
+    if( v.size() > 3 )
+        y1 = v[3]();
+}
+
+Sprite::Sprite()
+    : numberOfRows(1)
+    , numberOfColumns(1)
+    , center(false)
+    , flipRows(false)
 {
     type = "Sprite";
-    
-    addProperty("file", file);
+
     addProperty("numberOfRows", numberOfRows);
     addProperty("numberOfColumns", numberOfColumns);
     addProperty("center", center);
@@ -163,22 +234,6 @@ Sprite::Sprite() : numberOfRows(1),
 
 Sprite::~Sprite()
 {
-}
-
-Mat4 Sprite::getOffsetMatrix(double x, double y, double k) const
-{
-    double w = width / numberOfColumns(),
-           h = height / numberOfRows();
-    
-    Vec2 offset(x, y);
-    if( center() )
-        offset -= 0.5 * k * Vec2(w, h);
-    
-    return Mat4(
-        k*w, 0.0, 0.0, 0.0,
-        0.0, k*h, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0,
-        offset.x, offset.y, 0.0, 1.0);
 }
 
 Mat3 Sprite::getTexMatrix(int frame) const
@@ -192,15 +247,36 @@ Mat3 Sprite::getTexMatrix(int frame) const
     if( flipRows() )
         j = numberOfRows() - j - 1;
     
-    return Mat3(1.0 / c, 0.0, 0.0,
+    return Mat3(
+        1.0 / c, 0.0     , 0.0,
                  0.0, 1.0 / r, 0.0,
                 i / c, j / r, 1.0);
+}
+
+double Sprite::getWidth(int frame) const
+{
+    return width / numberOfColumns();
+}
+
+double Sprite::getHeight(int frame) const
+{
+    return height / numberOfRows();
+}
+
+bool Sprite::getCenter(int frame) const
+{
+    return center;
+}
+
+Polygon Sprite::getCollisionPolygon(int frame) const
+{
+    return polygon;
 }
 
 void Sprite::handleChild(const parse::Node* n)
 {
     string n_name = n->data.s;
-    parse::Node* value = n->data.value;
+    // parse::Node* value = n->data.value;
     
     Serializable::handleChild(n);
 }
@@ -210,6 +286,92 @@ string Sprite::serializeElements(string indent) const
     string r = Serializable::serializeElements(indent);
     return r;
 }
+
+Atlas::Atlas()
+{
+    type = "Atlas";
+    addProperty("rectangles", rectangles);
+}
+
+Atlas::~Atlas()
+{
+}
+
+Mat3 Atlas::getTexMatrix(int frame) const
+{
+    int n = rectangles.size();
+
+    if( n == 0 )
+    {
+        g2cerror("Atlas used with no rectangles.  Returning idenitity matrix.");
+        return Mat3();
+    }
+
+    frame = ( ( frame % n ) + n ) % n;
+    const Rectangle& rectangle( rectangles[frame] );
+
+    // Matrix that transforms the unit square to the rectangle
+    // in texture [0,0,1,1] coordinates.
+    Mat3 result(
+        (rectangle.x1 - rectangle.x0) / width, 0.0, 0.0,
+        0.0, (rectangle.y1 - rectangle.y0) / height, 0.0,
+        rectangle.x0 / width, rectangle.y0 / height, 1.0);
+
+    return result;
+}
+
+double Atlas::getWidth(int frame) const
+{
+    int n = rectangles.size();
+
+    if( n == 0 )
+    {
+        g2cerror("Atlas used with no rectangles.  Returning width 10.");
+        return 10.0;
+    }
+
+    frame = ( ( frame % n ) + n ) % n;
+    const Rectangle& rectangle( rectangles[frame] );
+
+    return fabs(rectangle.x1 - rectangle.x0);
+}
+
+double Atlas::getHeight(int frame) const
+{
+    int n = rectangles.size();
+
+    if( n == 0 )
+    {
+        g2cerror("Atlas used with no rectangles.  Returning height 10.");
+        return 10.0;
+    }
+
+    frame = ( ( frame % n ) + n ) % n;
+    const Rectangle& rectangle( rectangles[frame] );
+
+    return fabs(rectangle.y1 - rectangle.y0);
+}
+
+bool Atlas::getCenter(int frame) const
+{
+    return center;
+}
+
+Polygon Atlas::getCollisionPolygon(int frame) const
+{
+    int n = rectangles.size();
+
+    if( n == 0 )
+    {
+        g2cerror("Atlas used with no rectangles.  Returning width empty polygon.");
+        return Polygon();
+    }
+
+    frame = ( ( frame % n ) + n ) % n;
+
+    return polygons[frame];
+}
+
 
 Font::Font() : widths(128), lineHeight(32.0), lineBottom(16.0), widthScale(1.0), spacing(0.0), baseChar(' ')
 {
@@ -306,7 +468,7 @@ void Font::drawString(const Mat4& M,
             char c = s[i];
             double l = k * charLeft(c);
             
-            Mat4 matrix(M * getOffsetMatrix(x-l, y, k));
+            Mat4 matrix(M * getOffsetMatrix(c-baseChar, x-l, y, k));
             Mat3 texMatrix(getTexMatrix(c-baseChar));
             
             Sprite::renderer->drawMesh(NULL, matrix, texMatrix, color, this);
@@ -607,10 +769,10 @@ void Node::removeAndDelete(Node* t)
     delete t;
 }
 
-void Node::removeSprite(const Sprite* s)
+void Node::removeSampler(const Sampler* sampler)
 {    
     for(vector<Node*>::const_iterator itr = children.begin(); itr!=children.end(); itr++)
-        (*itr)->removeSprite(s);
+        (*itr)->removeSampler(sampler);
 }
 
 Node* Node::findChild(const string& name) const
@@ -849,6 +1011,7 @@ Mat4 Node::getWorldMatrix() const
 {
     if(parent)
         return parent->getWorldMatrix() * getMatrix();
+
     return Mat4();
 }
 
@@ -866,7 +1029,7 @@ Actor* Node::actorInClick(const Mat4& worldMatrix, const Vec2& C)
     
     for(vector<Node*>::reverse_iterator itr = children.rbegin(); itr!=children.rend(); itr++)
     {
-        Actor* n = (*itr)->actorInClick(worldMatrix * n->getMatrix(), C);
+        Actor* n = (*itr)->actorInClick(worldMatrix * getMatrix(), C);
         if( n )
             return n;
     }
@@ -1490,7 +1653,7 @@ void Polygon::triangulate() const
         bool empty = true;
         for( int j = (i+3)%n; j!=i; j=(j+1)%n )
         {
-            Vec2 v = T * vertices[p[j]] + a;
+            Vec2 v = T.inverse() * (vertices[p[j]] - a);
             if( v.x > 0.0 && v.y > 0.0 && v.y + v.x < 1.0 )
             {
                 empty = false;
@@ -1513,6 +1676,62 @@ void Polygon::triangulate() const
             n--;
         }
     }
+}
+
+vector<int> Polygon::getTriangleIndices() const
+{
+    vector<int> indices;
+
+    // This algorithm runs in worst case O(n^3).
+    int n = size();
+    vector<int> p(n);
+
+    int i = 0;
+
+    // Cache the indices of the polygon.
+    for( i = 0; i < n; i++ )
+        p[i] = i;
+
+    // Iterate through the indices.
+    for( i = 0; i < n && n > 2; i++ )
+    {
+        // Consider triangle i, i+1, i+2 candidate for being an ear.
+        const Vec2 &a(vertices[p[i]]), &b(vertices[p[(i+1) % n]]), &c(vertices[p[(i+2) % n]]);
+        Mat2 T(b-a, c-a);
+
+        // If it's going clockwise, it's not an ear.
+        if( T.det() < 0.0 )
+            continue;
+
+        // If another point of the polygon is inside, it's not an ear.
+        bool empty = true;
+        for( int j = (i+3)%n; j!=i; j=(j+1)%n )
+        {
+            Vec2 v = T.inverse() * (vertices[p[j]] - a);
+            if( v.x > 0.0 && v.y > 0.0 && v.y + v.x < 1.0 )
+            {
+                empty = false;
+                break;
+            }
+        }
+
+        // If empty is true, at this point, it is an ear, and we remove the
+        // middle point from p, and add the triangle to indices.
+        if( empty )
+        {
+            indices.push_back( p[i] );
+            indices.push_back( p[(i+1)%n] );
+            indices.push_back( p[(i+2)%n] );
+
+            for( int j = (i+1)%n; j < n-1; j++ )
+                p[j] = p[j+1];
+            
+            i = -1; // Recall i++ happens at the end of the loop-body.
+            n--;
+        }
+    }
+
+    return indices;
 }
 
 void Polygon::handleChild(const parse::Node* n)
@@ -1585,14 +1804,23 @@ Polygon::DrawType Polygon::getDrawType() const
     return drawType;
 }
 
-Actor::Actor() : sprite(NULL), mesh(NULL), x(position.x), y(position.y)
+Actor::Actor()
+    : sampler(NULL)
+    , mesh(NULL)
+    , sprite(sampler)
+    , x(position.x)
+    , y(position.y)
 {
     init();
 }
 
-Actor::Actor(Sprite* insprite) : mesh(NULL), x(position.x), y(position.y)
+Actor::Actor(Sampler* insampler)
+    : mesh(NULL)
+    , sprite(sampler)
+    , x(position.x)
+    , y(position.y)
 {
-    sprite = insprite;
+    sampler = insampler;
     init();
 }
 
@@ -1615,7 +1843,7 @@ void Actor::init()
     addProperty("rotation", rotation);
     addProperty("frame", frame);
     addProperty("color", color);
-    addProperty("spriteName", spriteName);
+    addProperty("samplerName", samplerName);
 }
 
 Mat4 Actor::getMatrix() const
@@ -1629,12 +1857,12 @@ Mat4 Actor::getMatrix() const
                  x, y, 0, 1);
 }
 
-void Actor::removeSprite(const Sprite* s)
+void Actor::removeSampler(const Sampler* s)
 {
-    if( sprite == s )
-        sprite = NULL;
+    if( sampler == s )
+        sampler = NULL;
     
-    Node::removeSprite(s);
+    Node::removeSampler(s);
 }
 
 void Actor::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
@@ -1642,21 +1870,21 @@ void Actor::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
     Mat4 matrix(worldMatrix);
     Mat3 texMatrix;
 
-    if( sprite )
+    if( sampler )
     {
-        matrix = matrix * sprite->getOffsetMatrix(0.0, 0.0, 1.0);
-        texMatrix = sprite->getTexMatrix(frame());
+        matrix = matrix * sampler->getOffsetMatrix(frame(), 0.0, 0.0, 1.0);
+        texMatrix = sampler->getTexMatrix(frame());
     }
 
-    Sprite::renderer->drawMesh(mesh, matrix, texMatrix, worldColor, sprite);
+    Sprite::renderer->drawMesh(mesh, matrix, texMatrix, worldColor, sampler);
 
     if( Sprite::drawLines )
         collisionPolygon().drawInTree(worldMatrix, worldColor);
 }
 
 
-map<Actor*, string> gActorToSpriteName;
-map<Text*, string> gTextToFontName;
+static map<Actor*, string> gActorToSamplerName;
+static map<Text*, string> gTextToFontName;
 
 void Actor::handleChild(const parse::Node* n)
 {
@@ -1667,8 +1895,8 @@ void Actor::handleChild(const parse::Node* n)
     
     if(value)
     {
-        if(n_name == "spriteName")
-            gActorToSpriteName[this] = value->data.s;
+        if(n_name == "samplerName")
+            gActorToSamplerName[this] = value->data.s;
     }
 }
 
@@ -1680,15 +1908,17 @@ Polygon Actor::collisionPolygon() const
     {
         R = k() * polygon + position;
     }
-    else if( sprite )
+    else if( sampler )
     {
-        double w = k() * sprite->width / sprite->numberOfColumns(),
-               h = k() * sprite->height / sprite->numberOfRows();
+        double w = k() * sampler->getWidth(frame),
+               h = k() * sampler->getHeight(frame);
         
-        if( !sprite->polygon.empty() )
+        Polygon samplerPoly( sampler->getCollisionPolygon(frame) );
+
+        if( !samplerPoly.empty() )
         {
-            R = k() * sprite->polygon + position;
-            if( sprite->center() )
+            R = k() * samplerPoly + position;
+            if( sampler->getCenter() )
                 R -= 0.5 * Vec2(w, h);
         }
         else
@@ -1697,7 +1927,7 @@ Polygon Actor::collisionPolygon() const
             
             R.add(x0, y0).add(x1, y0).add(x1, y1).add(x0, y1);
             
-            if( sprite->center() )
+            if( sampler->getCenter() )
                 R -= 0.5 * Vec2(w, h);
         }
     }
@@ -1721,29 +1951,32 @@ Actor* Actor::actorInClick(const Mat4& worldMatrix, const Vec2& C)
     return NULL;
 }
 
-Button::Button() : baseFrame(0),
-                   depressed(false),
-                   handler(NULL),
-                   enabled(true)
+Button::Button()
+    : baseFrame(0)
+    , depressed(false)
+    , handler(NULL)
+    , enabled(true)
 {
     type = "Button";
 }
 
-Button::Button(Sprite* insprite) : Actor(insprite),
-                                   baseFrame(0),
-                                   depressed(false),
-                                   handler(NULL),
-                                   enabled(true)
+Button::Button(Sampler* insampler)
+    : Actor(insampler)
+    , baseFrame(0)
+    , depressed(false)
+    , handler(NULL)
+    , enabled(true)
 {
     type = "Button";
     frame = 0;
 }
 
-Button::Button(Sprite* insprite, int baseFrame) : Actor(insprite),
-                                                  baseFrame(baseFrame),
-                                                  depressed(false),
-                                                  handler(NULL),
-                                                  enabled(true)
+Button::Button(Sampler* insampler, int baseFrame)
+    : Actor(insampler)
+    , baseFrame(baseFrame)
+    , depressed(false)
+    , handler(NULL)
+    , enabled(true)
 {
     type = "Button";
     frame = baseFrame;
@@ -1751,9 +1984,9 @@ Button::Button(Sprite* insprite, int baseFrame) : Actor(insprite),
 
 void Button::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 {
-    if( !sprite )
+    if( !sampler )
     {
-        g2cerror( "Button %s drawing with null sprite.\n", name.c_str() );
+        g2cerror( "Button %s drawing with null sampler.\n", name.c_str() );
         exit(0);
     }
     
@@ -1995,7 +2228,7 @@ World::World() : bank(NULL), soundInitted(false)
     
     type = "World";
     
-    addProperty("sprites", sprites);
+    addProperty("samplers", samplers);
     addProperty("sounds", sounds);
 }
 
@@ -2006,7 +2239,7 @@ World::~World()
     
     delete context;
 
-    for(vector<Sprite*>::iterator itr = sprites.begin(); itr!=sprites.end(); itr++)
+    for(vector<Sampler*>::iterator itr = samplers.begin(); itr!=samplers.end(); itr++)
         delete *itr;
 
     for(vector<Sound*>::iterator itr = sounds.begin(); itr!=sounds.end(); itr++)
@@ -2062,24 +2295,24 @@ void World::resize(int width, int height)
         -1.0, -1.0, 0.0, 1.0);
 }
 
-void World::addSprite(Sprite* sprite)
+void World::addSampler(Sampler* sampler)
 {
-    sprites.push_back(sprite);
+    samplers.push_back(sampler);
 }
 
-void World::removeSprite(const Sprite* sprite)
+void World::removeSampler(const Sampler* sampler)
 {
-    int n = sprites.size();
+    int n = samplers.size();
     int j = 0;
     for(int i = 0; i < n; i++)
-        if(sprites[i] != sprite)
+        if(samplers[i] != sampler)
         {
-            sprites[j] = sprites[i];
+            samplers[j] = samplers[i];
             j++;
         }
-    sprites.resize(j);
+    samplers.resize(j);
     
-    Node::removeSprite(sprite);
+    Node::removeSampler(sampler);
 }
 
 bool World::mouseDown(const Vec2& C)
@@ -2101,30 +2334,29 @@ void World::initWithPath(const char* path)
 
 void World::initWithParseNode(const parse::Node* n)
 {
-    gActorToSpriteName.clear();
+    gActorToSamplerName.clear();
     gTextToFontName.clear();
     
     Node::initWithParseNode(n);
     
-    updateSpriteMap();
+    updateSamplerMap();
     updateSoundMap();
-    
     updateNodeMap();
     
-    for(map<Actor*, string>::iterator itr = gActorToSpriteName.begin();
-        itr != gActorToSpriteName.end();
+    for(map<Actor*, string>::iterator itr = gActorToSamplerName.begin();
+        itr != gActorToSamplerName.end();
         itr++)
     {
-        const string& spriteName(itr->second);
-        if( spriteName != "" )
+        const string& samplerName(itr->second);
+        if( samplerName != "" )
         {
-            map<string, Sprite*>::iterator mitr = spriteMap.find(spriteName);
-            if( mitr != spriteMap.end() )
-                itr->first->sprite = mitr->second;
+            map<string, Sampler*>::iterator mitr = samplerMap.find(samplerName);
+            if( mitr != samplerMap.end() )
+                itr->first->sampler = mitr->second;
             else
             {
-                g2cerror( "Actor %s requested sprite not found: %s\n",
-                        itr->first->name.c_str(), spriteName.c_str() );
+                g2cerror( "Actor %s requested sampler not found: %s\n",
+                    itr->first->name.c_str(), samplerName.c_str() );
                 exit(0);
             }
         }
@@ -2137,20 +2369,20 @@ void World::initWithParseNode(const parse::Node* n)
         const string& fontName(itr->second);
         if( fontName != "" )
         {
-            map<string, Sprite*>::iterator mitr = spriteMap.find(fontName);
-            if( mitr != spriteMap.end() )
+            map<string, Sampler*>::iterator mitr = samplerMap.find(fontName);
+            if( mitr != samplerMap.end() )
                 itr->first->font = (Font*)(mitr->second);
         }
     }
 }
 
-void World::updateSpriteMap()
+void World::updateSamplerMap()
 {
-    spriteMap.clear();
-    for(vector<Sprite*>::iterator itr = sprites.begin(); itr!=sprites.end(); itr++)
+    samplerMap.clear();
+    for(vector<Sampler*>::iterator itr = samplers.begin(); itr!=samplers.end(); itr++)
     {
-        Sprite* sprite = *itr;
-        spriteMap[sprite->name] = sprite;
+        Sampler* sampler = *itr;
+        samplerMap[sampler->name] = sampler;
     }
 }
 
@@ -2185,32 +2417,37 @@ void World::handleChild(const parse::Node* n)
     
     if( value )
     {
-        if( n_name == "sprites" )
+        if( n_name == "samplers" )
         {
             for(vector<parse::Node*>::const_iterator itr = value->children.begin();
                 itr!=value->children.end();
                 itr++)
             {
                 string type = getType(*itr);
-                Sprite* sprite = NULL;
+                Sampler* sampler = NULL;
                 
                 if(type=="Sprite")
-                    sprite = new Sprite();
+                {
+                    sampler = new Sprite();
+                }
                 else if(type == "Font")
-                    sprite = new Font();
+                {
+                    sampler = new Font();
+                }
                 else
                 {
-                    g2cerror("Object in sprite list must be type Sprite or Font.\n");
+                    g2cerror("Object in sampler list must be type Sprite or Font.\n");
                     exit(0);
                 }
                 
-                if( sprite )
+                if( sampler )
                 {
-                    sprite->initWithParseNode(*itr);
-                    sprites.push_back(sprite);
-                    deleteResources.push_back(sprite);
+                    sampler->initWithParseNode(*itr);
                     
-                    bank->initTextureWithPath(sprite, sprite->file().c_str());
+                    samplers.push_back(sampler);
+                    deleteResources.push_back(sampler);
+
+                    bank->initTextureWithPath(sampler, sampler->file().c_str());
                 }
             }
             
@@ -2257,7 +2494,7 @@ void World::clear()
 {
     clearChildren();
     
-    sprites.clear();
+    samplers.clear();
     sounds.clear();
     
     for( vector<Serializable*>::iterator itr = deleteResources.begin();
@@ -2313,10 +2550,10 @@ Node* World::getNode(const string& name)
     return NULL;
 }
 
-Sprite* World::getSprite(const string& name)
+Sampler* World::getSampler(const string& name)
 {
-    map<string, Sprite*>::iterator itr = spriteMap.find(name);
-    if( itr != spriteMap.end() )
+    map<string, Sampler*>::iterator itr = samplerMap.find(name);
+    if( itr != samplerMap.end() )
         return itr->second;
     return NULL;
 }

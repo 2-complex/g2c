@@ -16,6 +16,7 @@ current: $(CURRENT)
 endif
 
 EXES = \
+	atlas \
 	modelfile \
 	serialize \
 	ship \
@@ -50,6 +51,9 @@ define build_with_source
 endef
 
 DEPS := $(LIBG2C) $(LIBENVIRONMENTS) $(G2C_SOURCE_DIR)/lin/lin.h
+
+atlas: $(DEPS) atlas.cpp
+	$(call build_with_source, atlas.cpp)
 
 modelfile: $(DEPS) modelfile.cpp
 	$(call build_with_source, modelfile.cpp)

@@ -3,7 +3,8 @@
 
 using namespace std;
 
-class ShipEnvironment : public SpriteEnvironment {
+class ShipEnvironment : public SpriteEnvironment
+{
 public:
 	ShipEnvironment();
 

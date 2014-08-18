@@ -124,17 +124,16 @@ bool AsynchronousBank::step()
     
     if( inst.resource->type == "Texture" ||
         inst.resource->type == "Texture2D" ||
+        inst.resource->type == "Sampler" ||
         inst.resource->type == "Sprite" ||
         inst.resource->type == "Font" )
     {
         bank->initTextureWithPath((Texture2D*)inst.resource, inst.path.c_str());
     }
-    
     else if( inst.resource->type == "Sound" )
     {
         bank->initSoundWithPath((Sound*)inst.resource, inst.path.c_str());
     }
-    
     else
     {   // Assume if it's anything else it's a generic serializable.
         bank->initSerializableWithPath(inst.resource, inst.path.c_str());
