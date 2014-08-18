@@ -469,14 +469,14 @@ namespace g2c {
 
         StringProperty file;
 
-        virtual Mat4 getOffsetMatrix(double x = 0.0, double y = 0.0, double k = 1.0) const;
-        virtual Mat3 getTexMatrix(int frame = 0) const= 0;
+        virtual Mat4 getOffsetMatrix(int frame = 0, double x = 0.0, double y = 0.0, double k = 1.0) const;
+        virtual Mat3 getTexMatrix(int frame = 0) const = 0;
 
-        virtual double getWidth() const= 0;
-        virtual double getHeight() const= 0;
-        virtual bool getCenter() const= 0;
+        virtual double getWidth(int frame = 0) const = 0;
+        virtual double getHeight(int frame = 0) const = 0;
+        virtual bool getCenter(int frame = 0) const = 0;
 
-        virtual Polygon getCollisionPolygon() const = 0;
+        virtual Polygon getCollisionPolygon(int frame = 0) const = 0;
     };
 
 
@@ -484,6 +484,7 @@ namespace g2c {
     {
     public:
         Rectangle();
+        Rectangle( double x0, double y0, double x1, double y1 );
         virtual ~Rectangle();
 
         double x0;
@@ -494,18 +495,6 @@ namespace g2c {
     public:
         std::string serialize(std::string indent = "") const;
         void initWithParseNode(const parse::Node* n);
-    };
-
-
-    class RectangleList : public Serializable
-    {
-    public:
-        RectangleList();
-        virtual ~RectangleList();
-
-        VectorProperty<Rectangle> Rectangles;
-
-        virtual Mat3 getTexMatrix(int frame = 0) const;
     };
 
     /*! A Sprite represnts a texture on the GPU whose image is a rectangular array of animation
@@ -533,20 +522,40 @@ namespace g2c {
         
         static bool drawLines;
 
-        Sampler* sampler;
         static Renderer* renderer;
-        
+
         virtual Mat3 getTexMatrix(int frame = 0) const;
-        virtual double getWidth() const;
-        virtual double getHeight() const;
-        virtual bool getCenter() const;
-        virtual Polygon getCollisionPolygon() const;
+        virtual double getWidth(int frame = 0) const;
+        virtual double getHeight(int frame = 0) const;
+        virtual bool getCenter(int frame = 0) const;
+        virtual Polygon getCollisionPolygon(int frame = 0) const;
         
     protected:
         virtual std::string serializeElements(std::string indent = "") const;
         virtual void handleChild(const parse::Node* n);
     };
-    
+
+
+    /*! An Atlas is a texture which is subdivided into rectangular images to be sampled by an
+        Actor.  Here, a frame of animation references a rectangle in the list.*/
+    class Atlas : public Sampler
+    {
+    public:
+        Atlas();
+        virtual ~Atlas();
+
+        BoolProperty center;
+        VectorProperty<Rectangle> rectangles;
+        VectorProperty<Polygon> polygons;
+
+        virtual Mat3 getTexMatrix(int frame = 0) const;
+        virtual double getWidth(int frame = 0) const;
+        virtual double getHeight(int frame = 0) const;
+        virtual bool getCenter(int frame = 0) const;
+        virtual Polygon getCollisionPolygon(int frame = 0) const;
+    };
+
+
     /*! Button is a type of Actor that is clickable, it is meant to draw as a textured quad
         using a Sampler object just like its parent, except that it has its own implementations
         of mouseDown, mouseDragged and mouseUp which handle the animation of the button getting

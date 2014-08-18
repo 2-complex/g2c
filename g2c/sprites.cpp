@@ -153,13 +153,13 @@ Sampler::~Sampler()
 {
 }
 
-Mat4 Sampler::getOffsetMatrix(double x, double y, double k) const
+Mat4 Sampler::getOffsetMatrix(int frame, double x, double y, double k) const
 {
-    double w = getWidth(),
-           h = getHeight();
+    double w = getWidth(frame),
+           h = getHeight(frame);
 
     Vec2 offset(x, y);
-    if( getCenter() )
+    if( getCenter(frame) )
         offset -= 0.5 * k * Vec2(w, h);
 
     return Mat4(
@@ -174,6 +174,14 @@ Rectangle::Rectangle()
     , y0(0.0)
     , x1(1.0)
     , y1(1.0)
+{
+}
+
+Rectangle::Rectangle(double x0, double y0, double x1, double y1)
+    : x0(x0)
+    , y0(y0)
+    , x1(x1)
+    , y1(y1)
 {
 }
 
@@ -209,39 +217,8 @@ void Rectangle::initWithParseNode(const parse::Node* n)
         y1 = v[3]();
 }
 
-RectangleList::RectangleList()
-{
-    type = "RectangleList";
-    addProperty("Rectangles", Rectangles);
-}
-
-RectangleList::~RectangleList()
-{
-}
-
-Mat3 RectangleList::getTexMatrix(int frame) const
-{
-    int n = Rectangles.size();
-
-    if( frame == 0 )
-    {
-        g2cerror("RectangleList used with no Rectangles.  Returning idenitity matrix.");
-        return Mat3();
-    }
-
-    frame = ( ( frame % n ) + n ) % n;
-    const Rectangle& Rectangle( Rectangles[frame] );
-
-    // Matrix that transforms the unit square to the Rectangle.
-    return Mat3(
-        Rectangle.x1 - Rectangle.x0, 0.0, 0.0,
-        0.0, Rectangle.y1 - Rectangle.y0, 0.0,
-        Rectangle.x0, Rectangle.y0, 1.0 );
-}
-
 Sprite::Sprite()
-    : sampler(NULL)
-    , numberOfRows(1)
+    : numberOfRows(1)
     , numberOfColumns(1)
     , center(false)
     , flipRows(false)
@@ -276,22 +253,22 @@ Mat3 Sprite::getTexMatrix(int frame) const
         i / c  , j / r   , 1.0 );
 }
 
-double Sprite::getWidth() const
+double Sprite::getWidth(int frame) const
 {
     return width / numberOfColumns();
 }
 
-double Sprite::getHeight() const
+double Sprite::getHeight(int frame) const
 {
     return height / numberOfRows();
 }
 
-bool Sprite::getCenter() const
+bool Sprite::getCenter(int frame) const
 {
     return center;
 }
 
-Polygon Sprite::getCollisionPolygon() const
+Polygon Sprite::getCollisionPolygon(int frame) const
 {
     return polygon;
 }
@@ -309,6 +286,92 @@ string Sprite::serializeElements(string indent) const
     string r = Serializable::serializeElements(indent);
     return r;
 }
+
+Atlas::Atlas()
+{
+    type = "Atlas";
+    addProperty("rectangles", rectangles);
+}
+
+Atlas::~Atlas()
+{
+}
+
+Mat3 Atlas::getTexMatrix(int frame) const
+{
+    int n = rectangles.size();
+
+    if( n == 0 )
+    {
+        g2cerror("Atlas used with no rectangles.  Returning idenitity matrix.");
+        return Mat3();
+    }
+
+    frame = ( ( frame % n ) + n ) % n;
+    const Rectangle& rectangle( rectangles[frame] );
+
+    // Matrix that transforms the unit square to the rectangle
+    // in texture [0,0,1,1] coordinates.
+    Mat3 result(
+        (rectangle.x1 - rectangle.x0) / width, 0.0, 0.0,
+        0.0, (rectangle.y1 - rectangle.y0) / height, 0.0,
+        rectangle.x0 / width, rectangle.y0 / height, 1.0);
+
+    return result;
+}
+
+double Atlas::getWidth(int frame) const
+{
+    int n = rectangles.size();
+
+    if( n == 0 )
+    {
+        g2cerror("Atlas used with no rectangles.  Returning width 10.");
+        return 10.0;
+    }
+
+    frame = ( ( frame % n ) + n ) % n;
+    const Rectangle& rectangle( rectangles[frame] );
+
+    return fabs(rectangle.x1 - rectangle.x0);
+}
+
+double Atlas::getHeight(int frame) const
+{
+    int n = rectangles.size();
+
+    if( n == 0 )
+    {
+        g2cerror("Atlas used with no rectangles.  Returning height 10.");
+        return 10.0;
+    }
+
+    frame = ( ( frame % n ) + n ) % n;
+    const Rectangle& rectangle( rectangles[frame] );
+
+    return fabs(rectangle.y1 - rectangle.y0);
+}
+
+bool Atlas::getCenter(int frame) const
+{
+    return center;
+}
+
+Polygon Atlas::getCollisionPolygon(int frame) const
+{
+    int n = rectangles.size();
+
+    if( n == 0 )
+    {
+        g2cerror("Atlas used with no rectangles.  Returning width empty polygon.");
+        return Polygon();
+    }
+
+    frame = ( ( frame % n ) + n ) % n;
+
+    return polygons[frame];
+}
+
 
 Font::Font() : widths(128), lineHeight(32.0), lineBottom(16.0), widthScale(1.0), spacing(0.0), baseChar(' ')
 {
@@ -405,7 +468,7 @@ void Font::drawString(const Mat4& M,
             char c = s[i];
             double l = k * charLeft(c);
             
-            Mat4 matrix(M * getOffsetMatrix(x-l, y, k));
+            Mat4 matrix(M * getOffsetMatrix(c-baseChar, x-l, y, k));
             Mat3 texMatrix(getTexMatrix(c-baseChar));
             
             Sprite::renderer->drawMesh(NULL, matrix, texMatrix, color, this);
@@ -1795,7 +1858,7 @@ void Actor::removeSampler(const Sampler* s)
 {
     if( sampler == s )
         sampler = NULL;
-    
+
     Node::removeSampler(s);
 }
 
@@ -1806,7 +1869,7 @@ void Actor::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 
     if( sampler )
     {
-        matrix = matrix * sampler->getOffsetMatrix(0.0, 0.0, 1.0);
+        matrix = matrix * sampler->getOffsetMatrix(frame(), 0.0, 0.0, 1.0);
         texMatrix = sampler->getTexMatrix(frame());
     }
 
@@ -1844,10 +1907,10 @@ Polygon Actor::collisionPolygon() const
     }
     else if( sampler )
     {
-        double w = k() * sampler->getWidth(),
-               h = k() * sampler->getHeight();
+        double w = k() * sampler->getWidth(frame),
+               h = k() * sampler->getHeight(frame);
 
-        Polygon samplerPoly( sampler->getCollisionPolygon() );
+        Polygon samplerPoly( sampler->getCollisionPolygon(frame) );
 
         if( !samplerPoly.empty() )
         {

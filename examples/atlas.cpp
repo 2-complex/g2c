@@ -3,97 +3,81 @@
 
 using namespace std;
 
-class ShipEnvironment : public SpriteEnvironment {
+class AtlasEnvironment : public SpriteEnvironment {
 public:
-	ShipEnvironment();
+    AtlasEnvironment();
 
 private:
-	Sprite ship;
-	Actor enterprise;
-	
-	set<unsigned char> keys;
-	
-	Vec2 velocity;
-	Vec2 position;
-	double theta;
-	
-	double then;
-	
-	void init();
-	void step(double t);
-	void draw() const;
-	
-	void keyDown(unsigned char c);
-	void keyUp(unsigned char c);
-	
-	void button();
+    Atlas treeAtlas;
+    Actor sherman;
+
+    void init();
+    void draw() const;
+
+    void keyDown(unsigned char c);
 };
 
-ShipEnvironment::ShipEnvironment() : theta(0.0), then(0.0) {}
-
-void ShipEnvironment::keyDown(unsigned char c)
+AtlasEnvironment::AtlasEnvironment()
 {
-	keys.insert(c);
 }
 
-void ShipEnvironment::keyUp(unsigned char c)
+void AtlasEnvironment::keyDown(unsigned char c)
 {
-	keys.erase(c);
+    switch( c )
+    {
+        case '+':
+        case '=':
+            sherman.frame++;
+        break;
+
+        case '-':
+        case '_':
+            sherman.frame--;
+        break;
+    }
 }
 
-void ShipEnvironment::init()
+void AtlasEnvironment::init()
 {
-	bank.initTextureWithPath(&ship, "ship.png");
-	ship.numberOfRows = 2;
-	ship.numberOfColumns = 32;
-	ship.center = true;
-	ship.flipRows = true;
-	
-	enterprise.sprite = &ship;
-	
-	enterprise.position.set(100, 100);
+    bank.initTextureWithPath(&treeAtlas, "treeatlas.png");
+
+    treeAtlas.center = true;
+
+    treeAtlas.rectangles.push_back( Rectangle(0, 0, 474, 1014) );
+    treeAtlas.rectangles.push_back( Rectangle(476, 3, 780, 279) );
+    treeAtlas.rectangles.push_back( Rectangle(476, 285, 762, 511) );
+    treeAtlas.rectangles.push_back( Rectangle(488, 519, 768, 739) );
+    treeAtlas.rectangles.push_back( Rectangle(482, 756, 915, 1006) );
+    treeAtlas.rectangles.push_back( Rectangle(3, 1029, 498, 1594) );
+    treeAtlas.rectangles.push_back( Rectangle(497, 1032, 933, 1384) );
+    treeAtlas.rectangles.push_back( Rectangle(947, 867, 1368, 1159) );
+    treeAtlas.rectangles.push_back( Rectangle(1028, 606, 1584, 856) );
+    treeAtlas.rectangles.push_back( Rectangle(779, 354, 1020, 751) );
+    treeAtlas.rectangles.push_back( Rectangle(797, 3, 1020, 345) );
+    treeAtlas.rectangles.push_back( Rectangle(1025, 240, 1281, 559) );
+    treeAtlas.rectangles.push_back( Rectangle(1022, 6, 1284, 229) );
+    treeAtlas.rectangles.push_back( Rectangle(1292, 243, 1689, 595) );
+    treeAtlas.rectangles.push_back( Rectangle(1298, 9, 1731, 235) );
+    treeAtlas.rectangles.push_back( Rectangle(1757, 12, 2013, 505) );
+    treeAtlas.rectangles.push_back( Rectangle(1688, 507, 2037, 817) );
+    treeAtlas.rectangles.push_back( Rectangle(1388, 867, 1617, 1162) );
+
+    sherman.sampler = &treeAtlas;
+
+    sherman.position.set(100, 100);
 }
 
-void ShipEnvironment::step(double t)
+void AtlasEnvironment::draw() const
 {
-	double now = t;
-	
-	if( now - then < 1.0 / 30.0 && then != 0.0 )
-		return;
-	
-	if( keys.find('a') != keys.end() )
-		theta += M_PI / 16.0;
-	
-	if( keys.find('d') != keys.end() )
-		theta -= M_PI / 16.0;
-	
-	bool thrust = false;
-	if( keys.find('s') != keys.end() )
-	{
-		thrust = true;
-		velocity += Vec2(cos(theta), sin(theta));
-	}
-	
-	enterprise.position += velocity;
-	enterprise.frame = (((int)(32.0 * (theta / (2.0 * M_PI)) + 0.5)) % 32 + 32) % 32;
-	
-	if( thrust )
-		enterprise.frame += 32;
-	
-	then = now;
-}
-
-void ShipEnvironment::draw() const
-{
-	enterprise.draw();
+    sherman.draw();
 }
 
 int main(int argc, char** args)
 {
-	ShipEnvironment e;
-	e.animate = true;
-	e.mainLoop();
-	
-	return 0;
+    AtlasEnvironment e;
+    e.animate = true;
+    e.mainLoop();
+    
+    return 0;
 }
 
