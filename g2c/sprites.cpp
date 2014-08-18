@@ -1162,11 +1162,12 @@ void RendererGL2::init()
     initialized = true;
 }
 
-void RendererGL2::drawMesh(const Mesh* mesh,
-                           const Mat4& matrix,
-                           const Mat3& texMatrix,
-                           const Color& color,
-                           const Texture* texture) const
+void RendererGL2::drawMesh(
+    const Mesh* mesh,
+    const Mat4& matrix,
+    const Mat3& texMatrix,
+    const Color& color,
+    const Texture* texture) const
 {
     if( !initialized )
     {
@@ -1174,7 +1175,8 @@ void RendererGL2::drawMesh(const Mesh* mesh,
         exit(0);
     }
     
-    if( !mesh ) mesh = quad;
+    if( !mesh )
+        mesh = quad;
     
     if( mesh == quad )
     {
