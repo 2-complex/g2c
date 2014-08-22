@@ -232,6 +232,9 @@ public:
 
     Buffer& operator=(const std::vector<double>& v);
     Buffer& operator=(const std::vector<float>& v);
+    Buffer& set(const double* v, int size);
+    Buffer& set(const float* v, int size);
+
 
 protected:
     virtual std::string serializeElements(std::string indent = "") const;
@@ -260,6 +263,8 @@ public:
 
     IndexBuffer& operator=(const std::vector<int>& v);
     IndexBuffer& operator=(const std::vector<unsigned short>& v);    
+    IndexBuffer& set(const int*, int size);
+    IndexBuffer& set(const unsigned short*, int size);
 
 protected:
     virtual std::string serializeElements(std::string indent = "") const;

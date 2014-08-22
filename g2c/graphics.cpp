@@ -674,10 +674,10 @@ Buffer::Buffer(const vector<double>& v)
     float* fv = new float[size];
     for(int i = 0; i < size; i++)
         fv[i] = v[i];
-    
+
     size = v.size();
     initWithFloatArray(fv);
-    
+
     delete[] fv;
 }
 
@@ -709,6 +709,8 @@ Buffer::Buffer(const float* v, int size) : size(size)
     type = "Buffer";
     initWithFloatArray(v);
 }
+
+
 
 Buffer::~Buffer()
 {
@@ -744,6 +746,30 @@ Buffer& Buffer::operator=(const vector<float>& v)
 
     return *this;
 }
+
+
+Buffer& Buffer::set(const float* v, int size)
+{
+    this->size = size;
+    initWithFloatArray(v);
+    return *this;
+}
+
+
+Buffer& Buffer::set(const double* v, int size)
+{
+    this->size = size;
+
+    type = "Buffer";
+    float* fv = new float[size];
+    for(int i = 0; i < size; i++)
+        fv[i] = v[i];
+
+    initWithFloatArray(fv);
+    delete[] fv;
+    return *this;
+}
+
 
 string Buffer::serializeElements(string indent) const
 {
@@ -889,6 +915,28 @@ IndexBuffer& IndexBuffer::operator=(const std::vector<unsigned short>& v)
     initWithShortArray(sv);
     
     delete[] sv;
+
+    return *this;
+}
+
+IndexBuffer& IndexBuffer::set(const int* v, int size)
+{
+    this->size = size;
+    
+    unsigned short* sv = new unsigned short[size];
+    for(int i = 0; i < size; i++)
+        sv[i] = v[i];
+    
+    initWithShortArray(sv);
+    delete[] sv;
+    
+    return *this;
+}
+
+IndexBuffer& IndexBuffer::set(const unsigned short* v, int size)
+{
+    this->size = size;
+    initWithShortArray(v);
 
     return *this;
 }

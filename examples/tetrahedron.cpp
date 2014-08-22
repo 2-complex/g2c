@@ -38,16 +38,8 @@ void TetrahedronEnvironment::init()
         2,0,3
     };
 
-    vector<float> vertexVector;
-    for( int i = 0; i < sizeof(vertexArray) / sizeof(float); i++ )
-        vertexVector.push_back(vertexArray[i]);
-
-    vector<int> indexVector;
-    for( int i = 0; i < sizeof(indexArray) / sizeof(int); i++ )
-        indexVector.push_back(indexArray[i]);
-
-    buffer = vertexVector;
-    indexBuffer = indexVector;
+    buffer.set(vertexArray, sizeof(vertexArray) / sizeof(float));
+    indexBuffer.set(indexArray, sizeof(indexArray) / sizeof(int));
 
     geometry["position"] = Field(&buffer, 3, 3, 0);
     geometry.indices = &indexBuffer;
