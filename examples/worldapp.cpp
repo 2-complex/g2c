@@ -49,12 +49,7 @@ void WorldApp::draw() const
 
 void WorldApp::destroy()
 {
-<<<<<<< HEAD
-	delete world;
-	delete renderer;
-=======
     delete world;
     delete renderer;
->>>>>>> worldapp
 }
 
