@@ -2,10 +2,12 @@
 #include "panenvironment.h"
 #include "graphics.h"
 
+using namespace std;
+
 class TetrahedronEnvironment : public PanEnvironment
 {
-    Buffer* buffer;
-    IndexBuffer* indexBuffer;
+    Buffer buffer;
+    IndexBuffer indexBuffer;
     Geometry geometry;
     Effect effect;
     Assumption material;
@@ -36,11 +38,11 @@ void TetrahedronEnvironment::init()
         2,0,3
     };
 
-    buffer = new Buffer(vertexArray, 12);
-    indexBuffer = new IndexBuffer(indexArray, 12);
+    buffer.set(vertexArray, sizeof(vertexArray) / sizeof(float));
+    indexBuffer.set(indexArray, sizeof(indexArray) / sizeof(int));
 
-    geometry["position"] = Field(buffer, 3, 3, 0);
-    geometry.indices = indexBuffer;
+    geometry["position"] = Field(&buffer, 3, 3, 0);
+    geometry.indices = &indexBuffer;
 
     effect.vertexCode = 
         "\n"
