@@ -192,7 +192,7 @@ namespace g2c {
         ElementType elementType;
 
         std::vector<float> positions;
-        std::vector<short> indices;
+        std::vector<unsigned short> indices;
 
         int numberOfVertices() const;
         int numberOfElements() const;
