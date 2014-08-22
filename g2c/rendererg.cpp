@@ -47,13 +47,16 @@ void RendererG::init()
     effect.compile();
 
     quadGeometry["position"] = Field(&quadBuffer, 3, 3, 0);
+    quadGeometry.indices = &quadIndexBuffer;
     quadShape.geometry = &quadGeometry;
     assumption.effect = &effect;
 
     defaultTexture = new Texture2D;
     GLubyte data[] = {255, 255, 255, 255};
     defaultTexture->initWithImageData(data, 1, 1, 32);
-    
+
+    quadShape.assumptions.push_back(&assumption);
+
     initialized = true;
 }
 
@@ -64,10 +67,13 @@ void RendererG::drawMesh(
     const Color& color,
     const Texture* texture) const
 {
+    if( !texture )
+        texture = defaultTexture;
+
     assumption["matrix"] = projection * matrix;
     assumption["texMatrix"] = texMatrix;
     assumption["color"] = color;
-    assumption["color"] = texture;
+    assumption["texture"] = texture;
 
     quadShape.draw();    
 }

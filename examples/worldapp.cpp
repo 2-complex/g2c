@@ -3,8 +3,8 @@
 
 #include "appenvironment.h"
 #include "sprites.h"
-
 #include "transforms.h"
+#include "rendererg.h"
 
 using namespace g2c;
 
@@ -26,7 +26,7 @@ void WorldApp::init()
     glewInit();
 
     world = new World;
-    renderer =  new RendererGL2;
+    renderer =  new RendererG;
     renderer->init();
 
     glEnable(GL_BLEND);
