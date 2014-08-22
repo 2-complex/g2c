@@ -1065,14 +1065,14 @@ void RendererGL2::init()
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), &(quad->positions[0]), GL_STREAM_DRAW);
-    
+
     glGenBuffers(1, &indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned short), &(quad->indices[0]), GL_STREAM_DRAW);
-    
+
     glGenBuffers(1, &polygonBuffer);
     glGenBuffers(1, &polygonIndexBuffer);
-    
+
     const char* vertexCode = "\n"
         "    attribute vec3 position;\n"
         "    uniform mat4 matrix;\n"

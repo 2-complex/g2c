@@ -32,7 +32,7 @@ void RendererG::init()
         "        v_texcoord = t.xy / t.z;\n"
         "        gl_Position = matrix * vec4(position, 1.0);\n"
         "    }\n";
-    
+
     const char* fragmentCode = "\n"
         "#ifdef GL_ES\nprecision highp float;\n#endif\n"
         "    uniform vec4 color;\n"
@@ -41,12 +41,14 @@ void RendererG::init()
         "    void main() {\n"
         "        gl_FragColor = color * texture2D(texture, v_texcoord);\n"
         "    }\n";
+    
+    effect.vertexCode = vertexCode;
+    effect.fragmentCode = fragmentCode;
+    effect.compile();
 
-    quadEffect.compile(vertexCode, fragmentCode);
-
-    quadGeometry["position"] = Field(quadBuffer, 3, 3, 0);
-    quadShape.geometry = quadGeometry;
-    assumption.effect = quadEffect;
+    quadGeometry["position"] = Field(&quadBuffer, 3, 3, 0);
+    quadShape.geometry = &quadGeometry;
+    assumption.effect = &effect;
 
     defaultTexture = new Texture2D;
     GLubyte data[] = {255, 255, 255, 255};

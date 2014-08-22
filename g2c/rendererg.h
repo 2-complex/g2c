@@ -4,8 +4,7 @@
 
 namespace g2c
 {
-    /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 2
-        collection.  The draw function in this will work in desktop OpenGL or in OpenGL ES 2.
+    /*! An implementation of Renderer to draw meshes using g2c's graphics library.
         
         Set Sprite::renderer to an instance of RendererG to and call init().  Then all meshes
         will draw using it.*/
@@ -17,6 +16,7 @@ namespace g2c
     private:
 	Buffer quadBuffer;
 	IndexBuffer quadIndexBuffer;
+
 	Buffer polygonBuffer;
         IndexBuffer polygonIndexBuffer;
 
@@ -24,7 +24,7 @@ namespace g2c
 	Geometry quadGeometry;
 	Shape quadShape;
 
-	Assumption assumption;
+	mutable Assumption assumption;
         
         Texture2D* defaultTexture;
     public:

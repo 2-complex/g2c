@@ -180,7 +180,7 @@ namespace g2c {
     public:
         Mesh();
         virtual ~Mesh();
-        
+
         enum ElementType
         {
             kTriangles,
