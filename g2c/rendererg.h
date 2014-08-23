@@ -17,15 +17,19 @@ namespace g2c
 	Buffer quadBuffer;
 	IndexBuffer quadIndexBuffer;
 
-	Buffer polygonBuffer;
-        IndexBuffer polygonIndexBuffer;
+	mutable Buffer polygonBuffer;
+        mutable IndexBuffer polygonIndexBuffer;
 
 	Effect effect;
-	Geometry quadGeometry;
+	
+        Geometry quadGeometry;
 	Shape quadShape;
 
+	Geometry polygonGeometry;
+	Shape polygonShape;
+
 	mutable Assumption assumption;
-        
+
         Texture2D* defaultTexture;
     public:
         virtual void init();

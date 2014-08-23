@@ -41,21 +41,26 @@ void RendererG::init()
         "    void main() {\n"
         "        gl_FragColor = color * texture2D(texture, v_texcoord);\n"
         "    }\n";
-    
+
     effect.vertexCode = vertexCode;
     effect.fragmentCode = fragmentCode;
     effect.compile();
+    assumption.effect = &effect;
 
     quadGeometry["position"] = Field(&quadBuffer, 3, 3, 0);
     quadGeometry.indices = &quadIndexBuffer;
     quadShape.geometry = &quadGeometry;
-    assumption.effect = &effect;
+
+    polygonGeometry["position"] = Field(&polygonBuffer, 3, 3, 0);
+    polygonGeometry.indices = &polygonIndexBuffer;
+    polygonShape.geometry = &polygonGeometry;
 
     defaultTexture = new Texture2D;
     GLubyte data[] = {255, 255, 255, 255};
     defaultTexture->initWithImageData(data, 1, 1, 32);
 
     quadShape.assumptions.push_back(&assumption);
+    polygonShape.assumptions.push_back(&assumption);
 
     initialized = true;
 }
@@ -75,7 +80,16 @@ void RendererG::drawMesh(
     assumption["color"] = color;
     assumption["texture"] = texture;
 
-    quadShape.draw();    
+    if( mesh )
+    {
+	polygonBuffer = mesh->positions;
+        polygonIndexBuffer = mesh->indices;
+        polygonShape.draw();
+    }
+    else
+    {
+	quadShape.draw();
+    }
 }
 
 }
