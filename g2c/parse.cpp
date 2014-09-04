@@ -24,6 +24,9 @@
 
 #include <stack>
 
+#include <stdlib.h>
+#include <stdio.h>
+
 using namespace parse;
 using namespace std;
 
@@ -54,36 +57,36 @@ void Node::parse()
 {
     const char* pairs = "{}()[]\'\'\"\"";
     std::stack<char> q;
-    
+
     clearChildren();
-    
+
     // Start with an invisible separator character before the whole thing.
     vector<int> separators;
     separators.push_back(begin-1);
-    
+
     bool escaped = false;
 
     for(int i=begin; i<end; i++)
     {
         int level = q.size();
         char c = s[i];
-        
+
         char open_char = 0;
         if( level )
             open_char = q.top();
-        
+
         if( level == 0 )
         {
             if( c == ',' || c == ':' )
                 separators.push_back(i);
         }
-        
+
         // If we're within a quote, we look for the other quote only.
         if(level > 0 && (open_char == '\'' || open_char == '"'))
         {
             if( !escaped && c == open_char )
                 q.pop();
-            
+
             if( !escaped && c == '\\' )
                 escaped = true;
             else
@@ -96,7 +99,7 @@ void Node::parse()
             {
                 char begin_c = pairs[j];
                 char end_c = pairs[j+1];
-                
+
                 // Note if begin_c == end_c, this will begin it.
                 if( c==begin_c )
                     q.push(c);
@@ -105,19 +108,19 @@ void Node::parse()
             }
         }
     }
-    
+
     separators.push_back(end);
-    
+
     int n = separators.size();
     if( n==2 )
     {
         // We pretend there's a comma before the beginning.
         int a = separators[0]+1, b = separators[1];
-        
+
         // Strip whitespace.
         while(a < b && charInString(s[a], " \r\n\t")) a++;
         while(a < b && charInString(s[b-1], " \r\n\t")) b--;
-        
+
         if(b-a > 0)
         {
             // If it's a string.
@@ -128,13 +131,13 @@ void Node::parse()
                 for(int j = a+1; j < b-1; j++)
                 {
                     char c = s[j];
-                    
+
                     if( !escaped && c=='\\' )
                     {
                         escaped = true;
                         continue;
                     }
-                    
+
                     if( escaped )
                     {
                         switch(c)
@@ -142,15 +145,15 @@ void Node::parse()
                             case 'n':
                                 r += '\n';
                             break;
-                            
+
                             case 'r':
                                 r += '\r';
                             break;
-                            
+
                             case 't':
                                 r += '\t';
                             break;
-                            
+
                             default:
                                 r += c;
                             break;
@@ -158,17 +161,17 @@ void Node::parse()
                     }
                     else
                         r += c;
-                    
+
                     escaped = false;
                 }
                 data.s = r;
                 type = kString;
             }
-            
+
             char num_chars[] = "-.0123456789";
             bool is_num = true;
             bool is_float = false;
-            
+
             // Iterate through each character in the substring, make sure it's a
             // digit or a dot.  Then we know it's a number.
             for(int j = a; j < b; j++)
@@ -183,7 +186,7 @@ void Node::parse()
                     is_float = true;
                 }
             }
-            
+
             if( is_num )
             {
                 string r;
@@ -205,7 +208,7 @@ void Node::parse()
                     type = kInt;
                 }
             }
-            
+
             // If it's a node.
             if( (s[a] == '{' && s[b-1] == '}') ||
                 (s[a] == '[' && s[b-1] == ']') ||
@@ -214,11 +217,11 @@ void Node::parse()
                 char front = s[a];
                 a++;
                 b--;
-                
+
                 if(front == '{') type = kObject;
                 if(front == '[') type = kList;
                 if(front == '(') type = kTuple;
-                
+
                 // Clear whitespace.
                 while(a < b && charInString(s[a], " \r\n\t")) a++;
                 while(a < b && charInString(s[b-1], " \r\n\t")) b--;
@@ -245,13 +248,13 @@ void Node::parse()
         for(int i = 0; i < n-1; i++)
         {
             int a = separators[i]+1, b = separators[i+1];
-            
+
             bool second_of_pair = lastNode && s[a-1]==':';
-            
+
             // Strip whitespace.
             while(a < b && charInString(s[a], " \r\n\t")) a++;
             while(a < b && charInString(s[b-1], " \r\n\t")) b--;
-            
+
             if(b-a > 0)
             {
                 Node* n = new Node(s, a, b);
@@ -282,15 +285,15 @@ void Node::print() const
         case kInt:
             g2clog( "%d", data.i );
         break;
-        
+
         case kFloat:
             g2clog( "%f", data.x );
         break;
-        
+
         case kString:
             g2clog( "'%s'", data.s.c_str() );
         break;
-        
+
         case kObject:
         case kList:
         case kTuple:
@@ -310,7 +313,7 @@ void Node::print() const
                     front = '(';
                     back = ')';
                 break;
-                
+
                 case kNode:
                 case kInt:
                 case kFloat:

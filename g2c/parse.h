@@ -60,37 +60,37 @@ public:
         begin(0),
         end(0),
         type(kNode) {s = (char*)"";}
-    
+
     Node(const char* s) : s(s),
         type(kNode) {begin = 0; end = strlen(s); parse();}
-    
-    Node(const char* s, int begin, int end) : 
+
+    Node(const char* s, int begin, int end) :
         s(s),
         begin(begin),
         end(end),
         type(kNode) {parse();}
-    
+
     virtual ~Node();
-    
+
     const char* s;
     int begin;
     int end;
-    
+
     Type type;
     Data data;
-    
+
     std::vector<Node*> children;
-    
+
     void display() const;
     void print() const;
-    
+
 protected:
     void parse();
     void clearChildren();
 };
 
 bool charInString(char c, const char* s);
-    
+
 }
 
 #endif
