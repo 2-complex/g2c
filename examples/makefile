@@ -10,11 +10,6 @@ OBJ_DIR = obj
 
 include $(G2C_SOURCE_DIR)/platform.mk
 
-ifneq ($(MAKECMDGOALS), clean)
-CURRENT = $(MAKECMDGOALS)
-current: $(CURRENT)
-endif
-
 EXES = \
 	modelfile \
 	serialize \
@@ -26,6 +21,8 @@ EXES = \
 	triangle \
 	worldfile \
 	worldapptest
+
+all: $(EXES)
 
 
 LIBENVIRONMENTS = $(ENVIRONMENTS_DIR)/libenvironments.a
@@ -86,4 +83,6 @@ clean:
 	-rm -f $(EXES)
 	-rm -f $(OBJ_DIR)/*.o
 	-rm -rf *.dSYM
+
+
 
