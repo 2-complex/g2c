@@ -47,6 +47,7 @@ namespace g2c {
     class Animator;
     class Animation;
     class Renderer;
+    class Sampler;
     class Sprite;
     class Button;
     class ButtonHandler;
@@ -143,7 +144,7 @@ namespace g2c {
         void removeAndDelete(Node* t);
         void clear();
         
-        virtual void removeSprite(const Sprite* sprite);
+        virtual void removeSampler(const Sampler* sampler);
         
         void clearChildren();
         
@@ -173,9 +174,10 @@ namespace g2c {
         void clearTookMouseDown();
     };
     
-    /*! Mesh represents a collection of triangles or line segments in 2D.
-        To draw a mesh, populate positions and vertices */
-    class Mesh {
+    /*! Mesh represents a collection of triangles or line segments in 2D.  To draw a mesh, populate positions and vertices,
+        then use a Renderer implementation's drawMesh() function. */
+    class Mesh
+    {
     public:
         Mesh();
         virtual ~Mesh();
@@ -220,7 +222,8 @@ namespace g2c {
         
         /*! Overridden to draw a Mesh object.  If mesh is NULL, drawMesh must still draw a default
             unit square.   */
-        virtual void drawMesh(const Mesh* mesh,
+        virtual void drawMesh(
+            const Mesh* mesh,
                               const Mat4& matrix,
                               const Mat3& texMatrix,
                               const Color& color,
@@ -230,7 +233,7 @@ namespace g2c {
     /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 1
         collection.  The draw function in this will work in desktop OpenGL or in OpenGL ES 1.
         
-        Set Sprite::renderer to an instance of RendererGL1 to and call init().  Then all meshes
+        Set Mesh::renderer to an instance of RendererGL1 to and call init().  Then all meshes
         will draw using it.*/
     class RendererGL1 : public Renderer
     {
@@ -239,7 +242,8 @@ namespace g2c {
         ~RendererGL1();
         
         virtual void init();
-        virtual void drawMesh(const Mesh* mesh,
+        virtual void drawMesh(
+            const Mesh* mesh,
                               const Mat4& matrix,
                               const Mat3& texMatrix,
                               const Color& color,
@@ -249,7 +253,7 @@ namespace g2c {
     /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 2
         collection.  The draw function in this will work in desktop OpenGL or in OpenGL ES 2.
         
-        Set Sprite::renderer to an instance of RendererGL2 to and call init().  Then all meshes
+        Set Mesh::renderer to an instance of RendererGL2 to and call init().  Then all meshes
         will draw using it.*/
     class RendererGL2 : public Renderer {
     public:
@@ -257,19 +261,19 @@ namespace g2c {
         ~RendererGL2();
         
     private:
-        GLuint buffer,
-               indexBuffer,
-               program,
-               positionLocation,
-               vertexShader,
-               fragmentShader,
-               matrixLocation,
-               SpriteLocation,
-               colorLocation,
-               textureLocation,
-               texMatrixLocation,
-               polygonBuffer,
-               polygonIndexBuffer;
+        GLuint buffer;
+        GLuint indexBuffer;
+        GLuint program;
+        GLuint positionLocation;
+        GLuint vertexShader;
+        GLuint fragmentShader;
+        GLuint matrixLocation;
+        GLuint SpriteLocation;
+        GLuint colorLocation;
+        GLuint textureLocation;
+        GLuint texMatrixLocation;
+        GLuint polygonBuffer;
+        GLuint polygonIndexBuffer;
         
         Texture2D* defaultTexture;
         
@@ -327,6 +331,7 @@ namespace g2c {
         void reverse();
         void setVertices(const std::vector<Vec2>& p);
         std::vector<Vec2> getVertices() const;
+        std::vector<int> getTriangleIndices() const;
         
         DrawType getDrawType() const;
         void setDrawType(DrawType inDrawType);
@@ -347,26 +352,28 @@ namespace g2c {
         void triangulate() const;
     };
     
-    /*! An Actor represents 2D graphics on the screen, typically a sprite at
-        a particular 2D location with a current frame of animation.  Several actors
-        might use the same Sprite.  For instance, a sprite might be a picture of a bullet,
-        and a game with lots of bullets on the screen at the same time would use several
-        Actors all pointing to the same Sprite.
+    /*! An Actor represents 2D graphics on the screen, typically a sprite at a particular location
+        with a current frame of animation.  Several actors might use the same Sampler object to
+        draw.  For instance, a game with a lot of visually identical bullets on the screen would
+        draw several Actors all pointing to the same bullet Sprite.
         
-        An Actor has a pointer to a Sprite and also a Mesh.  Actor::draw() draws the mesh
-        using the sprite as a texture.  If no Mesh is specified, a default rectangular mesh is used.
+        An Actor has a pointer to a Sampler and also a Mesh.  Actor::draw() draws the mesh using
+        the sampler to select a matrix in a texture.  If no Mesh is specified, a default square
+        mesh is used.
         
-        Actors can be positioned and scaled using x,y, and k, also a frame of animation that is current.
-        The frame gets used to compute texture coordiates when drawing the mesh.*/
-    class Actor : public Node {
+        Actors can be positioned and scaled using x,y, and k, also a frame of animation that is
+        current.  The frame gets used to compute texture coordiates when drawing the mesh. */
+    class Actor : public Node
+    {
     public:
         Actor();
         
         /*! Initializes the Actor with given Sprite object. */
-        explicit Actor(Sprite* insprite);
+        explicit Actor(Sampler* inSampler);
         virtual ~Actor();
         
-        Sprite* sprite;
+        Sampler* sampler;
+        Sampler*& sprite;
         Mesh* mesh;
         
         /*! The x coordinate where to draw on the screen.  Modifying x changes position. */
@@ -378,7 +385,7 @@ namespace g2c {
         /*! A scaling factor. */
         DoubleProperty k;
         
-        /*! The index of the current frame of animation of the Sprite to draw. */
+        /*! The index of the current frame of animation to draw. */
         IntProperty frame;
         
         /*! The 2D coordinates where to draw on the screen. */
@@ -396,16 +403,15 @@ namespace g2c {
         bool vectorInside(const Mat4& worldMatrix, const Vec2& C) const;
         
         Actor* actorInClick(const Mat4& worldMatrix, const Vec2& C);
-        virtual void removeSprite(const Sprite* sprite);
+        virtual void removeSampler(const Sampler* sampler);
         
-        /*! Draws mesh using sprite as a texture.  If mesh is NULL, uses a default unit square Mesh.
-            If sprite is NULL*/
+        /*! Draws mesh using sampler as a texture.  If mesh is NULL, uses a default unit square Mesh.*/
         virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
         
     private:
         void init();
         
-        StringProperty spriteName;
+        StringProperty samplerName;
     };
     
     /*! Actor for drawing text from a string and a Font object.  Text::draw draws a quad for each
@@ -423,7 +429,7 @@ namespace g2c {
         /*! A standard c++ string, this is the text that gets drawn. */
         std::string s;
         
-        /*! A font object is a Sprite whose frames correspond to the characters to be drawn. */
+        /*! A font object is a Sampler whose frames correspond to the characters to be drawn. */
         Font* font;
         
         std::string fontName;
@@ -453,21 +459,61 @@ namespace g2c {
         virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
     };
     
+    /*! A Sampler is a texture together with a method by which a texture is sampled to draw
+        a quad on the sreen.  Override getTexMatrix() to return a matrix representing the
+        transformation of a unit quad [(0,0), (1,1)] to the quad in the texture to be sampled
+        based on the frame number. */
+    class Sampler : public Texture2D
+    {
+    public:
+        Sampler();
+        virtual ~Sampler();
+
+        StringProperty file;
+
+        virtual Mat4 getOffsetMatrix(int frame = 0, double x = 0.0, double y = 0.0, double k = 1.0) const;
+        virtual Mat3 getTexMatrix(int frame = 0) const = 0;
+
+        virtual double getWidth(int frame = 0) const = 0;
+        virtual double getHeight(int frame = 0) const = 0;
+        virtual bool getCenter(int frame = 0) const = 0;
+
+        virtual Polygon getCollisionPolygon(int frame = 0) const = 0;
+    };
+
+
+    class Rectangle : public Serializable
+    {
+    public:
+        Rectangle();
+        Rectangle( double x0, double y0, double x1, double y1 );
+        virtual ~Rectangle();
+
+        double x0;
+        double y0;
+        double x1;
+        double y1;
+
+    public:
+        std::string serialize(std::string indent = "") const;
+        void initWithParseNode(const parse::Node* n);
+    };
+
     /*! A Sprite represnts a texture on the GPU whose image is a rectangular array of animation
-        frames.  For instance a chracter in a side-scroller could use a Sprite to hold all
-        the possible poses.
+        frames.  For instance a chracter in a side-scroller could use a Sprite to hold all the
+        possible poses.
         
         Sprite can be initialized by using the functions of its parent class Texture2D to load in a
         Bitmap and then setting numberOfRows and numberOfColumns.
         
         The class Actor is made to draw a Sprite on the screen with specific coordinates and current
         animation frames. */
-    class Sprite : public Texture2D {
+    class Sprite : public Sampler
+    {
     public:
         Sprite();
         virtual ~Sprite();
         
-        StringProperty file;
         IntProperty numberOfColumns;
         IntProperty numberOfRows;
         
@@ -477,23 +523,48 @@ namespace g2c {
         Polygon polygon;
         
         static bool drawLines;
+
         static Renderer* renderer;
         
-        Mat4 getOffsetMatrix(double x = 0.0, double y = 0.0, double k = 1.0) const;
-        Mat3 getTexMatrix(int frame = 0) const;
+        virtual Mat3 getTexMatrix(int frame = 0) const;
+        virtual double getWidth(int frame = 0) const;
+        virtual double getHeight(int frame = 0) const;
+        virtual bool getCenter(int frame = 0) const;
+        virtual Polygon getCollisionPolygon(int frame = 0) const;
         
     protected:
         virtual std::string serializeElements(std::string indent = "") const;
         virtual void handleChild(const parse::Node* n);
     };
     
-    /*! Button is a type of Actor that is clickable, it is meant to draw as a sprite using
-        a Sprite object just like an Actor, except that it has its own implementations of
-        mouseDown, mouseDragged and mouseUp which handle the animation of the button getting
+
+    /*! An Atlas is a texture which is subdivided into rectangular images to be sampled by an
+        Actor.  Here, a frame of animation references a rectangle in the list.*/
+    class Atlas : public Sampler
+    {
+    public:
+        Atlas();
+        virtual ~Atlas();
+
+        BoolProperty center;
+        VectorProperty<Rectangle> rectangles;
+        VectorProperty<Polygon> polygons;
+
+        virtual Mat3 getTexMatrix(int frame = 0) const;
+        virtual double getWidth(int frame = 0) const;
+        virtual double getHeight(int frame = 0) const;
+        virtual bool getCenter(int frame = 0) const;
+        virtual Polygon getCollisionPolygon(int frame = 0) const;
+    };
+
+
+    /*! Button is a type of Actor that is clickable, it is meant to draw as a textured quad
+        using a Sampler object just like its parent, except that it has its own implementations
+        of mouseDown, mouseDragged and mouseUp which handle the animation of the button getting
         pushed.
         
-        To use a Button, instantiate one, set the button's sprite, set the integer baseFrame
-        to the index of the frame of the sprite for the button in resting state.  The next frame
+        To use a Button, instantiate one, set the button's sampler, set the integer baseFrame
+        to the index of the frame of the sampler for the button in resting state.  The next frame
         after that is assumed to be for the depressed state.
         
         To implement a behaviour for the button when pressed, subclass ButtonHandler, override
@@ -502,8 +573,8 @@ namespace g2c {
     class Button : public Actor {
     public:
         Button();
-        explicit Button(Sprite* insprite);
-        Button(Sprite* insprite, int inBaseFrame);
+        explicit Button(Sampler* insampler);
+        Button(Sampler* insampler, int inBaseFrame);
         
         int baseFrame;
         bool enabled;
@@ -538,9 +609,8 @@ namespace g2c {
         virtual void click(Button* button) = 0;
     };
     
-    /*! Font is a type of Sprite which contains images of characters.  Whereas a sprite contains
-        frames of animation and is drawn using an Actor, Font contains as its frames images of
-        characters, and is drawn using a Text object. */
+    /*! Font is a type of Sampler which contains images of characters.  It is is drawn using a
+        Text object. */
     class Font : public Sprite {
     public:
         Font();
@@ -557,19 +627,21 @@ namespace g2c {
         double charLeft(char c) const;
         double lineWidth(double k, const char* s, int startIndex) const;
         std::vector<std::pair<int, int> > lineIndices(const char* s) const;
-        void drawString(const Mat4& M,
-                        const Color& color,
-                        double x,
-                        double y,
-                        double k,
-                        const char* s,
-                        const std::string& justification = "left") const;
-        Polygon stringRectangle(double k,
-                                const char* s,
-                                const std::string& justification = "left") const;
-        
+        void drawString(
+            const Mat4& M,
+            const Color& color,
+            double x,
+            double y,
+            double k,
+            const char* s,
+            const std::string& justification = "left") const;
+        Polygon stringRectangle(
+            double k,
+            const char* s,
+            const std::string& justification = "left") const;
+
         void getWidthsFromBitmap(const Bitmap& bitmap);
-        
+
         virtual std::string serializeElements(std::string indent = "") const;
         virtual void handleChild(const parse::Node* n);
     };
@@ -595,15 +667,15 @@ namespace g2c {
         
         Bank* bank;
         
-        PointerVectorProperty<Sprite*> sprites;
+        PointerVectorProperty<Sampler*> samplers;
         PointerVectorProperty<Sound*> sounds;
         
         void initSound(Player* player);
         
         virtual void resize(int width, int height);
         
-        void addSprite(Sprite* sprite);
-        virtual void removeSprite(const Sprite* sprite);
+        void addSampler(Sampler* sampler);
+        virtual void removeSampler(const Sampler* sampler);
         
         void clear();
         
@@ -616,27 +688,27 @@ namespace g2c {
         virtual void initWithParseNode(const parse::Node* n);
         virtual void handleChild(const parse::Node* n);
         
-        std::string serializeSprites(std::string indent = "") const;
+        std::string serializeSamplers(std::string indent = "") const;
         
         virtual void playSound(const std::string& name, double gain = 1.0) const;
         g2c::Sound* getSound(const std::string& name);
         
         virtual Node* getNode(const std::string& name);
-        virtual Sprite* getSprite(const std::string& name);
+        virtual Sampler* getSampler(const std::string& name);
         
         virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
         
     private:
         bool soundInitted;
         
-        std::map<std::string, Sprite*> spriteMap;
+        std::map<std::string, Sampler*> samplerMap;
         std::map<std::string, Sound*> soundMap;
         std::map<std::string, Node*> nodeMap;
         
         std::vector<Serializable*> deleteResources;
         
         void buildMaps();
-        void updateSpriteMap();
+        void updateSamplerMap();
         void updateSoundMap();
         void updateNodeMap(Node* node = NULL);
         

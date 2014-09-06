@@ -32,10 +32,11 @@ void button(int b, int state, int x, int y);
 void keyboard(unsigned char inkey, int x, int y);
 Environment* gEnvironment = NULL;
 
-Environment::Environment() : dragging(false),
-							 initted(false),
-							 glutInitted(false),
-							 animate(true) {}
+Environment::Environment()
+    : dragging(false)
+    , initted(false)
+    , glutInitted(false)
+    , animate(true) {}
 
 Environment::~Environment() {}
 
