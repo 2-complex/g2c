@@ -42,7 +42,7 @@ std::string Mat4Property::serialize(std::string indent) const
     const double* p = ptr();
     for( int i = 0; i < 16; i++ )
         v.push_back(p[i]);
-    
+
     return flattenWhitespace(v.serialize(indent).c_str());
 }
 
@@ -50,10 +50,10 @@ void Mat4Property::initWithParseNode(const parse::Node* n)
 {
     VectorProperty<DoubleProperty> v;
     v.initWithParseNode(n);
-    
+
     double* ptr = (double*)(&m00);
     int size = v.size();
-    
+
     for( int i = 0; i < 16; i++ )
         if( size > 0 )
             ptr[i] = v[i]();
@@ -75,10 +75,10 @@ void Vec2Property::initWithParseNode(const parse::Node* n)
 {
     VectorProperty<DoubleProperty> v;
     v.initWithParseNode(n);
-    
+
     if( v.size() > 0 )
         x = v[0]();
-    
+
     if( v.size() > 1 )
         y = v[1]();
 }
@@ -100,13 +100,13 @@ void Vec3Property::initWithParseNode(const parse::Node* n)
 {
     VectorProperty<DoubleProperty> v;
     v.initWithParseNode(n);
-    
+
     if( v.size() > 0 )
         x = v[0]();
-    
+
     if( v.size() > 1 )
         y = v[1]();
-    
+
     if( v.size() > 2 )
         z = v[2]();
 }
@@ -129,16 +129,16 @@ void ColorProperty::initWithParseNode(const parse::Node* n)
 {
     VectorProperty<DoubleProperty> v;
     v.initWithParseNode(n);
-    
+
     if( v.size() > 0 )
         r = v[0]();
-    
+
     if( v.size() > 1 )
         g = v[1]();
-    
+
     if( v.size() > 2 )
         b = v[2]();
-    
+
     if( v.size() > 3 )
         a = v[3]();
 }
@@ -157,11 +157,11 @@ Mat4 Sampler::getOffsetMatrix(int frame, double x, double y, double k) const
 {
     double w = getWidth(frame),
            h = getHeight(frame);
-    
+
     Vec2 offset(x, y);
     if( getCenter(frame) )
         offset -= 0.5 * k * Vec2(w, h);
-    
+
     return Mat4(
         k*w, 0.0, 0.0, 0.0,
         0.0, k*h, 0.0, 0.0,
@@ -240,13 +240,13 @@ Mat3 Sprite::getTexMatrix(int frame) const
 {
     int c = numberOfColumns();
     int r = numberOfRows();
-    
+
     double i = (frame % c + c) % c,
            j = ((frame / c) % r + r) % r;
-    
+
     if( flipRows() )
         j = numberOfRows() - j - 1;
-    
+
     return Mat3(
         1.0 / c, 0.0     , 0.0,
                  0.0, 1.0 / r, 0.0,
@@ -277,7 +277,7 @@ void Sprite::handleChild(const parse::Node* n)
 {
     string n_name = n->data.s;
     // parse::Node* value = n->data.value;
-    
+
     Serializable::handleChild(n);
 }
 
@@ -399,7 +399,7 @@ double Font::charLeft(char c) const
     int n = lefts.size();
     if( index < 0 || index >= n )
         return 0.0;
-    
+
     return widthScale * lefts[index];
 }
 
@@ -407,7 +407,7 @@ double Font::charLeft(char c) const
 double Font::lineWidth(double k, const char* s, int startIndex) const
 {
     double width = 0;
-    
+
     char c = 0;
     for(int i = startIndex; (c=s[i]); i++)
     {
@@ -421,11 +421,11 @@ double Font::lineWidth(double k, const char* s, int startIndex) const
 vector<pair<int, int> > Font::lineIndices(const char* s) const
 {
     vector<pair<int, int> > v;
-    
+
     int first = 0;
     int i=0;
     char c=0;
-    
+
     for(; (c=s[i]); i++)
     {
         if( c == '\n' || c == '\r' )
@@ -438,7 +438,7 @@ vector<pair<int, int> > Font::lineIndices(const char* s) const
     // act like there isn't a last line.
     if(first != i)
         v.push_back(pair<int, int>(first, i));
-    
+
     return v;
 }
 
@@ -456,23 +456,23 @@ void Font::drawString(const Mat4& M,
     {
         double w = lineWidth(k, s, itr->first);
         x = startX;
-        
+
         if( justification == "right" )
             x -= w;
-        
+
         if( justification == "center" )
             x -= 0.5 * w;
-        
+
         for(int i=itr->first; i<itr->second; i++)
         {
             char c = s[i];
             double l = k * charLeft(c);
-            
+
             Mat4 matrix(M * getOffsetMatrix(c-baseChar, x-l, y, k));
             Mat3 texMatrix(getTexMatrix(c-baseChar));
-            
+
             Sprite::renderer->drawMesh(NULL, matrix, texMatrix, color, this);
-            
+
             x += k * charWidth(c);
         }
         y -= k * lineHeight;
@@ -483,29 +483,29 @@ Polygon Font::stringRectangle(double k, const char* s, const string& justificati
 {
     double left = 0.0, right = 0.0, bottom = 0.0,
         top = k * (lineHeight + lineBottom);
-    
+
     vector<pair<int, int> > v = lineIndices(s);
     bool firstline = true;
     for(vector<pair<int, int> >::const_iterator itr = v.begin(); itr!=v.end(); itr++)
     {
         double w = lineWidth(k, s, itr->first);
         double x = 0;
-        
+
         if( justification == "right" )
             x -= w;
-        
+
         if( justification == "center" )
             x -= 0.5 * w;
-        
+
         left = min(left, x);
         right = max(right, x+w);
-        
+
         if( !firstline )
             bottom -= k * lineHeight;
-        
+
         firstline = false;
     }
-    
+
     Polygon R;
     R.add(left, bottom).add(right, bottom).add(right, top).add(left, top);
     R.setDrawType(Polygon::kOutline);
@@ -518,29 +518,29 @@ void Font::getWidthsFromBitmap(const Bitmap& bitmap)
     double width = bitmap.getWidth();
     double height = bitmap.getHeight();
     int bitsPerPixel = bitmap.getBitsPerPixel();
-    
+
     double w = 1.0 * width / numberOfColumns;
     double h = 1.0 * height / numberOfRows;
-    
+
     if( bitsPerPixel != 32 )
     {
         g2clog("Attempt to generate widths, not from 32 bit data.");
         return;
     }
-    
+
     widths.clear();
     lefts.clear();
-    
+
     double threshold = 255.0;
-    
+
     if( numberOfRows == 1 && numberOfColumns == 1 )
     {
         g2clog("Attempt to generate widths with"
                " numberOfRows = numberOfColumns = 1.\n");
     }
-    
+
     vector<double> sums((int)(w+1));
-    
+
     for( int j = 0; j < numberOfRows; j++ )
     for( int i = 0; i < numberOfColumns; i++ )
     {
@@ -548,7 +548,7 @@ void Font::getWidthsFromBitmap(const Bitmap& bitmap)
         int x1 = min((int)((i+1)*w), width);
         int y0 = min((int)(j*h), height);
         int y1 = min((int)((j+1)*h), height);
-        
+
         /* iterate through find the first column the sum of whose
            alpha is greater than threshold and the last that is less */
         for( int x = x0; x < x1; x++ )
@@ -562,10 +562,10 @@ void Font::getWidthsFromBitmap(const Bitmap& bitmap)
             }
             sums[x-x0] = sum;
         }
-        
+
         double right = w / 2;
         double left = 0;
-        
+
         for( int x = x0; x < x1; x++ )
         {
             if(sums[x-x0] > threshold)
@@ -574,7 +574,7 @@ void Font::getWidthsFromBitmap(const Bitmap& bitmap)
                 break;
             }
         }
-        
+
         for( int x = x1-1; x >= x0; x-- )
         {
             if(sums[x-x0] > threshold)
@@ -583,18 +583,18 @@ void Font::getWidthsFromBitmap(const Bitmap& bitmap)
                 break;
             }
         }
-        
+
         widths.push_back(right - left);
         lefts.push_back(left);
     }
-    
+
     spacing = 3;
 }
 
 string Font::serializeElements(string indent) const
 {
     string r = Sprite::serializeElements(indent);
-    
+
     r += TAB + indent + "'lineHeight' : " + floatToString(lineHeight) + ",\n";
     r += TAB + indent + "'lineBottom' : " + floatToString(lineBottom) + ",\n";
     if( widthScale!=1.0 )
@@ -605,7 +605,7 @@ string Font::serializeElements(string indent) const
 
     string s;
     int n = 0;
-    
+
     n = widths.size();
     s = "[";
     for(int i = 0; i < n; i++)
@@ -618,7 +618,7 @@ string Font::serializeElements(string indent) const
     }
     s += "\n" + TAB + TAB + indent + "]";
     r += TAB + indent + "'widths' : " + s + string(",\n");
-    
+
     n = lefts.size();
     s = "[";
     for(int i = 0; i < n; i++)
@@ -631,23 +631,23 @@ string Font::serializeElements(string indent) const
     }
     s += "\n" + TAB + TAB + indent + "]";
     r += TAB + indent + "'lefts' : " + s + string(",\n");
-    
+
     if(baseChar!=' ')
     {
         char c[2] = {baseChar, 0};
         r += TAB + indent + "'baseChar' : '" + string(c) + "',\n";
     }
-    
+
     return r;
 }
 
 void Font::handleChild(const parse::Node* n)
 {
     Sprite::handleChild(n);
-    
+
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if(n_name == "widths")
     {
         widths.clear();
@@ -658,7 +658,7 @@ void Font::handleChild(const parse::Node* n)
             widths.push_back((*itr)->data.x);
         }
     }
-    
+
     if(n_name == "lefts")
     {
         lefts.clear();
@@ -669,7 +669,7 @@ void Font::handleChild(const parse::Node* n)
             lefts.push_back((*itr)->data.x);
         }
     }
-    
+
     if(n_name == "lineHeight")
     {
         lineHeight = value->data.x;
@@ -679,7 +679,7 @@ void Font::handleChild(const parse::Node* n)
     {
         lineBottom = value->data.x;
     }
-    
+
     if(n_name == "widthScale")
     {
         widthScale = value->data.x;
@@ -689,7 +689,7 @@ void Font::handleChild(const parse::Node* n)
     {
         spacing = value->data.x;
     }
-    
+
     if(n_name == "baseChar")
     {
         baseChar = value->data.s[0];
@@ -719,12 +719,12 @@ void Node::add(Node* t)
 void Node::addAtIndex(Node* t, int index)
 {
     assert(t);
-    
+
     int n = children.size();
-    
+
     if(index < 0) index = 0;
     if(index > n) index = n;
-    
+
     children.resize(n+1);
     int i = n;
     for(;i>index; i--)
@@ -770,7 +770,7 @@ void Node::removeAndDelete(Node* t)
 }
 
 void Node::removeSampler(const Sampler* sampler)
-{    
+{
     for(vector<Node*>::const_iterator itr = children.begin(); itr!=children.end(); itr++)
         (*itr)->removeSampler(sampler);
 }
@@ -806,14 +806,14 @@ void Node::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
                 worldMatrix * node->getMatrix(),
                 worldColor * node->getColor() );
         }
-    }    
+    }
 }
 
 void Node::handleChild(const parse::Node* n)
 {
     const parse::Node* value = n->data.value;
     string n_name = n->data.s;
-    
+
     if( n_name == "children" )
     {
         for(vector<parse::Node*>::const_iterator itr = value->children.begin();
@@ -838,7 +838,7 @@ void Node::handleChild(const parse::Node* n)
                 newNode = new Integer();
             else if(type == "Polygon")
                 newNode = new Polygon();
-            
+
             if(newNode)
             {
                 newNode->initWithParseNode(*itr);
@@ -859,16 +859,16 @@ void Node::clearChildren()
     {
         (*itr)->clearChildren();
     }
-    
+
     children.clear();
-    
+
     for( vector<Serializable*>::iterator itr = deleteMe.begin();
          itr!=deleteMe.end();
          itr++)
     {
         delete *itr;
     }
-    
+
     deleteMe.clear();
 }
 
@@ -905,7 +905,7 @@ bool Node::mouseDown(const Mat4& worldMatrix, const Vec2& C)
 {
     if( !visible() )
         return false;
-    
+
     if( delegate && vectorInside(worldMatrix, C) )
     {
         Vec4 v = worldMatrix.inverse() * Vec4(C.x, C.y, 0.0, 1.0);
@@ -922,7 +922,7 @@ bool Node::mouseDown(const Mat4& worldMatrix, const Vec2& C)
             itr++)
         {
             Node* node = *itr;
-            
+
             if(node->listening)
             {
                 if( node->mouseDown(worldMatrix * node->getMatrix(), C) )
@@ -945,7 +945,7 @@ void Node::mouseDragged(const Mat4& worldMatrix, const Vec2& C)
 {
     if(!tookMouseDown)
         return;
-    
+
     if( delegate )
     {
         Vec4 v = worldMatrix.inverse()*Vec4(C.x, C.y, 0, 1);
@@ -1026,7 +1026,7 @@ Actor* Node::actorInClick(const Mat4& worldMatrix, const Vec2& C)
 {
     if(!visible())
         return NULL;
-    
+
     for(vector<Node*>::reverse_iterator itr = children.rbegin(); itr!=children.rend(); itr++)
     {
         Actor* n = (*itr)->actorInClick(worldMatrix * getMatrix(), C);
@@ -1057,14 +1057,14 @@ void Mesh::resize(int inNumberOfVertices, int inNumberOfElements)
     int sd = 3;
     if( elementType == kLines )
         sd = 2;
-    
+
     positions.resize(inNumberOfVertices * 3);
     indices.resize(inNumberOfElements * sd);
 }
 
 int Mesh::numberOfVertices() const
 {
-    return positions.size() / 3; 
+    return positions.size() / 3;
 }
 
 int Mesh::numberOfElements() const
@@ -1072,8 +1072,8 @@ int Mesh::numberOfElements() const
     int sd = 3;
     if( elementType == kLines )
         sd = 2;
-    
-    return indices.size() / sd; 
+
+    return indices.size() / sd;
 }
 
 Renderer::Renderer()
@@ -1122,14 +1122,14 @@ void RendererGL1::drawMesh(const Mesh* mesh,
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    
+
     for(int i = 0; i < 16; i++)
         fv[i] = (GLfloat)(projection.ptr()[i]);
     glLoadMatrixf(fv);
-    
+
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
-    
+
     if( texture )
     {
         glEnable(GL_TEXTURE_2D);
@@ -1137,22 +1137,22 @@ void RendererGL1::drawMesh(const Mesh* mesh,
     }
     else
         glDisable(GL_TEXTURE_2D);
-    
+
     for(int i = 0; i < 16; i++)
         fv[i] = (GLfloat)(matrix.ptr()[i]);
     glLoadMatrixf(fv);
-    
+
     glColor4f(color.r, color.g, color.b, color.a);
-    
+
     GLuint gltype = GL_TRIANGLES;
-    
+
     int dimension = 3; // Dimension of simplices, not space.
     if( mesh->elementType == Mesh::kLines )
     {
         gltype = GL_LINES;
         dimension = 2;
     }
-    
+
     const short* indices = &(mesh->indices[0]);
     const float* positions = &(mesh->positions[0]);
 
@@ -1166,20 +1166,20 @@ void RendererGL1::drawMesh(const Mesh* mesh,
             size = i;
     }
     size++;
-    
+
     float* texCoords = new float[2*size];
-    
+
     int j = 0;
     for(int i = 0; i < size; i++)
-    {    
+    {
         Vec3 c = texMatrix * Vec3(positions[3*i], positions[3*i+1], 1.0);
-        
+
         texCoords[j] = c.x / c.z;
         texCoords[j+1] = c.y / c.z;
-        
+
         j+=2;
     }
-    
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
@@ -1193,7 +1193,7 @@ void RendererGL1::drawMesh(const Mesh* mesh,
 
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
-    
+
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 #endif
@@ -1206,7 +1206,7 @@ RendererGL2::RendererGL2() :
     fragmentShader(0),
     defaultTexture(NULL)
 {
-    
+
 }
 
 RendererGL2::~RendererGL2()
@@ -1227,14 +1227,14 @@ void RendererGL2::init()
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), &(quad->positions[0]), GL_STREAM_DRAW);
-    
+
     glGenBuffers(1, &indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(short), &(quad->indices[0]), GL_STREAM_DRAW);
-    
+
     glGenBuffers(1, &polygonBuffer);
     glGenBuffers(1, &polygonIndexBuffer);
-    
+
     const char* vertexCode = "\n"
         "    attribute vec3 position;\n"
         "    uniform mat4 matrix;\n"
@@ -1245,7 +1245,7 @@ void RendererGL2::init()
         "        v_texcoord = t.xy / t.z;\n"
         "        gl_Position = matrix * vec4(position, 1.0);\n"
         "    }\n";
-    
+
     const char* fragmentCode = "\n"
         "#ifdef GL_ES\nprecision highp float;\n#endif\n"
         "    uniform vec4 color;\n"
@@ -1254,11 +1254,11 @@ void RendererGL2::init()
         "    void main() {\n"
         "        gl_FragColor = color * texture2D(texture, v_texcoord);\n"
         "    }\n";
-    
+
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexCode, NULL);
     glCompileShader(vertexShader);
-    
+
     GLint logLength;
     glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &logLength);
     if( logLength > 0 )
@@ -1268,7 +1268,7 @@ void RendererGL2::init()
         g2clog("Shader compile log:\n%s", log);
         free(log);
     }
-    
+
     GLint status;
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &status);
     if( status == 0 )
@@ -1276,12 +1276,12 @@ void RendererGL2::init()
         glDeleteShader(vertexShader);
         exit(0);
     }
-    
-    
+
+
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentCode, NULL);
     glCompileShader(fragmentShader);
-    
+
     glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &logLength);
     if( logLength > 0 )
     {
@@ -1290,38 +1290,38 @@ void RendererGL2::init()
         g2clog("Shader compile log:\n%s", log);
         free(log);
     }
-    
+
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &status);
     if( status == 0 )
     {
         glDeleteShader(fragmentShader);
         exit(0);
     }
-    
+
     program = glCreateProgram();
-    
+
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
-    
+
     glLinkProgram(program);
-    
+
     glGetProgramiv(program, GL_LINK_STATUS, &status);
     if( status == 0 )
     {
         g2cerror( "Shader program did not link.\n" );
         exit(0);
     }
-    
+
     positionLocation = glGetAttribLocation(program, "position");
     matrixLocation = glGetUniformLocation(program, "matrix");
     colorLocation = glGetUniformLocation(program, "color");
     textureLocation = glGetUniformLocation(program, "texture");
     texMatrixLocation = glGetUniformLocation(program, "texMatrix");
-    
+
     defaultTexture = new Texture2D;
     GLubyte data[] = {255, 255, 255, 255};
     defaultTexture->initWithImageData(data, 1, 1, 32);
-    
+
     initialized = true;
 }
 
@@ -1337,10 +1337,10 @@ void RendererGL2::drawMesh(
         g2cerror( "RendererGL2 draw called before initialization.\n" );
         exit(0);
     }
-    
+
     if( !mesh )
         mesh = quad;
-    
+
     if( mesh == quad )
     {
         glBindBuffer(GL_ARRAY_BUFFER, buffer);
@@ -1355,28 +1355,28 @@ void RendererGL2::drawMesh(
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,
             mesh->numberOfElements()*3*sizeof(short), &(mesh->indices[0]), GL_STREAM_DRAW);
     }
-    
+
     glUseProgram(program);
-    
+
     glEnableVertexAttribArray(positionLocation);
     glVertexAttribPointer(positionLocation, 3, GL_FLOAT, false, 0, 0);
-    
+
     Mat4 M = projection * matrix;
-    
+
     for(int i = 0; i < 16; i++)
         fv[i] = (GLfloat)(M.ptr()[i]);
     glUniformMatrix4fv(matrixLocation, 1, false, fv);
-    
+
     for(int i = 0; i < 9; i++)
         fv[i] = (GLfloat)(texMatrix.ptr()[i]);
     glUniformMatrix3fv(texMatrixLocation, 1, false, fv);
-    
+
     const GLfloat cf[] = {(GLfloat)color.r, (GLfloat)color.g, (GLfloat)color.b, (GLfloat)color.a};
     glUniform4fv(colorLocation, 1, cf);
-    
+
     if(!texture)
         texture = defaultTexture;
-    
+
     glActiveTexture(GL_TEXTURE0 + texture->getUnit());
     glBindTexture(GL_TEXTURE_2D, texture->getIndex());
     glUniform1i(textureLocation, texture->getUnit());
@@ -1429,12 +1429,12 @@ Polygon& Polygon::operator=(const Polygon& P)
     vertices = P.vertices;
     this->Node::operator=(P);
     this->mesh = NULL;
-    this->valid = false;    
+    this->valid = false;
     return *this;
 }
 
 Polygon& Polygon::add( const Vec2& V )
-{    
+{
     vertices.push_back(V);
     return *this;
 }
@@ -1498,17 +1498,17 @@ Polygon operator * (const Mat4& M, const Polygon& P)
 {
     Polygon R;
     R.drawType = P.drawType;
-    
+
     int n = P.size();
-    
+
     vector<Vec2> r(n);
-    
+
     for( int i = 0; i < n; i++)
     {
         Vec4 v = M * Vec4(P.vertices[i], 0.0, 1.0);
         r[i] = (Vec2(v.x, v.y) / v.w);
     }
-    
+
     R.setVertices(r);
     return R;
 }
@@ -1517,9 +1517,9 @@ void Polygon::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 {
     if( size() < 3 )
         return;
-    
+
     update();
-    
+
     if( Sprite::renderer && mesh )
         Sprite::renderer->drawMesh(mesh, worldMatrix, Mat3(), worldColor, NULL);
     else
@@ -1559,7 +1559,7 @@ bool Polygon::vectorInside(const Mat4& worldMatrix, const Vec2& V) const
 {
     Vec4 tmp = worldMatrix * Vec4(V.x, V.y, 0.0, 1.0);
     Vec2 tv = Vec2( tmp.x, tmp.y ) / tmp.w;
-    
+
     double theta = 0;
     int n = size();
     for( int i=0; i<n; i++ )
@@ -1571,30 +1571,30 @@ void Polygon::update() const
 {
     if( valid )
         return;
-    
+
     if( !mesh )
         mesh = new Mesh;
-    
+
     int n = size();
-    
+
     switch(drawType)
     {
         case kSolid:
             mesh->elementType = Mesh::kTriangles;
             mesh->resize(n, max(0, n-2));
         break;
-        
+
         case kOutline:
             mesh->elementType = Mesh::kLines;
             mesh->resize(n, n);
         break;
-        
+
         default:
             g2cerror( "drawtype unknown: %d\n", drawType );
             exit(0);
         break;
     }
-    
+
     int i = 0;
     for( VectorProperty<Vec2Property>::const_iterator itr = vertices.begin(); itr!=vertices.end(); itr++ )
     {
@@ -1602,13 +1602,13 @@ void Polygon::update() const
         mesh->positions[i++] = (float)(itr->y);
         mesh->positions[i++] = 0.0;
     }
-    
+
     switch( drawType )
     {
         case kSolid:
             triangulate();
         break;
-        
+
         case kOutline:
             for( int i = 0; i < n; i++ )
             {
@@ -1616,13 +1616,13 @@ void Polygon::update() const
                 mesh->indices[2*i + 1] = (short)((i+1)%n);
             }
         break;
-        
+
         default:
             g2cerror( "drawtype unknown: %d\n", drawType );
             exit(0);
         break;
     }
-    
+
     valid = true;
 }
 
@@ -1631,24 +1631,24 @@ void Polygon::triangulate() const
     // This algorithm runs in worst case O(n^3).
     int n = size();
     vector<int> p(n);
-    
+
     int i = 0, k = 0;
-    
+
     // Cache the indices of the polygon.
     for( i = 0; i < n; i++ )
         p[i] = i;
-    
+
     // Iterate through the indices.
     for( i = 0; i < n && n > 2; i++ )
     {
         // Consider triangle i, i+1, i+2 candidate for being an ear.
         const Vec2 &a(vertices[p[i]]), &b(vertices[p[(i+1) % n]]), &c(vertices[p[(i+2) % n]]);
         Mat2 T(b-a, c-a);
-        
+
         // If it's going clockwise, it's not an ear.
         if( T.det() < 0.0 )
             continue;
-        
+
         // If another point of the polygon is inside, it's not an ear.
         bool empty = true;
         for( int j = (i+3)%n; j!=i; j=(j+1)%n )
@@ -1660,7 +1660,7 @@ void Polygon::triangulate() const
                 break;
             }
         }
-        
+
         // If empty is true, at this point, it is an ear, and we remove the
         // middle point from p, and add the triangle to indices.
         if( empty )
@@ -1668,10 +1668,10 @@ void Polygon::triangulate() const
             mesh->indices[k++] = (short)(p[i]);
             mesh->indices[k++] = (short)(p[(i+1)%n]);
             mesh->indices[k++] = (short)(p[(i+2)%n]);
-            
+
             for( int j = (i+1)%n; j < n-1; j++ )
                 p[j] = p[j+1];
-            
+
             i = -1; // Recall i++ happens at the end of the loop-body.
             n--;
         }
@@ -1725,7 +1725,7 @@ vector<int> Polygon::getTriangleIndices() const
 
             for( int j = (i+1)%n; j < n-1; j++ )
                 p[j] = p[j+1];
-            
+
             i = -1; // Recall i++ happens at the end of the loop-body.
             n--;
         }
@@ -1737,10 +1737,10 @@ vector<int> Polygon::getTriangleIndices() const
 void Polygon::handleChild(const parse::Node* n)
 {
     Node::handleChild(n);
-    
+
     const parse::Node* value = n->data.value;
     string n_name = n->data.s;
-    
+
     if(n_name == "vertices")
     {
         for(vector<parse::Node*>::const_iterator itr = value->children.begin();
@@ -1761,11 +1761,11 @@ string Polygon::serializeElements(string indent) const
 void Polygon::reverse()
 {
     vector<Vec2> r;
-    
+
     int n = size();
     for( int i = 0; i < n; i++ )
         r.push_back(vertices[n-i-1]);
-    
+
     setVertices(r);
 }
 
@@ -1782,14 +1782,14 @@ void Polygon::setVertices(const vector<Vec2>& v)
 vector<Vec2> Polygon::getVertices() const
 {
     vector<Vec2> r;
-    
+
     for(VectorProperty<Vec2Property>::const_iterator itr = vertices.begin();
         itr != vertices.end();
         itr++ )
     {
         r.push_back(*itr);
     }
-    
+
     return r;
 }
 
@@ -1826,7 +1826,7 @@ Actor::Actor(Sampler* insampler)
 
 Actor::~Actor()
 {
-    
+
 }
 
 void Actor::init()
@@ -1835,9 +1835,9 @@ void Actor::init()
     k = 1.0;
     visible = true;
     listening = true;
-    
+
     type = "Actor";
-    
+
     addProperty("position", position);
     addProperty("k", k);
     addProperty("rotation", rotation);
@@ -1850,7 +1850,7 @@ Mat4 Actor::getMatrix() const
 {
     double c = k*cos(rotation);
     double s = k*sin(rotation);
-    
+
     return Mat4( c, s, 0, 0,
                 -s, c, 0, 0,
                  0, 0, 1, 0,
@@ -1861,7 +1861,7 @@ void Actor::removeSampler(const Sampler* s)
 {
     if( sampler == s )
         sampler = NULL;
-    
+
     Node::removeSampler(s);
 }
 
@@ -1889,10 +1889,10 @@ static map<Text*, string> gTextToFontName;
 void Actor::handleChild(const parse::Node* n)
 {
     Node::handleChild(n);
-    
+
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if(value)
     {
         if(n_name == "samplerName")
@@ -1903,7 +1903,7 @@ void Actor::handleChild(const parse::Node* n)
 Polygon Actor::collisionPolygon() const
 {
     Polygon R;
-    
+
     if( !polygon.empty() )
     {
         R = k() * polygon + position;
@@ -1912,7 +1912,7 @@ Polygon Actor::collisionPolygon() const
     {
         double w = k() * sampler->getWidth(frame),
                h = k() * sampler->getHeight(frame);
-        
+
         Polygon samplerPoly( sampler->getCollisionPolygon(frame) );
 
         if( !samplerPoly.empty() )
@@ -1922,16 +1922,16 @@ Polygon Actor::collisionPolygon() const
                 R -= 0.5 * Vec2(w, h);
         }
         else
-        {    
+        {
             double x0 = position.x, x1 = position.x+w, y0 = position.y, y1 = position.y+h;
-            
+
             R.add(x0, y0).add(x1, y0).add(x1, y1).add(x0, y1);
-            
+
             if( sampler->getCenter() )
                 R -= 0.5 * Vec2(w, h);
         }
     }
-    
+
     R.setDrawType(Polygon::kOutline);
     return R;
 }
@@ -1945,7 +1945,7 @@ Actor* Actor::actorInClick(const Mat4& worldMatrix, const Vec2& C)
 {
     if(!visible())
         return NULL;
-    
+
     if( vectorInside(worldMatrix * getMatrix(), C) )
         return this;
     return NULL;
@@ -1989,9 +1989,9 @@ void Button::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
         g2cerror( "Button %s drawing with null sampler.\n", name.c_str() );
         exit(0);
     }
-    
+
     Actor::drawInTree(worldMatrix, worldColor);
-    
+
     if( Sprite::drawLines )
         collisionPolygon().drawInTree(worldMatrix, worldColor);
 }
@@ -2000,9 +2000,9 @@ bool Button::mouseDown(const Mat4& worldMatrix, const Vec2& C)
 {
     if( !visible() || !enabled )
         return false;
-    
+
     frame = baseFrame;
-    
+
     if( vectorInside(worldMatrix, C) )
     {
         frame = frame() + 1;
@@ -2018,7 +2018,7 @@ void Button::mouseDragged(const Mat4& worldMatrix, const Vec2& C)
 {
     if( !visible() || !enabled )
         return;
-    
+
     frame = baseFrame;
     if( vectorInside(worldMatrix, C) )
     {
@@ -2039,7 +2039,7 @@ void Button::mouseUp(const Mat4& worldMatrix, const Vec2& C)
 {
     if( !visible() || !enabled )
         return;
-    
+
     if( vectorInside(worldMatrix, C) )
     {
         if( handler )
@@ -2047,24 +2047,24 @@ void Button::mouseUp(const Mat4& worldMatrix, const Vec2& C)
         else
             g2clog( "WARNING: button %s with no handler.\n", name.c_str() );
     }
-    
+
     if( depressed )
     {
         depressed = false;
         if( handler )
             handler->up(this);
     }
-    
+
     frame = baseFrame;
 }
 
 void Button::handleChild(const parse::Node* n)
 {
     Actor::handleChild(n);
-    
+
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if(value)
     {
         if(n_name == "baseFrame")
@@ -2123,7 +2123,7 @@ void Text::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 string Text::serializeElements(string indent) const
 {
     string r = Actor::serializeElements(indent);
-    
+
     if( font )
         r += TAB + indent + "'fontName' : " + string("'") + font->name + "',\n";
     if( s != "" )
@@ -2136,10 +2136,10 @@ string Text::serializeElements(string indent) const
 void Text::handleChild(const parse::Node* n)
 {
     Actor::handleChild(n);
-    
+
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if(value)
     {
         if(n_name == "fontName")
@@ -2147,10 +2147,10 @@ void Text::handleChild(const parse::Node* n)
             fontName = value->data.s;
             gTextToFontName[this] = value->data.s;
         }
-        
+
         if(n_name == "s")
             s = value->data.s;
-        
+
         if(n_name == "justification")
             justification = value->data.s;
     }
@@ -2159,7 +2159,7 @@ void Text::handleChild(const parse::Node* n)
 Polygon Text::collisionPolygon() const
 {
     Polygon R;
-    
+
     if( !polygon.empty() )
     {
         R = polygon + position;
@@ -2173,7 +2173,7 @@ Polygon Text::collisionPolygon() const
         g2cerror( "Attempt to compute string rectangle with no font.\n" );
         exit(0);
     }
-    
+
     R.setDrawType(Polygon::kOutline);
     return R;
 }
@@ -2221,13 +2221,13 @@ Mat4 Layer::getMatrix() const
 
 World::World() : bank(NULL), soundInitted(false)
 {
-    player = new Player();
+    player = new AudioPlayer();
     context = new Context(player);
     context->makeCurrent();
     destroySoundQueue();
-    
+
     type = "World";
-    
+
     addProperty("samplers", samplers);
     addProperty("sounds", sounds);
 }
@@ -2236,7 +2236,7 @@ World::~World()
 {
     if( !soundInitted )
         delete player;
-    
+
     delete context;
 
     for(vector<Sampler*>::iterator itr = samplers.begin(); itr!=samplers.end(); itr++)
@@ -2246,22 +2246,22 @@ World::~World()
         delete *itr;
 }
 
-void World::initSound(Player* inPlayer)
-{    
+void World::initSound(AudioPlayer* inAudioPlayer)
+{
     if( soundInitted )
     {
         g2cerror("Sound intted for world twice");
         exit(0);
     }
-    
+
     // Throw away the stub player/context.
     delete context;
     delete player;
-    
-    player = inPlayer;
+
+    player = inAudioPlayer;
     context = new Context(player);
     context->makeCurrent();
-    
+
     soundInitted = true; // Only allow once.
 }
 
@@ -2287,7 +2287,7 @@ void World::resize(int width, int height)
         g2cerror( "Attempt to resize with no renderer world: %s\n", name.c_str() );
         exit(0);
     }
-    
+
     Sprite::renderer->projection = Mat4(
         2.0 / width, 0.0, 0.0, 0.0,
         0.0, 2.0 / height, 0.0, 0.0,
@@ -2311,7 +2311,7 @@ void World::removeSampler(const Sampler* sampler)
             j++;
         }
     samplers.resize(j);
-    
+
     Node::removeSampler(sampler);
 }
 
@@ -2336,13 +2336,13 @@ void World::initWithParseNode(const parse::Node* n)
 {
     gActorToSamplerName.clear();
     gTextToFontName.clear();
-    
+
     Node::initWithParseNode(n);
-    
+
     updateSamplerMap();
     updateSoundMap();
     updateNodeMap();
-    
+
     for(map<Actor*, string>::iterator itr = gActorToSamplerName.begin();
         itr != gActorToSamplerName.end();
         itr++)
@@ -2361,7 +2361,7 @@ void World::initWithParseNode(const parse::Node* n)
             }
         }
     }
-    
+
     for(map<Text*, string>::iterator itr = gTextToFontName.begin();
         itr != gTextToFontName.end();
         itr++)
@@ -2400,9 +2400,9 @@ void World::updateNodeMap(Node* node)
 {
     if( !node )
         node = this;
-    
+
     nodeMap[node->name] = node;
-    
+
     for(vector<Node*>::iterator itr = node->children.begin(); itr!=node->children.end(); itr++)
         updateNodeMap(*itr);
 }
@@ -2412,9 +2412,9 @@ void World::handleChild(const parse::Node* n)
 {
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     bool handled = false;
-    
+
     if( value )
     {
         if( n_name == "samplers" )
@@ -2425,7 +2425,7 @@ void World::handleChild(const parse::Node* n)
             {
                 string type = getType(*itr);
                 Sampler* sampler = NULL;
-                
+
                 if(type=="Sprite")
                 {
                     sampler = new Sprite();
@@ -2439,21 +2439,21 @@ void World::handleChild(const parse::Node* n)
                     g2cerror("Object in sampler list must be type Sprite or Font.\n");
                     exit(0);
                 }
-                
+
                 if( sampler )
                 {
                     sampler->initWithParseNode(*itr);
-                    
+
                     samplers.push_back(sampler);
                     deleteResources.push_back(sampler);
 
                     bank->initTextureWithPath(sampler, sampler->file().c_str());
                 }
             }
-            
+
             handled = true;
         }
-        
+
         if( n_name == "sounds" )
         {
             for(vector<parse::Node*>::const_iterator itr = value->children.begin();
@@ -2462,7 +2462,7 @@ void World::handleChild(const parse::Node* n)
             {
                 string type = getType(*itr);
                 Sound* sound = NULL;
-                
+
                 if(type=="Sound")
                     sound = new Sound();
                 else
@@ -2470,7 +2470,7 @@ void World::handleChild(const parse::Node* n)
                     g2cerror("Object in sound list must be type Sound.\n");
                     exit(0);
                 }
-                
+
                 if( sound )
                 {
                     sound->initWithParseNode(*itr);
@@ -2479,11 +2479,11 @@ void World::handleChild(const parse::Node* n)
                     bank->initSoundWithPath(sound, sound->file.c_str());
                 }
             }
-            
+
             handled = true;
         }
     }
-    
+
     if( !handled )
     {
         Layer::handleChild(n);
@@ -2493,17 +2493,17 @@ void World::handleChild(const parse::Node* n)
 void World::clear()
 {
     clearChildren();
-    
+
     samplers.clear();
     sounds.clear();
-    
+
     for( vector<Serializable*>::iterator itr = deleteResources.begin();
          itr != deleteResources.end();
          itr++ )
     {
         delete *itr;
     }
-    
+
     deleteResources.clear();
 }
 
@@ -2516,7 +2516,7 @@ void World::playSound(const std::string& name, double gain) const
 {
     if( sources.empty() )
         initSoundQueue();
-    
+
     map<string, Sound*>::const_iterator sound_itr = soundMap.find(name);
     if( sound_itr!=soundMap.end() )
     {
@@ -2563,7 +2563,7 @@ void World::initSoundQueue() const
 {
     context->makeCurrent();
     sources.resize(8);
-    
+
     for(vector<Source*>::iterator itr = sources.begin(); itr!=sources.end(); itr++)
         *itr = new Source;
 }
@@ -2584,16 +2584,16 @@ Animator::Animator() : eventStoppedCounter(0)
 
 Animator::~Animator()
 {
-    
+
 }
 
 void Animator::add(Animation* a)
 {
     animationsAdded++;
-    
+
     retain(a);
     S.insert(a);
-    
+
     if(a->stopsEvents)
     {
         if( eventStoppedCounter==0 )
@@ -2632,7 +2632,7 @@ void Animator::remove(Animation* a)
     if(itr!=S.end())
     {
         animationsRemoved++;
-        
+
         if(a->stopsEvents)
         {
             eventStoppedCounter--;
@@ -2645,7 +2645,7 @@ void Animator::remove(Animation* a)
                     (*itr)->listening = true;
                 }
             }
-            
+
             if(eventStoppedCounter < 0)
             {
                 g2cerror( "Animator event stopped counter dropped below 0.\n" );
@@ -2667,9 +2667,9 @@ public:
     double t;
     int i;
     Animation* a;
-    
+
     AnimationContainer(double t, int i, Animation* a) : t(t), i(i), a(a) {}
-    
+
     bool operator<(const AnimationContainer& c) const
     {
         return t < c.t || (t == c.t && i < c.i);
@@ -2679,40 +2679,40 @@ public:
 void Animator::step(double t)
 {
     set<AnimationContainer> beginMe, advanceMe, endMe;
-    
+
     int index = 0;
     for(set<Animation*>::iterator itr = S.begin(); itr!= S.end(); itr++)
     {
         Animation* a = *itr;
-        
+
         if(t > a->start)
         {
             if(!a->running)
                 beginMe.insert(AnimationContainer(a->start, index, a));
-            
+
             advanceMe.insert(AnimationContainer(a->start, index, a));
         }
-        
+
         if(!a->forever && t > a->start + a->duration)
             endMe.insert(AnimationContainer(a->start + a->duration, index, a));
-        
+
         index++;
     }
-    
+
     for(set<AnimationContainer>::iterator itr = beginMe.begin(); itr!= beginMe.end(); itr++)
     {
         Animation* a = itr->a;
         a->begin();
         a->running = true;
     }
-    
+
     for(set<AnimationContainer>::iterator itr = advanceMe.begin(); itr!= advanceMe.end(); itr++)
     {
         Animation* a = itr->a;
         a->advance(t);
         a->last = t;
     }
-    
+
     for(set<AnimationContainer>::iterator itr = endMe.begin(); itr!= endMe.end(); itr++)
     {
         Animation* a = itr->a;
@@ -2724,16 +2724,16 @@ void Animator::step(double t)
 void Animator::end()
 {
     vector<Animation*> endMe;
-    
+
     for(set<Animation*>::iterator itr = S.begin(); itr!= S.end(); itr++)
     {
         endMe.push_back(*itr);
     }
-    
+
     for(vector<Animation*>::iterator itr = endMe.begin(); itr!= endMe.end(); itr++)
     {
         Animation* a = *itr;
-        
+
         a->end();
         remove(a);
     }
@@ -2742,19 +2742,19 @@ void Animator::end()
 void Animator::clear()
 {
     vector<Animation*> deleteMe;
-    
+
     for(set<Animation*>::iterator itr = S.begin(); itr!= S.end(); itr++)
     {
         Animation* a = *itr;
         deleteMe.push_back(a);
     }
-    
+
     for(vector<Animation*>::iterator itr = deleteMe.begin(); itr!= deleteMe.end(); itr++)
     {
         Animation* a = *itr;
         remove(a);
     }
-    
+
     assert(S.size() == 0);
 }
 
@@ -2778,7 +2778,7 @@ Animation::Animation(double instart, double induration) : stopsEvents(false),
 
 Animation::~Animation()
 {
-    
+
 }
 
 void Animation::advance(double t)
@@ -2792,23 +2792,23 @@ void Animation::advance(double t)
         if( scaled_t > 1.0 )
             scaled_t = 1.0;
     }
-    
+
     step(scaled_t);
 }
 
 void Animation::begin()
 {
-    
+
 }
 
 void Animation::step(double /*t*/)
 {
-    
+
 }
 
 void Animation::end()
 {
-    
+
 }
 
 void Animation::print() const

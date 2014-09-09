@@ -67,9 +67,9 @@ OpenSLPlayer::OpenSLPlayer()
 int OpenSLPlayer::createContext()
 {
     SLresult result;
-    
+
     ContextInfo info;
-    
+
     // create engine
     result = slCreateEngine(&info.engineObject, 0, NULL, 0, NULL, NULL);
     if( SL_RESULT_SUCCESS != result )
@@ -77,7 +77,7 @@ int OpenSLPlayer::createContext()
         g2cerror("OpenSL Failed to get create engine.\n");
         exit(0);
     }
-    
+
     // realize the engine
     result = (*info.engineObject)->Realize(info.engineObject, SL_BOOLEAN_FALSE);
     if( SL_RESULT_SUCCESS != result )
@@ -85,7 +85,7 @@ int OpenSLPlayer::createContext()
         g2cerror("OpenSL Failed to realize engine object.\n");
         exit(0);
     }
-    
+
     // get the engine interface, which is needed in order to create other objects
     result = (*info.engineObject)->GetInterface(info.engineObject, SL_IID_ENGINE, &info.engine);
     if( SL_RESULT_SUCCESS != result )
@@ -93,7 +93,7 @@ int OpenSLPlayer::createContext()
         g2cerror("OpenSL Failed to get interface engine.\n");
         exit(0);
     }
-    
+
     // create output mix, with environmental reverb specified as a non-required interface
     const SLInterfaceID ids[0] = {};
     const SLboolean req[0] = {};
@@ -103,22 +103,22 @@ int OpenSLPlayer::createContext()
         g2cerror("OpenSL Failed to create output mix.\n");
         exit(0);
     }
-    
+
     // realize the output mix
     result = (*info.outputMixObject)->Realize(info.outputMixObject, SL_BOOLEAN_FALSE);
-    
+
     if( SL_RESULT_SUCCESS != result )
     {
         g2cerror("Failed to initialize OpenSL.\n");
         exit(0);
     }
-    
+
     int index = 1;
     while( contextInfos.find(index)!=contextInfos.end() )
         index++;
-    
+
     contextInfos[index] = info;
-    
+
     return index;
 }
 
@@ -130,9 +130,9 @@ void OpenSLPlayer::destroyContext(int index)
         g2cerror("Attempt to make context current that doesn't exist. index=%d\n", index);
         exit(0);
     }
-    
+
     ContextInfo& info(itr->second);
-    
+
     // destroy output mix object, and invalidate all associated interfaces
     if (info.outputMixObject != NULL) {
         (*info.outputMixObject)->Destroy(info.outputMixObject);
@@ -158,45 +158,45 @@ int OpenSLPlayer::createSource()
             " index=%d\n", contextIndex);
         exit(0);
     }
-    
+
     ContextInfo& contextInfo(itr->second);
-    
+
     SourceInfo* sourceInfo = new SourceInfo;
-    
+
     SLresult result;
-    
+
     // configure audio source
     SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2};
     SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 1, SL_SAMPLINGRATE_44_1,
         SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
         SL_SPEAKER_FRONT_CENTER, SL_BYTEORDER_LITTLEENDIAN};
     SLDataSource audioSrc = {&loc_bufq, &format_pcm};
-    
+
     // configure audio sink
     SLDataLocator_OutputMix loc_outmix = {SL_DATALOCATOR_OUTPUTMIX, contextInfo.outputMixObject};
     SLDataSink audioSnk = {&loc_outmix, NULL};
-    
+
     // create audio player
     const SLInterfaceID ids[3] = {SL_IID_BUFFERQUEUE, SL_IID_EFFECTSEND, SL_IID_VOLUME};
     const SLboolean req[3] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE};
-    
+
     result = (*contextInfo.engine)->CreateAudioPlayer(
         contextInfo.engine, &(sourceInfo->bqPlayerObject),
         &audioSrc, &audioSnk, 3, ids, req);
-    
+
     if( SL_RESULT_SUCCESS != result )
     {
         g2cerror("OpenSL Failed to initialize OpenSL audio player.\n");
         exit(0);
     }
-    
+
     int index = 1;
     while( sourceInfos.find(index) != sourceInfos.end() )
         index++;
-    
+
     sourceInfos[index] = sourceInfo;
     sourceInfo->realize();
-    
+
     return index;
 }
 
@@ -207,9 +207,9 @@ void OpenSLPlayer::destroySource(int index)
         g2cerror("OpenSL Attempt to destroy non-existant source.");
         exit(0);
     }
-    
+
     SourceInfo* info(sourceInfos[index]);
-    
+
     // destroy buffer queue audio player object, and invalidate all associated interfaces
     if( info->bqPlayerObject != NULL )
     {
@@ -221,23 +221,23 @@ void OpenSLPlayer::destroySource(int index)
         info->bqPlayerMuteSolo = NULL;
         info->bqPlayerVolume = NULL;
     }
-    
+
     sourceInfos.erase(index);
-    
+
     delete info;
 }
 
 
 int OpenSLPlayer::createSound()
-{    
+{
     Audio* audio = new Audio;
-    
+
     int index = 1;
     while( audios.find(index)!=audios.end() )
         index++;
-    
+
     audios[index] = audio;
-    
+
     return index;
 }
 
@@ -249,7 +249,7 @@ void OpenSLPlayer::destroySound(int index)
         g2cerror("OpenSL Attempt to destroy audio that doesn't exist. index=%d\n", index);
         exit(0);
     }
-    
+
     delete audios[index];
     audios.erase(index);
 }
@@ -262,7 +262,7 @@ void OpenSLPlayer::makeContextCurrent(int index)
         g2cerror("OpenSL Attempt to make context current that doesn't exist. index=%d\n", index);
         exit(0);
     }
-    
+
     contextIndex = index;
 }
 
@@ -280,15 +280,15 @@ void OpenSLPlayer::loadSound(
         g2cerror("OpenSL Attempt to load into non-existant audio buffer. index=%d\n", index);
         exit(0);
     }
-    
+
     Audio* audio = itr->second;
-    
+
     if( audio->buffer )
     {
         delete[] audio->buffer;
         audio->buffer = NULL;
     }
-    
+
     audio->size = numSamples*bytesPerSample;
     audio->buffer = new uint8_t[audio->size];
     memcpy(audio->buffer, data, audio->size);
@@ -305,7 +305,7 @@ void OpenSLPlayer::playSound(
 
     sourceInfo->loop = loop;
     sourceInfo->audio = audio;
-    
+
     if( audio->size > 0 )
     {
         SLresult result;
@@ -328,7 +328,7 @@ bool OpenSLPlayer::isSourcePlaying(int index)
 
     SLresult result = (*(sourceInfo->bqPlayerBufferQueue))->GetState(
         sourceInfo->bqPlayerBufferQueue, &state);
-    
+
     if( SL_RESULT_SUCCESS != result )
         g2clog("sound failed to play");
 
@@ -363,7 +363,7 @@ OpenSLPlayer::Audio::~Audio()
 }
 
 OpenSLPlayer::SourceInfo::SourceInfo() : bqPlayerObject(NULL)
-{    
+{
 }
 
 OpenSLPlayer::SourceInfo::~SourceInfo()
@@ -373,7 +373,7 @@ OpenSLPlayer::SourceInfo::~SourceInfo()
 void OpenSLPlayer::SourceInfo::realize()
 {
     SLresult result;
-    
+
     // realize the player
     result = (*bqPlayerObject)->Realize(bqPlayerObject, SL_BOOLEAN_FALSE);
     if( SL_RESULT_SUCCESS != result )
@@ -381,7 +381,7 @@ void OpenSLPlayer::SourceInfo::realize()
         g2cerror("OpenSL Failed to realize player.");
         exit(0);
     }
-    
+
     // get the play interface
     result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_PLAY, &bqPlayerPlay);
     if( SL_RESULT_SUCCESS != result )
@@ -389,7 +389,7 @@ void OpenSLPlayer::SourceInfo::realize()
         g2cerror("OpenSL Failed to get player interface.");
         exit(0);
     }
-    
+
     // get the buffer queue interface
     result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_BUFFERQUEUE,
         &bqPlayerBufferQueue);
@@ -398,7 +398,7 @@ void OpenSLPlayer::SourceInfo::realize()
         g2cerror("OpenSL Failed to get player interface.");
         exit(0);
     }
-    
+
     // register callback on the buffer queue
     result = (*bqPlayerBufferQueue)->RegisterCallback(
         bqPlayerBufferQueue, bqPlayerCallback, this);
@@ -407,7 +407,7 @@ void OpenSLPlayer::SourceInfo::realize()
         g2cerror("OpenSL Failed register callback.");
         exit(0);
     }
-    
+
     // get the effect send interface
 
     result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_EFFECTSEND,
@@ -417,7 +417,7 @@ void OpenSLPlayer::SourceInfo::realize()
         g2cerror("OpenSL Failed to get effect send interface.");
         exit(0);
     }
-    
+
     // get the volume interface
     result = (*bqPlayerObject)->GetInterface(
         bqPlayerObject, SL_IID_VOLUME, &bqPlayerVolume);
@@ -426,7 +426,7 @@ void OpenSLPlayer::SourceInfo::realize()
         g2cerror("OpenSL Failed to get volume control interface.");
         exit(0);
     }
-    
+
     // set the player's state to playing
     result = (*bqPlayerPlay)->SetPlayState(bqPlayerPlay, SL_PLAYSTATE_PLAYING);
     if( SL_RESULT_SUCCESS != result )

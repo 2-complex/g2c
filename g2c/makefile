@@ -29,7 +29,7 @@ OFILES = \
 	$(OBJ_DIR)/parse.o \
 	$(OBJ_DIR)/serializable.o \
 	$(OBJ_DIR)/sound.o \
-	$(OBJ_DIR)/player.o \
+	$(OBJ_DIR)/audioplayer.o \
 	$(OBJ_DIR)/bank.o \
 	$(OBJ_DIR)/texture.o \
 	$(OBJ_DIR)/sprites.o \
@@ -41,7 +41,7 @@ OFILES = \
 	$(OBJ_DIR)/openalplayer.o
 
 libg2c.a: $(OFILES)
-	ar rcs libg2c.a $(OFILES) 
+	ar rcs libg2c.a $(OFILES)
 
 
 $(OBJ_DIR)/listener.o: $(SOURCE_DIR)/listener.cpp $(SOURCE_DIR)/listener.h
@@ -56,9 +56,9 @@ $(OBJ_DIR)/sound.o: $(SOURCE_DIR)/sound.cpp $(SOURCE_DIR)/sound.h
 	@mkdir -p $(@D)
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/sound.cpp -o $(OBJ_DIR)/sound.o
 
-$(OBJ_DIR)/player.o: $(SOURCE_DIR)/player.cpp $(SOURCE_DIR)/player.h
+$(OBJ_DIR)/audioplayer.o: $(SOURCE_DIR)/audioplayer.cpp $(SOURCE_DIR)/audioplayer.h
 	@mkdir -p $(@D)
-	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/player.cpp -o $(OBJ_DIR)/player.o
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) -c $(SOURCE_DIR)/audioplayer.cpp -o $(OBJ_DIR)/audioplayer.o
 
 $(OBJ_DIR)/openalplayer.o: $(SOURCE_DIR)/openalplayer.cpp $(SOURCE_DIR)/openalplayer.h
 	@mkdir -p $(@D)
