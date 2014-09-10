@@ -214,7 +214,8 @@ void SpriteEnvironment::keyboard(unsigned char inkey)
                 }
                 i++;
             }
-            sound_index = (sound_index+1)%n;
+            if( n )
+                sound_index = (sound_index+1)%n;
         }
         break;
     }
