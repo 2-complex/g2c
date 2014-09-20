@@ -113,7 +113,7 @@ void Value::mimmic(const Value& v)
     {
         type = v.type;
         size = v.size;
-        
+
         if(type == NONE)
         {
             textureName = v.textureName;
@@ -121,17 +121,17 @@ void Value::mimmic(const Value& v)
         }
         else
             textureName = "";
-        
+
         if(type != TEXTURE)
             data.ptr = new GLfloat[size];
     }
-    
+
     if(type != v.type)
     {
         g2cerror( "Attempt to set value to incongruous type.\n" );
         exit(0);
     }
-    
+
     if(type == TEXTURE)
     {
         data.texture = v.data.texture;
@@ -150,35 +150,35 @@ void Value::applyToLocation(GLuint location) const
             g2cerror( "Attempt to bind emtpy value to location." );
             exit(0);
         break;
-        
+
         case FLOAT:
             glUniform1fv(location, 1, data.ptr);
         break;
-        
+
         case VEC2:
             glUniform2fv(location, 1, data.ptr);
         break;
-        
+
         case VEC3:
             glUniform3fv(location, 1, data.ptr);
         break;
-        
+
         case VEC4:
             glUniform4fv(location, 1, data.ptr);
         break;
-        
+
         case MAT2:
             glUniformMatrix2fv(location, 1, false, data.ptr);
         break;
-        
+
         case MAT3:
             glUniformMatrix3fv(location, 1, false, data.ptr);
         break;
-        
+
         case MAT4:
             glUniformMatrix4fv(location, 1, false, data.ptr);
         break;
-        
+
         case TEXTURE:
             glActiveTexture(GL_TEXTURE0 + data.texture->getUnit());
             glBindTexture(data.texture->getTarget(), data.texture->getIndex());
@@ -287,15 +287,15 @@ string Value::toString() const
         case NONE:
             return "None";
         break;
-        
+
         case FLOAT:
             return floatToString(*(data.ptr));
         break;
-        
+
         case TEXTURE:
             return "'" + data.texture->name + "'";
         break;
-        
+
         default:
         {
             string r = "[";
@@ -364,14 +364,14 @@ void Effect::addUniformsFromProgram()
     int maxNameLength, numberUniforms;
     glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxNameLength);
     glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &numberUniforms);
-    
+
     char* name = new char[maxNameLength+1];
     memset(name, 0, maxNameLength+1);
-    
+
     GLsizei length = 0;
-     GLint size = 0;
-     GLenum type = 0;
-    
+    GLint size = 0;
+    GLenum type = 0;
+
     for( int i = 0; i < numberUniforms; i++ )
     {
         glGetActiveUniform(program, i, maxNameLength, &length, &size, &type, name);
@@ -391,14 +391,14 @@ void Effect::assume(const map<string, Value>* assumption) const
         map<string, GLint>::const_iterator mitr = uniformLocationMap.find(itr->first);
         if( mitr!=uniformLocationMap.end() )
             itr->second.applyToLocation(mitr->second);
+        }
     }
-}
 
 bool Effect::loadShaders()
 {
     program = glCreateProgram();
 
-    const string header = 
+    const string header =
 #if defined(ANDROID)
         "precision mediump float;\n";
 #else
@@ -423,7 +423,7 @@ void Effect::bindAttributeToField(const string& name, const Field& field) const
         exit(0);
     }
     glBindBuffer(GL_ARRAY_BUFFER, field.buffer->index);
-    
+
     map<string, GLint>::const_iterator itr = attributeLocationMap.find(name);
     if(itr == attributeLocationMap.end())
     {
@@ -431,16 +431,16 @@ void Effect::bindAttributeToField(const string& name, const Field& field) const
         exit(0);
     }
     GLuint attributeLocaion = itr->second;
-    
+
     glEnableVertexAttribArray(attributeLocaion);
     enabledAttributes.push_back(attributeLocaion);
-    
+
     if( field.size < 1 || field.size > 4 )
     {
         g2cerror( "Attempt to draw with field size not 1 2 3 or 4.\n" );
         exit(0);
     }
-    
+
     glVertexAttribPointer(attributeLocaion, field.size, GL_FLOAT, false,
         field.stride*sizeof(float), (const GLvoid*)(field.offset*sizeof(float)));
 }
@@ -489,13 +489,13 @@ bool Effect::compileShader(GLuint *shader, GLenum type, const char* code)
 bool Effect::linkProgram()
 {
     GLint status;
-    
+
     glLinkProgram(program);
     glGetProgramiv(program, GL_LINK_STATUS, &status);
-    
+
     if (status == 0)
         return false;
-    
+
     return true;
 }
 
@@ -507,7 +507,7 @@ void Effect::addAttribute(const char* name)
 void Effect::addUniform(const char* name)
 {
     GLint location = glGetUniformLocation(program, name);
-    
+
     if(location<0)
     {
         g2cerror( "location turned up negative for uniform: %s\n", name );
@@ -536,33 +536,33 @@ void Effect::use() const
 string Effect::serializeElements(string indent) const
 {
     string r = Serializable::serializeElements(indent);
-    
+
     r += TAB + indent + "'vertexCode' : '" + vertexCode + "',\n";
     r += TAB + indent + "'fragmentCode' : '" + fragmentCode + "',\n";
-    
+
     return r;
 }
 
 void Effect::handleChild(const parse::Node* n)
 {
     Serializable::handleChild(n);
-    
+
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if( n_name == "vertexCode" )
     {
         vertexCode = value->data.s;
     }
-    
+
     if( n_name == "fragmentCode" )
     {
         fragmentCode = value->data.s;
     }
-    
+
     if( !(fragmentCode=="" || vertexCode=="") )
     {
-	loadShaders();
+        loadShaders();
     }
 }
 
@@ -587,13 +587,13 @@ string Assumption::serializeElements(string indent) const
 void Assumption::handleChild(const parse::Node* n)
 {
     Serializable::handleChild(n);
-    
+
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if(n_name == "name" || n_name == "type")
         return;
-    
+
     if(n_name == "effect")
     {
         effectName = value->data.s;
@@ -626,20 +626,20 @@ void Assumption::handleChild(const parse::Node* n)
             case 2:
                 (*this)[n_name] = Vec2(v[0], v[1]);
             break;
-            
+
             case 3:
                 (*this)[n_name] = Vec3(v[0], v[1], v[2]);
             break;
-            
+
             // This is a design flaw.  A four entry array here could also mean a 2x2 matrix.
             case 4:
                 (*this)[n_name] = Vec4(v[0], v[1], v[2], v[3]);
             break;
-            
+
             case 9:
                 (*this)[n_name] = Mat3(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8]);
             break;
-            
+
             case 16:
                 (*this)[n_name] = Mat4(
                     v[0], v[1], v[2], v[3],
@@ -647,7 +647,7 @@ void Assumption::handleChild(const parse::Node* n)
                                        v[8], v[9], v[10], v[11],
                                        v[12], v[13], v[14], v[15]);
             break;
-            
+
             default:
                 g2clog( "Value of %s of unusual size : %d\n", n_name.c_str(), (int)(v.size()) );
                 exit(0);
@@ -673,10 +673,10 @@ Buffer::Buffer(const vector<double>& v)
     float* fv = new float[size];
     for(int i = 0; i < size; i++)
         fv[i] = v[i];
-    
+
     size = v.size();
     initWithFloatArray(fv);
-    
+
     delete[] fv;
 }
 
@@ -687,7 +687,7 @@ Buffer::Buffer(const vector<float>& v)
     float* fv = new float[size];
     for(int i = 0; i < size; i++)
         fv[i] = v[i];
-    
+
     initWithFloatArray(fv);
     delete[] fv;
 }
@@ -698,7 +698,7 @@ Buffer::Buffer(const double* v, int size) : size(size)
     float* fv = new float[size];
     for(int i = 0; i < size; i++)
         fv[i] = v[i];
-    
+
     initWithFloatArray(fv);
     delete[] fv;
 }
@@ -719,11 +719,11 @@ string Buffer::serializeElements(string indent) const
 {
 #if !(defined(TARGET_OS_IPHONE) || defined(ANDROID))
     string r = Serializable::serializeElements(indent);
-    
+
     float* array = new float[size];
     glGetBufferSubData(GL_ARRAY_BUFFER, 0, size*sizeof(float), array);
-    
-    
+
+
     r += TAB + indent + "'array' : [";
     for(int i = 0; i < size; i++)
     {
@@ -732,9 +732,9 @@ string Buffer::serializeElements(string indent) const
         r += floatToString(array[i]) + ", ";
     }
     r += "\n" + TAB + indent + "],\n";
-        
+
     delete[] array;
-    
+
     return r;
 #else
     return "(Buffer::serialize does not work on mobile.)";
@@ -746,12 +746,12 @@ void Buffer::handleChild(const parse::Node* n)
     Serializable::handleChild(n);
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if( n_name == "array" )
     {
         size = value->children.size();
         float* array = new float[size];
-        
+
         int i = 0;
         for(vector<parse::Node*>::const_iterator itr = value->children.begin();
             itr!=value->children.end();
@@ -760,9 +760,9 @@ void Buffer::handleChild(const parse::Node* n)
             array[i] = (*itr)->data.x;
             i++;
         }
-        
+
         initWithFloatArray(array);
-        
+
         delete[] array;
     }
 }
@@ -770,7 +770,7 @@ void Buffer::handleChild(const parse::Node* n)
 void Buffer::initWithFloatArray(const float* v)
 {
     glGenBuffers(1, &index);
-    
+
     glBindBuffer(GL_ARRAY_BUFFER, index);
     glBufferData(GL_ARRAY_BUFFER, size * sizeof(GLfloat), v, GL_STREAM_DRAW);
 }
@@ -787,10 +787,10 @@ IndexBuffer::IndexBuffer(const vector<int>& v)
     unsigned short* sv = new unsigned short[size];
     for(int i = 0; i < size; i++)
         sv[i] = v[i];
-    
+
     size = v.size();
     initWithShortArray(sv);
-    
+
     delete[] sv;
 }
 
@@ -801,7 +801,7 @@ IndexBuffer::IndexBuffer(const vector<unsigned short>& v)
     unsigned short* sv = new unsigned short[size];
     for(int i = 0; i < size; i++)
         sv[i] = v[i];
-    
+
     initWithShortArray(sv);
     delete[] sv;
 }
@@ -812,7 +812,7 @@ IndexBuffer::IndexBuffer(const int* v, int size) : size(size)
     unsigned short* sv = new unsigned short[size];
     for(int i = 0; i < size; i++)
         sv[i] = v[i];
-    
+
     initWithShortArray(sv);
     delete[] sv;
 }
@@ -833,10 +833,10 @@ string IndexBuffer::serializeElements(string indent) const
 {
 #if !(defined(TARGET_OS_IPHONE) || defined(ANDROID))
     string r = Serializable::serializeElements(indent);
-    
+
     unsigned short* array = new unsigned short[size];
     glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size*sizeof(unsigned short), array);
-    
+
     r += TAB + indent + "'array' : [";
     for(int i = 0; i < size; i++)
     {
@@ -845,7 +845,7 @@ string IndexBuffer::serializeElements(string indent) const
         r += intToString(array[i]) + ", ";
     }
     r += "\n" + TAB + indent + "],\n";
-    
+
     delete[] array;
     return r;
 #else
@@ -858,12 +858,12 @@ void IndexBuffer::handleChild(const parse::Node* n)
     Serializable::handleChild(n);
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if( n_name == "array" )
     {
         size = value->children.size();
         unsigned short* array = new unsigned short[size];
-        
+
         int i = 0;
         for(vector<parse::Node*>::const_iterator itr = value->children.begin();
             itr!=value->children.end();
@@ -872,9 +872,9 @@ void IndexBuffer::handleChild(const parse::Node* n)
             array[i] = (*itr)->data.i;
             i++;
         }
-        
+
         initWithShortArray(array);
-        
+
         delete[] array;
     }
 }
@@ -882,7 +882,7 @@ void IndexBuffer::handleChild(const parse::Node* n)
 void IndexBuffer::initWithShortArray(const unsigned short* v)
 {
     glGenBuffers(1, &index);
-    
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
         size*sizeof(unsigned short), (GLshort*)v, GL_STREAM_DRAW);
@@ -896,22 +896,22 @@ Geometry::Geometry() : indices(NULL)
 
 Geometry::~Geometry()
 {
-    
+
 }
 
 string Geometry::serializeElements(string indent) const
 {
     string r = Serializable::serializeElements(indent);
-    
+
     if(indices)
         r += TAB + indent + "'indices' : '" + indices->name + "',\n";
-    
+
     for(const_iterator itr = begin(); itr!=end(); itr++)
     {
         r += TAB + indent + "'" + itr->first + "' : " +
             flattenWhitespace(itr->second.serialize(indent + TAB).c_str()) + ",\n";
     }
-    
+
     return r;
 }
 
@@ -920,10 +920,10 @@ void Geometry::handleChild(const parse::Node* n)
     Serializable::handleChild(n);
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if( n_name == "name" || n_name == "type" )
         return;
-    
+
     if( n_name == "indices" )
     {
         indicesName = value->data.s;
@@ -941,7 +941,7 @@ void Geometry::bindAttributes(const Effect* effect)
         g2cerror( "Attributes bound to null effect\n" );
         exit(0);
     }
-    
+
     for(const_iterator itr = begin(); itr!=end(); itr++)
     {
         effect->bindAttributeToField(itr->first, itr->second);
@@ -955,7 +955,7 @@ void Geometry::draw() const
         g2cerror( "Attempt to draw geometry with undefined indices.\n" );
         exit(0);
     }
-    
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices->index);
     glDrawElements(GL_TRIANGLES, indices->size, GL_UNSIGNED_SHORT, 0);
 }
@@ -973,20 +973,20 @@ Field::Field(const Buffer* buffer, GLint size, GLsizei stride, int offset) :
 
 Field::~Field()
 {
-    
+
 }
 
 string Field::serializeElements(std::string indent) const
 {
     string r = Serializable::serializeElements(indent);
-    
+
     if( buffer )
         r += TAB + indent + "'buffer' : '" + buffer->name + "',\n";
-    
+
     r += TAB + indent + "'size' : " + intToString(size) + ",\n";
     r += TAB + indent + "'stride' : " + intToString(stride) + ",\n";
     r += TAB + indent + "'offset' : " + intToString(offset) + ",\n";
-    
+
     return r;
 }
 
@@ -995,16 +995,16 @@ void Field::handleChild(const parse::Node* n)
     Serializable::handleChild(n);
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if( n_name == "buffer" )
         bufferName = value->data.s;
-    
+
     if( n_name == "size" )
         size = value->data.i;
 
     if( n_name == "stride" )
         stride = value->data.i;
-    
+
     if( n_name == "offset" )
         offset = value->data.i;
 }
@@ -1034,7 +1034,7 @@ const Value& Shape::get(const string& uniformName) const
             }
         }
     }
-    
+
     return noValue;
 }
 
@@ -1042,15 +1042,15 @@ void Shape::draw() const
 {
     if(!visible)
         return;
-    
+
     if(!geometry)
     {
         g2cerror( "Shape drawn with no geometry.\n" );
         exit(0);
     }
-    
+
     const Effect* effect = NULL;
-    
+
     // Search through assumptions looking for effect.
     for(list<Assumption*>::const_reverse_iterator itr = assumptions.rbegin();
         itr!=assumptions.rend();
@@ -1062,17 +1062,17 @@ void Shape::draw() const
             break;
         }
     }
-    
+
     // If we didn't find an effect, bail.
     if(!effect)
     {
         g2cerror( "Shape %s drawn with no effect.\n", name.c_str() );
         exit(0);
     }
-    
+
     // If we did find an effect, use it.
     effect->use();
-    
+
     // Iterate through the assumptions and assume the uniforms in them.
     for(list<Assumption*>::const_iterator itr = assumptions.begin();
         itr!=assumptions.end();
@@ -1081,11 +1081,11 @@ void Shape::draw() const
         if( (*itr)->active )
             effect->assume(*itr);
     }
-    
+
     geometry->bindAttributes(effect);
     geometry->draw();
     effect->disableEnabledAttributes();
-    
+
     glUseProgram(0);
 }
 
@@ -1093,19 +1093,19 @@ void Shape::draw() const
 string Shape::serializeElements(string indent) const
 {
     string r = Serializable::serializeElements(indent);
-    
+
     if( !visible )
         r += TAB + indent + "'visible' : '" + intToString(visible) + "',\n";
-    
+
     if( geometry )
         r += TAB + indent + "'geometry' : '" + geometry->name + "',\n";
     r += TAB + indent + "'assumptions' : [\n";
-    
+
     for(list<Assumption*>::const_iterator itr = assumptions.begin(); itr!=assumptions.end(); itr++)
         r += TAB + TAB + indent + "'" + (*itr)->name + "',\n";
-    
+
     r += TAB + indent + "],\n";
-    
+
     return r;
 }
 
@@ -1114,13 +1114,13 @@ void Shape::handleChild(const parse::Node* n)
     Serializable::handleChild(n);
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if( n_name == "visible" )
         visible = value->data.i;
-    
+
     if( n_name == "geometry" )
         geometryName = value->data.s;
-    
+
     if( n_name == "assumptions" )
     {
         for(vector<parse::Node*>::const_iterator itr = value->children.begin();
@@ -1154,7 +1154,7 @@ void Model::draw() const
 Model& Model::add(Element* element, bool flagForDelete)
 {
     elements.push_back(element);
-    
+
     if( element->type == "Effect" )
         effects[element->name] = (Effect*)element;
     else if( element->type == "Assumption" )
@@ -1174,10 +1174,10 @@ Model& Model::add(Element* element, bool flagForDelete)
         g2cerror( "Element not inserted" );
         exit(0);
     }
-    
+
     if(flagForDelete)
         deleteMe.insert(element);
-    
+
     return *this;
 }
 
@@ -1210,12 +1210,12 @@ void Model::resolveNames()
             else
                 assumption->effect = mitr->second;
         }
-        
+
         for(Assumption::iterator itr = assumption->begin(); itr!=assumption->end(); itr++)
         {
             Value& value(itr->second);
             const string& textureName = itr->second.textureName;
-            
+
             if( textureName!="" )
             {
                 map<string, Texture*>::iterator mitr = textures.find(textureName);
@@ -1229,8 +1229,8 @@ void Model::resolveNames()
             }
         }
     }
-    
-    // Iterate through geometries.  Geometries have an index buffer and a map to fields.  Each 
+
+    // Iterate through geometries.  Geometries have an index buffer and a map to fields.  Each
     // field has a name of a buffer that needs to be resolved.
     for(map<string, Geometry*>::iterator itr = geometries.begin(); itr!=geometries.end(); itr++)
     {
@@ -1247,7 +1247,7 @@ void Model::resolveNames()
             else
                 geometry->indices = mitr->second;
         }
-        
+
         for(Geometry::iterator itr = geometry->begin(); itr!=geometry->end(); itr++)
         {
             string& bufferName = itr->second.bufferName;
@@ -1261,7 +1261,7 @@ void Model::resolveNames()
                 itr->second.buffer = mitr->second;
         }
     }
-    
+
     // Iterate through the shapes next and resolve their geometries and assumptions.
     for(map<string, Shape*>::iterator itr = shapes.begin(); itr!=shapes.end(); itr++)
     {
@@ -1278,11 +1278,11 @@ void Model::resolveNames()
             else
                 shape->geometry = mitr->second;
         }
-        
+
         for(vector<string>::iterator itr = shape->assumptionNames.begin();
             itr != shape->assumptionNames.end();
             itr++)
-        {                
+        {
             string& assumptionName = *itr;
             map<string, Assumption*>::iterator mitr = assumptions.find(assumptionName);
             if(mitr == assumptions.end())
@@ -1299,7 +1299,7 @@ void Model::resolveNames()
 string Model::serializeElements(string indent) const
 {
     string r = Serializable::serializeElements();
-    
+
     if( !include.empty() )
     {
         r += TAB + indent + "'include' : [\n";
@@ -1307,7 +1307,7 @@ string Model::serializeElements(string indent) const
             r += TAB + TAB + indent + "'" + (*itr) + "',\n";
         r += TAB + indent +  "],\n";
     }
-    
+
     if( !elements.empty() )
     {
         r += TAB + indent + "'elements' : [\n";
@@ -1315,14 +1315,14 @@ string Model::serializeElements(string indent) const
             r += (*itr)->serialize(TAB + TAB + indent) + ",\n";
         r += TAB + indent +  "],\n";
     }
-    
+
     return r;
 }
 
 void Model::deserialize(const std::string& s)
 {
     Serializable::deserialize(s);
-    
+
     for(vector<string>::iterator itr = include.begin(); itr != include.end(); itr++)
     {
         Model model;
@@ -1330,7 +1330,7 @@ void Model::deserialize(const std::string& s)
         model.deleteMe.clear();
         add(model, true);
     }
-    
+
     compileEffects();
     resolveNames();
 }
@@ -1350,7 +1350,7 @@ void Model::handleChild(const parse::Node* n)
     Serializable::handleChild(n);
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if( n_name == "include" )
     {
         for(vector<parse::Node*>::const_iterator itr = value->children.begin();
@@ -1361,7 +1361,7 @@ void Model::handleChild(const parse::Node* n)
             include.push_back(filename);
         }
     }
-    
+
     if( n_name == "elements" )
     {
         for(vector<parse::Node*>::const_iterator itr = value->children.begin();
@@ -1370,45 +1370,45 @@ void Model::handleChild(const parse::Node* n)
         {
             parse::Node* element = *itr;
             string elementType = getType(element);
-            
+
             Texture2D* newTexture = NULL;
             CubeMap* newCubeMap = NULL;
             Element* t = NULL;
-            
+
             if( elementType == "Texture" || elementType == "Texture2D" )
                 t = newTexture = new Texture2D;
-            
+
             if( elementType == "Assumption" )
                 t = new Assumption;
-            
+
             if( elementType == "Buffer" )
                 t = new Buffer;
-            
+
             if( elementType == "CubeMap" )
                 t = newCubeMap = new CubeMap;
-            
+
             if( elementType == "IndexBuffer" )
                 t = new IndexBuffer;
-            
+
             if( elementType == "Effect" )
                 t = new Effect;
-            
+
             if( elementType == "Geometry" )
                 t = new Geometry;
-            
+
             if( elementType == "Shape" )
                 t = new Shape;
-            
+
             t->initWithParseNode(element);
             add(t, true);
-            
+
             if( elementType == "Texture2D" ||
                 elementType == "Texture" )
             {
                 if( newTexture->file != "" )
                     bank->initTextureWithPath(newTexture, newTexture->file.c_str());
             }
-            
+
             if( elementType == "CubeMap" )
             {
                 if( newCubeMap->positiveXFile != "" &&
@@ -1417,14 +1417,14 @@ void Model::handleChild(const parse::Node* n)
                     newCubeMap->negativeYFile != "" &&
                     newCubeMap->positiveZFile != "" &&
                     newCubeMap->negativeZFile != "" )
-                {    
+                {
                     Bitmap positiveXBitmap,
                            negativeXBitmap,
                            positiveYBitmap,
                            negativeYBitmap,
                            positiveZBitmap,
                            negativeZBitmap;
-                    
+
                     bank->initBitmapWithPath(&positiveXBitmap, newCubeMap->positiveXFile.c_str());
                     bank->initBitmapWithPath(&negativeXBitmap, newCubeMap->negativeXFile.c_str());
                     bank->initBitmapWithPath(&positiveYBitmap, newCubeMap->positiveYFile.c_str());
