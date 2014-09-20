@@ -13,6 +13,7 @@ include $(G2C_SOURCE_DIR)/platform.mk
 EXES = \
 	atlas \
 	modelfile \
+	quad \
 	serialize \
 	ship \
 	sound \
@@ -54,6 +55,9 @@ atlas: $(DEPS) atlas.cpp
 
 modelfile: $(DEPS) modelfile.cpp
 	$(call build_with_source, modelfile.cpp, modelfile)
+
+quad: $(DEPS) quad.cpp
+	$(call build_with_source, quad.cpp, quad)
 
 serialize: $(DEPS) serialize.cpp
 	$(call build_with_source, serialize.cpp, serialize)
