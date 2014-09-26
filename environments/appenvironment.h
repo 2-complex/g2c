@@ -5,6 +5,8 @@
 #include "app.h"
 #include "environment.h"
 
+using namespace g2c;
+
 class AppEnvironment : public Environment {
 public:
 	AppEnvironment();

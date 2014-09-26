@@ -30,6 +30,9 @@ void reshape(int w, int h);
 void motion(int x, int y);
 void button(int b, int state, int x, int y);
 void keyboard(unsigned char inkey, int x, int y);
+
+namespace g2c {
+
 Environment* gEnvironment = NULL;
 
 Environment::Environment()
@@ -78,10 +81,7 @@ void Environment::display()
 {
     if( !initted )
     {
-#if GLUT && !__APPLE_CC__
-        glewInit();
-#endif
-
+        initOpenGL();
         init();
         initted = true;
     }
@@ -118,6 +118,7 @@ void Environment::reshape(int w, int h)
 
     if( !initted )
     {
+        initOpenGL();
         init();
         initted = true;
     }
@@ -208,8 +209,8 @@ void Environment::mainLoop()
     glutInitted = true;
 
     gEnvironment = this;
-    setGlobalListener(this);
-    initListenerGlut();
+    setGlobalGlutListener(this);
+    initGlutListener();
 
     // install the functions in this file as callbacks
     glutDisplayFunc(fdisplay);
@@ -219,8 +220,18 @@ void Environment::mainLoop()
     glutMainLoop();
 }
 
-void Environment::init() {}
-void Environment::step(double /*t*/) {animate = false;}
-void Environment::draw() const {}
+void Environment::init()
+{
+}
 
+void Environment::step(double /*t*/)
+{
+    animate = false;
+}
+
+void Environment::draw() const
+{
+}
+
+}
 

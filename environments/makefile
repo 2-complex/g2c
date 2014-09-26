@@ -15,12 +15,19 @@ G2C_SOURCE_DIR = $(G2C_ROOT)/g2c
 include $(G2C_SOURCE_DIR)/platform.mk
 
 OFILES = \
+        $(OBJ_DIR)/glutlistener.o \
 	$(OBJ_DIR)/environment.o \
 	$(OBJ_DIR)/spriteenvironment.o \
 	$(OBJ_DIR)/panenvironment.o \
 	$(OBJ_DIR)/scrollenvironment.o \
 	$(OBJ_DIR)/appenvironment.o
 
+
+$(OBJ_DIR)/glutlistener.o: glutlistener.cpp glutlistener.h
+	@mkdir -p $(@D)
+	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) \
+		-I$(G2C_SOURCE_DIR) \
+		-c glutlistener.cpp -o $(OBJ_DIR)/glutlistener.o
 
 $(OBJ_DIR)/environment.o: environment.cpp environment.h
 	@mkdir -p $(@D)
@@ -59,3 +66,4 @@ libenvironments.a: $(OFILES)
 clean:
 	-rm -f obj/*
 	-rm -f libenvironments.a
+
