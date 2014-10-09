@@ -34,10 +34,15 @@
 
 #include <queue>
 
-namespace g2c {
+namespace g2c
+{
 
-
-class MacBank : public Bank {
+/*! An partial implementation of Bank for Mac OSX.  Contains much of the functionality for loading
+    resources from files in iOS as well.  Use the subclass IOSResourceBank to load resources
+    in an iOS app.  Use the subclass MacFileSystemBank to load resources from files in a local
+    directory strucutre on a Mac.*/
+class MacBank : public Bank
+{
 public:
     MacBank() {}
     virtual ~MacBank() {}
@@ -67,7 +72,9 @@ protected:
     void initBitmapWithCGImage(Bitmap* bitmap, CGImageRef image);
 };
 
-class MacFileSystemBank : public MacBank {
+/*! An full implementation of Bank for loading resources from files in the file system on a Mac.*/
+class MacFileSystemBank : public MacBank
+{
 public:
     MacFileSystemBank() {}
     virtual ~MacFileSystemBank() {}
@@ -78,3 +85,4 @@ public:
 
 
 #endif
+

@@ -30,8 +30,6 @@ using namespace std;
 namespace g2c {
 
 
-
-
 void IOSResourceBank::initPersistentSerializableWithKey(Serializable* s, const char* key)
 {
 	NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
@@ -87,4 +85,5 @@ void IOSResourceBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
 }
 
 } // end namespace
+
 
