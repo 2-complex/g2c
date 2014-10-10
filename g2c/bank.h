@@ -78,9 +78,14 @@ public:
     
     Bank* bank;
     
-    struct LoadInstruction {
-        LoadInstruction(Serializable* resource, const std::string& path) :
-            resource(resource), path(path) {}
+    struct LoadInstruction
+    {
+        LoadInstruction(Serializable* resource, const std::string& path)
+            : resource(resource)
+            , path(path)
+        {
+        }
+
         Serializable* resource;
         std::string path;
     };
@@ -94,7 +99,10 @@ public:
     virtual void initSoundWithPath(Sound* sound, const char* path);
     virtual void initTextureWithPath(Texture2D* texture, const char* path);
 
+    /*! Pop a resource from the instruction queue and load it. */
     bool step();
+
+    /*! Get a percentage (out of 100) of the resources from the queue that have been loaded. */
     int percent() const;
 
 private:
