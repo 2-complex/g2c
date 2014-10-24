@@ -1,5 +1,5 @@
 
-#include "appenvironment.h"
+#include "gluttrampoline.h"
 #include "worldapp.h"
 
 #if __APPLE_CC__
@@ -12,7 +12,7 @@
 
 int main(int argc, char** args)
 {
-    AppEnvironment environment;
+    GlutTrampoline trampoline;
     WorldApp app;
 
 #if __APPLE_CC__
@@ -23,14 +23,13 @@ int main(int argc, char** args)
 
     OpenALPlayer player;
 
-    environment.initWindow("World", 800, 600);
+    trampoline.initWindow("World", 800, 600);
 
     app.setBank(&bank);
     app.setAudioPlayer(&player);
 
-    environment.app = &app;
-
-    environment.mainLoop();
+    trampoline.app = &app;
+    trampoline.mainLoop();
 
     return 0;
 }

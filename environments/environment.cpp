@@ -163,9 +163,10 @@ void fdisplay() { gEnvironment->display(); }
 void freshape(int w, int h) { gEnvironment->reshape(w,h); }
 
 
-void Environment::initWindow(const char* name,
-                             int width,
-                             int height)
+void Environment::initWindow(
+    const char* name,
+    int width,
+    int height)
 {
     int argc = 0;
     char** args = NULL;
