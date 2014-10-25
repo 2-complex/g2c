@@ -40,20 +40,41 @@ class Bitmap;
     file or from raw data in memory.  A Bitmap may be used to populate a Texture object in GPU space.*/
 class Bitmap {
 public:
+    /*! Construct a Bitmap with the default constructor and then populate using set().*/
     Bitmap();
+
+    /*! Constuct a Bitmap by copying another Bitmap, mimicks the argument in newly
+        allocated memory.*/   
     Bitmap(const Bitmap& b);
+
     virtual ~Bitmap();
-    
+
+    /*! Copy another Bitmap.*/
     Bitmap& operator=(const Bitmap& b);
     
+    /*! Use this function to populate the Bitmap with existing data in
+        memory.  Replaces whatever is currently in the Bitmap.*/
     void set(uint8_t* inData, int inWidth, int inHeight, int inBitsPerPixel);
+    
+    /*! Flips image in place.*/
     void flipVertically();
+
+    /*! Swaps red and blue.*/
     void swizzleRGB();
+
+    /*! Resizes image, picture no longer valid.*/
     void resize(int inWidth, int inHeight);
 
+    /*! Accessor for pointer to bitmap data.  Do not deallocate.*/
     const uint8_t* const getData() const;
+    
+    /*! Accessor for width of image.*/
     int getWidth() const;
+
+    /*! Accessor for height of image.*/
     int getHeight() const;
+
+    /*! Accessor for the bit depth.*/
     int getBitsPerPixel() const;
 
 private:
@@ -66,7 +87,8 @@ private:
     void sample(double x, double y, double* color) const;
 };
 
-/*! Texture is a base-class for Texture2D and CubeMap.  Functionality common between the two.*/
+/*! Texture is an abstract base-class for Texture2D and CubeMap holding functionality
+    common between the two.  Texture's*/
 class Texture : public Element {
 protected:
     Texture(GLenum target);
@@ -91,6 +113,9 @@ public:
 };
 
 
+/*! Texture2D represents a rectangular texture in GPU memory.  To use, initialize with a Bitmap.
+
+    A Texture2D can be constructed with a unit.  This refers to an OpenGL texture unit.*/
 class Texture2D : public Texture {
 friend class Value;
 public:
@@ -101,22 +126,25 @@ public:
     GLubyte* data;
     int width;
     int height;
-    
+
     std::string file;
-    
+
     void initWithImageData(const GLubyte* inData,
                            int inWidth,
                            int inHeight,
                            int inBitsPerPixel);
-    
+
     void initWithBitmap(const Bitmap& bitmap);
-    
+
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
-
 };
 
 
+/*! CubeMap represents a texture in GPU memory.  To use, initialize with six Bitmap objects
+    one for each face of the cube.  These bitmaps must be square.
+
+    A CubeMap can be constructed with a unit.  This refers to an OpenGL texture unit.*/
 class CubeMap : public Texture {
 friend class Value;
 public:

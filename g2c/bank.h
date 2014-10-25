@@ -31,8 +31,8 @@
 
 namespace g2c {
 
-/*! Data is a generic binary data container.  It keeps an privately allocated array of bytes which
-	can be resized and accessed.  ~Data() frees the array if it has been allocated.*/
+/*! A generic binary data container.  Keeps an privately allocated array of bytes which
+    can be resized and accessed.  ~Data() frees the array if it has been allocated.*/
 class Data {
 public:
     Data();
@@ -48,7 +48,7 @@ private:
 
 
 /*! Bank is used for cross-platform development.  Bank is an abstract class with methods for
-	retrieving resources such as images, sounds, and strings.  Since retrieval of such resource
+    retrieving resources such as images, sounds, and strings.  Since retrieval of such resource
     data tends to be platform specific, Bank is meant to be subclassed for a particular platform.*/
 class Bank {
 public:
@@ -78,23 +78,31 @@ public:
     
     Bank* bank;
     
-    struct LoadInstruction {
-        LoadInstruction(Serializable* resource, const std::string& path) :
-            resource(resource), path(path) {}
+    struct LoadInstruction
+    {
+        LoadInstruction(Serializable* resource, const std::string& path)
+            : resource(resource)
+            , path(path)
+        {
+        }
+
         Serializable* resource;
         std::string path;
     };
     
     virtual void initPersistentSerializableWithKey(Serializable* s, const char* key);
     virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key);
-    
+
     virtual void initSerializableWithPath(Serializable* s, const char* path);
     virtual void writeSerializableToPath(const Serializable* s, const char* path);
 
     virtual void initSoundWithPath(Sound* sound, const char* path);
     virtual void initTextureWithPath(Texture2D* texture, const char* path);
-    
+
+    /*! Pop a resource from the instruction queue and load it. */
     bool step();
+
+    /*! Get a percentage (out of 100) of the resources from the queue that have been loaded. */
     int percent() const;
 
 private:
@@ -106,3 +114,5 @@ private:
 
 
 #endif
+
+

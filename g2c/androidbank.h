@@ -30,6 +30,9 @@
 
 namespace g2c {
 
+
+/*! An implementation of Bank for use in an Android app.  Loads resources from files in the assets
+    directory of the project.*/
 class AndroidBank : public Bank
 {
 public:

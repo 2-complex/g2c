@@ -27,8 +27,12 @@
 
 #include <queue>
 
-namespace g2c {
+namespace g2c
+{
 
+/*! An implementation of Bank for linux/unix-based systems.  Loads uses unix libraries to load
+    bitmap data from image files, raw audio from sound files etc, uses standard libaries for
+    loading raw data from a file. */
 class UnixBank : public Bank {
 public:
     UnixBank() {}
