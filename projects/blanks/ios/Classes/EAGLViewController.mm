@@ -3,6 +3,11 @@
 
 @implementation EAGLViewController
 
+- (BOOL) prefersStatusBarHidden
+{
+    return YES;
+}
+
 - (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	switch(interfaceOrientation)
@@ -19,19 +24,13 @@
 	return NO;
 }
 
-- (void) viewDidLoad
-{
-	[super viewDidLoad];
-}
-
 - (void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 								duration:(NSTimeInterval)duration
 {
 	int width = self.view.window.frame.size.width;
 	int height = self.view.window.frame.size.height;
 	
-	if( toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft ||
-	    toInterfaceOrientation == UIInterfaceOrientationLandscapeRight )
+	if( UIInterfaceOrientationIsLandscape((toInterfaceOrientation)) )
 	{
 		int temp = width;
 		width = height;
@@ -39,11 +38,6 @@
 	}
 	
 	[(EAGLView*)self.view resizeWithWidth: width height: height];
-}
-
-- (void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
-{
-	
 }
 
 @end

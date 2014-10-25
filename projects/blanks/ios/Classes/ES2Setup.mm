@@ -12,13 +12,11 @@
         
         if( !context )
 		{
-			[self release];
 			return nil;
 		}
 		
 		if( ![EAGLContext setCurrentContext:context] )
 		{
-			[self release];
 			return nil;
 		}
 		
@@ -97,11 +95,6 @@
 	// take down context
 	if( [EAGLContext currentContext] == context )
         [EAGLContext setCurrentContext:nil];
-	
-	[context release];
-	context = nil;
-	
-	[super dealloc];
 }
 
 @end

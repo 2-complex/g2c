@@ -5,16 +5,20 @@
 
 #include "iosresourcebank.h"
 #include "sprites.h"
-#include "blank.h"
 
+#include "app.h"
+
+class BlankApp : public g2c::App {
+    void draw() const {
+        glClearColor(0.3f, 0.4f, 0.6f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+};
 
 using namespace std;
 using namespace g2c;
 
 @implementation EAGLView
-
-@synthesize animating;	
-@dynamic animationFrameInterval;
 
 + (Class) layerClass
 {
@@ -28,36 +32,18 @@ using namespace g2c;
         // Get the layer
         CAEAGLLayer *eaglLayer = (CAEAGLLayer*)self.layer;
         
-        eaglLayer.opaque = TRUE;
-        eaglLayer.drawableProperties =
-		[NSDictionary dictionaryWithObjectsAndKeys: [NSNumber numberWithBool:FALSE],
-		 kEAGLDrawablePropertyRetainedBacking,
-		 kEAGLColorFormatRGBA8,
-		 kEAGLDrawablePropertyColorFormat,
-		 nil];
+        eaglLayer.opaque = YES;
+        eaglLayer.drawableProperties = @{ kEAGLDrawablePropertyRetainedBacking: @(NO),
+                                          kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8 };
 		
-		// A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
-		// class is used as fallback when it isn't available.
-		
-		NSString *reqSysVer = @"3.1";
-		NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
-		if( [currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending )
-			displayLinkSupported = TRUE;
-		
-		animating = TRUE;
-		displayLinkSupported = FALSE;
-		animationFrameInterval = 1;
-		displayLink = nil;
-		animationTimer = nil;
+		_animating = YES;
+		_animationFrameInterval = 1;
 		
 		[self initWorld];
     }
 	
     return self;
 }
-
-
-
 
 - (void) initWorld
 {
@@ -85,12 +71,10 @@ using namespace g2c;
 	insider = new Insider;
 	firstReshape = true;
 	insider->bank = new IOSResourceBank;
-	Blank* app = new Blank;
-	
+    
+	BlankApp* app = new BlankApp();
 	app->setBank(insider->bank);
-	
 	insider->app = app;
-	
 	app->init();
 }
 
@@ -103,9 +87,9 @@ using namespace g2c;
 		int width = self.window.frame.size.width;
 		int height = self.window.frame.size.height;
 		
-		[self resizeWithWidth: width height: height];
+		[self resizeWithWidth:width height:height];
 		
-		firstReshape = false;
+		firstReshape = NO;
 	}
 	
 	insider->app->step(currentTime());
@@ -120,11 +104,6 @@ using namespace g2c;
     [self drawView:nil];
 }
 
-- (NSInteger) animationFrameInterval
-{
-	return animationFrameInterval;
-}
-
 - (void) setAnimationFrameInterval:(NSInteger)frameInterval
 {
 	// Frame interval defines how many display frames must pass between each time the
@@ -133,11 +112,11 @@ using namespace g2c;
 	// frame interval setting of one will fire 60 times a second when the display refreshes
 	// at 60 times a second. A frame interval setting of less than one results in undefined
 	// behavior.
-	if (frameInterval >= 1)
+	if( frameInterval >= 1 )
 	{
-		animationFrameInterval = frameInterval;
+		_animationFrameInterval = frameInterval;
 		
-		if (animating)
+		if( _animating )
 		{
 			[self stopAnimation];
 			[self startAnimation];
@@ -147,53 +126,27 @@ using namespace g2c;
 
 - (void) startAnimation
 {
-	if( !animating )
+	if( !_animating )
 	{
-		if( displayLinkSupported )
-		{
-			// CADisplayLink is API new to iPhone SDK 3.1. Compiling against earlier versions will result in a warning, but can be dismissed
-			// if the system version runtime check for CADisplayLink exists in -initWithCoder:. The runtime check ensures this code will
-			// not be called in system versions earlier than 3.1.
-			
-			displayLink = [NSClassFromString(@"CADisplayLink") displayLinkWithTarget:self selector:@selector(drawView:)];
-			[displayLink setFrameInterval:animationFrameInterval];
-			[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-		}
-		else
-		{
-			animationTimer =
-			[NSTimer scheduledTimerWithTimeInterval:
-			 (NSTimeInterval)((1.0 / 60.0) * animationFrameInterval)
-											 target: self
-										   selector: @selector(drawView:)
-										   userInfo: nil
-											repeats: TRUE];
-		}
-		
-		animating = TRUE;
+        displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(drawView:)];
+        [displayLink setFrameInterval:_animationFrameInterval];
+        [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        
+		_animating = YES;
 	}
 }
 
 - (void) stopAnimation
 {
-	if( animating )
+	if( _animating )
 	{
-		if( displayLinkSupported )
-		{
-			[displayLink invalidate];
-			displayLink = nil;
-		}
-		else
-		{
-			[animationTimer invalidate];
-			animationTimer = nil;
-		}
-		
-		animating = FALSE;
+        [displayLink invalidate];
+        displayLink = nil;
+		_animating = NO;
 	}
 }
 
-- (void)resizeWithWidth:(int)width height:(int)height
+- (void)resizeWithWidth:(NSUInteger)width height:(NSUInteger)height
 {
 	mWidth = width;
 	mHeight = height;
@@ -201,85 +154,72 @@ using namespace g2c;
 	insider->app->reshape(width, height);
 }
 
--(void)touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event
+- (void)touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    CGPoint touchPoint = [[touches anyObject] locationInView:self];
-    Vec2 c(touchPoint.x, mHeight-touchPoint.y);
-	
-	unsigned int index = 0;
-	set<unsigned int> filled;
-	for( map<UITouch*, int>::iterator itr = insider->touchIndexMap.begin(); itr!=insider->touchIndexMap.end(); itr++ )
-		filled.insert(itr->second);
-	
-	NSEnumerator *enumerator = [touches objectEnumerator];
-	
-	UITouch* touch;
-	while ( touch = [enumerator nextObject] )
-	{
-		while (filled.find(index) != filled.end())
-			index++;
-		
-		CGPoint touchPoint = [touch locationInView:self];
-		Vec2 c(touchPoint.x, mHeight-touchPoint.y);
-		
-		if( index == 0 )
-			insider->app->mouseDown(c);
-		
-		insider->app->touchDown(index, c);
-		insider->touchIndexMap[touch] = index;
-		
-		filled.insert(index);
-	}
-	
-	insider->app->mouseDown(c);
+    unsigned int index = 0;
+    set<unsigned int> filled;
+    for( map<UITouch*, int>::iterator itr = insider->touchIndexMap.begin(); itr!=insider->touchIndexMap.end(); itr++ )
+        filled.insert(itr->second);
+    
+    // Iterate through all touches
+    for( UITouch *touch in [touches allObjects] ) {
+        
+        // Get the location of the touch on the screen
+        CGPoint touchPoint = [touch locationInView:self];
+        // Invert the y point before passing to g2c
+        Vec2 c(touchPoint.x, mHeight - touchPoint.y);
+        
+        while (filled.find(index) != filled.end())
+            index++;
+        
+        if( index == 0 )
+            insider->app->mouseDown(c);
+        
+        insider->app->touchDown(index, c);
+        insider->touchIndexMap[touch] = index;
+        
+        filled.insert(index);
+        
+        insider->app->mouseDown(c);
+    }
 }
 
--(void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
+- (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    CGPoint touchPoint = [[touches anyObject] locationInView:self];
-    Vec2 c(touchPoint.x, mHeight-touchPoint.y);
-	
-	NSEnumerator *enumerator = [touches objectEnumerator];
-	
-	UITouch* touch;
-	while ( touch = [enumerator nextObject] )
-	{
-		CGPoint touchPoint = [touch locationInView:self];
-		Vec2 c(touchPoint.x, mHeight-touchPoint.y);
-		
-		int index = insider->touchIndexMap[touch];
-		
-		if( index == 0 )
-			insider->app->mouseDragged(c);
-		
-		insider->app->touchDragged(index, c);
-	}
-	
-	insider->app->mouseDragged(c);
+    // Iterate through all touches
+    for( UITouch *touch in [touches allObjects] )
+    {
+        // Get the location of the touch on the screen
+        CGPoint touchPoint = [touch locationInView:self];
+        // Invert the y point before passing to g2c
+        Vec2 c(touchPoint.x, mHeight - touchPoint.y);
+        
+        int index = insider->touchIndexMap[touch];
+        if( index == 0 )
+            insider->app->mouseDragged(c);
+        
+        insider->app->touchDragged(index, c);
+    }
 }
 
--(void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
+- (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    CGPoint touchPoint = [[touches anyObject] locationInView:self];
-    Vec2 c(touchPoint.x, mHeight-touchPoint.y);
-	
-	NSEnumerator *enumerator = [touches objectEnumerator];
-	
-	UITouch* touch;
-	while ( touch = [enumerator nextObject] )
-	{
-		CGPoint touchPoint = [touch locationInView:self];
-		Vec2 c(touchPoint.x, mHeight-touchPoint.y);
-		
-		int index = insider->touchIndexMap[touch];
-		if( index == 0 )
-			insider->app->mouseUp(c);
-		
-		insider->app->touchUp(index, c);
-		insider->touchIndexMap.erase(touch);
-	}
-	
-	insider->app->mouseUp(c);
+    // Iterate through all touches
+    for( UITouch *touch in [touches allObjects] )
+    {
+        
+        // Get the location of the touch on the screen
+        CGPoint touchPoint = [touch locationInView:self];
+        // Invert the y point before passing to g2c
+        Vec2 c(touchPoint.x, mHeight - touchPoint.y);
+        
+        int index = insider->touchIndexMap[touch];
+        if( index == 0 )
+            insider->app->mouseUp(c);
+        
+        insider->app->touchUp(index, c);
+        insider->touchIndexMap.erase(touch);
+    }
 }
 
 - (void)insertText:(NSString *)text
@@ -293,38 +233,19 @@ using namespace g2c;
 	insider->app->keyboard(0x7f);
 }
 
-- (BOOL)hasText
-{
-    return YES;
-}
-
 - (BOOL)canBecomeFirstResponder
 {
     return YES;
 }
 
-- (BOOL)canResignFirstResponder
-{
-	return YES;
-}
-
-
 - (void) dealloc
-{
-    [setup release];
-	
+{	
 	delete insider->app;
 	
 	delete insider->bank;
 	delete insider->renderer;
 	
 	delete insider;
-	
-    [super dealloc];
 }
 
-
-
-
 @end
-

@@ -27,13 +27,12 @@ public:
 @private
 	id <ESSetup> setup;
 	
-	int mWidth;
-	int mHeight;
+	NSUInteger mWidth;
+	NSUInteger mHeight;
 	
 	BOOL firstReshape;
-	BOOL animating;
-	BOOL displayLinkSupported;
-	NSInteger animationFrameInterval;
+	BOOL _animating;
+	NSInteger _animationFrameInterval;
 	
 	// Use of the CADisplayLink class is the preferred method for controlling animation timing.
 	// CADisplayLink will link to the main display and fire every vsync when added to a given run-loop.
@@ -41,20 +40,17 @@ public:
 	// isn't available.
 	id displayLink;
     NSTimer *animationTimer;
-	
+    
 	Insider* insider;
 }
 
 @property (readonly, nonatomic, getter=isAnimating) BOOL animating;
 @property (nonatomic) NSInteger animationFrameInterval;
 
-- (void) startAnimation;
-- (void) stopAnimation;
-- (void) initWorld;
-- (void) drawView:(id)sender;
+- (void)startAnimation;
+- (void)stopAnimation;
 
-
-- (void) resizeWithWidth:(int)width height:(int)height;
+- (void)resizeWithWidth:(NSUInteger)width height:(NSUInteger)height;
 
 @end
 
