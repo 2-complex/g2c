@@ -24,7 +24,7 @@
 
 #include "wave.h"
 #include "serializable.h"
-#include "player.h"
+#include "audioplayer.h"
 
 namespace g2c {
 
@@ -34,15 +34,15 @@ class Context {
 friend class Sound;
 friend class Source;
 public:
-    explicit Context(Player* player);
+    explicit Context(AudioPlayer* player);
     virtual ~Context();
-    
+
     void makeCurrent();
-    
+
 private:
     int index;
-    Player* player;
-    
+    AudioPlayer* player;
+
     static Context* currentContext;
 };
 
@@ -51,44 +51,44 @@ friend class Sound;
 public:
     Source();
     virtual ~Source();
-    
+
     bool isPlaying() const;
-    
+
 private:
     int index;
-    Player* player;
+    AudioPlayer* player;
 };
 
 class Sound : public Serializable {
 public:
     Sound();
     virtual ~Sound();
-    
+
     std::string file;
-    
+
     mutable Source* source;
-    
+
     bool loop;
-    
+
     void initWithWave(const Wave& wave);
-    
+
     void play(double gain = 1.0) const;
     void stop() const;
-    
+
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
-    
+
     // Temprary fix for MacBank which has code in it which appeals directly to OpenAL.
     // Sheesh.
     int getIndex() {return index;}
-    
+
     // Was private, not sure if it should be private.
     void load(int sampleRate, int numSamples, int numChannels,
         int bytesPerSample, const uint8_t* data);
-    
+
 private:
     int index;
-    Player* player;    
+    AudioPlayer* player;
 };
 
 } // end namespace

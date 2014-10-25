@@ -4,19 +4,19 @@
 #include "transforms.h"
 
 #include "bank.h"
-#include "player.h"
+#include "audioplayer.h"
 
 using namespace g2c;
 
 
 void BugWorldApp::setBank(Bank* inBank)
 {
-	this->bank = inBank;
+    this->bank = inBank;
 }
 
 void BugWorldApp::reshape(int width, int height)
 {
-	renderer->projection = orthographic(0, width, 0, height, -1, 1);
+    renderer->projection = orthographic(0, width, 0, height, -1, 1);
 }
 
 void BugWorldApp::init()
@@ -39,12 +39,12 @@ void BugWorldApp::init()
 
 void BugWorldApp::draw() const
 {
-	world->draw();
+    world->draw();
 }
 
 void BugWorldApp::destroy()
 {
-	delete world;
-	delete renderer;
+    delete world;
+    delete renderer;
 }
 

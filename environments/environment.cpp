@@ -42,119 +42,119 @@ Environment::~Environment() {}
 
 Mat4 Environment::getModelView() const
 {
-	double m[16];
-	glGetDoublev(GL_MODELVIEW_MATRIX, m);
-	Mat4 M;
-	M.set(m);
-	return M;
+    double m[16];
+    glGetDoublev(GL_MODELVIEW_MATRIX, m);
+    Mat4 M;
+    M.set(m);
+    return M;
 }
 
 Mat4 Environment::getProjection() const
 {
-	double m[16];
-	glGetDoublev(GL_PROJECTION_MATRIX, m);
-	Mat4 M;
-	M.set(m);
-	return M;
+    double m[16];
+    glGetDoublev(GL_PROJECTION_MATRIX, m);
+    Mat4 M;
+    M.set(m);
+    return M;
 }
 
 int Environment::getWindowWidth() const
 {
-	return windowWidth;
+    return windowWidth;
 }
 
 int Environment::getWindowHeight() const
 {
-	return windowHeight;
+    return windowHeight;
 }
 
 
 Vec2 Environment::flip(const Vec2& v) const
 {
-	return Vec2(v.x, windowHeight - v.y);
+    return Vec2(v.x, windowHeight - v.y);
 }
 
 void Environment::display()
 {
-	if( !initted )
-	{
+    if( !initted )
+    {
 #if GLUT && !__APPLE_CC__
-		glewInit();
+        glewInit();
 #endif
 
-		init();
-		initted = true;
-	}
-	
-	step( currentTime() );
-	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+        init();
+        initted = true;
+    }
+
+    step( currentTime() );
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-	
+
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    
+
     draw();
-    
+
     glPopMatrix();
-    
+
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
-    
-	glutSwapBuffers();
-	
+
+    glutSwapBuffers();
+
     if( animate )
-    	glutPostRedisplay();
+        glutPostRedisplay();
 }
 
 void Environment::reshape(int w, int h)
 {
-	windowHeight = h;
-	windowWidth = w;
-	
-	if( !initted )
-	{
-		init();
-		initted = true;
-	}
-    
-	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+    windowHeight = h;
+    windowWidth = w;
+
+    if( !initted )
+    {
+        init();
+        initted = true;
+    }
+
+    glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 }
 
 
 void Environment::button( int b, int state, int x, int y )
 {
-	Vec2 c = flip(Vec2(x,y));
-	
-	if( state == 0 ) // button down
-	{
-		if( !mouseDown(c) )
-		{
-			last = c;
-			dragging = true;
-		}
-	}
+    Vec2 c = flip(Vec2(x,y));
 
-	if( state == 1 ) // button up
-	{
-		mouseUp(c);
-		dragging = false;
-	}
+    if( state == 0 ) // button down
+    {
+        if( !mouseDown(c) )
+        {
+            last = c;
+            dragging = true;
+        }
+    }
+
+    if( state == 1 ) // button up
+    {
+        mouseUp(c);
+        dragging = false;
+    }
 }
 
 void Environment::motion(int x, int y)
 {
-	Vec2 c = flip(Vec2(x,y));
-	mouseDragged(c);
-	
-	if( dragging )
-	{
-		last = c;
-	}
+    Vec2 c = flip(Vec2(x,y));
+    mouseDragged(c);
+
+    if( dragging )
+    {
+        last = c;
+    }
 }
 
 
@@ -166,56 +166,56 @@ void Environment::initWindow(const char* name,
                              int width,
                              int height)
 {
-	int argc = 0;
-	char** args = NULL;
-	
+    int argc = 0;
+    char** args = NULL;
+
     // initilaize glut
     glutInit( &argc, args );
     glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
-    
+
     // bring up a window called windowName
     glutInitWindowSize( width, height );
     glutCreateWindow( name );
-    
-	// call the virtual function in case somebody wants more enables
-	enables();
-	
-	glutInitted = true;
+
+    // call the virtual function in case somebody wants more enables
+    enables();
+
+    glutInitted = true;
 }
 
 
 void Environment::enables()
 {
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
-    
+
     glCullFace(GL_NONE);
-	
-	glEnable(GL_ALPHA);
+
+    glEnable(GL_ALPHA);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 
 void Environment::mainLoop()
 {
-	if( !glutInitted )
-	{
-		initWindow();
-	}
-	
-	glutInitted = true;
-	
-	gEnvironment = this;
-	setGlobalListener(this);
-	initListenerGlut();
-	
-	// install the functions in this file as callbacks
+    if( !glutInitted )
+    {
+        initWindow();
+    }
+
+    glutInitted = true;
+
+    gEnvironment = this;
+    setGlobalListener(this);
+    initListenerGlut();
+
+    // install the functions in this file as callbacks
     glutDisplayFunc(fdisplay);
     glutReshapeFunc(freshape);
-	
-	// leave the rest to glut
+
+    // leave the rest to glut
     glutMainLoop();
 }
 

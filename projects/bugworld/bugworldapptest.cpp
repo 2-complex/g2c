@@ -3,7 +3,7 @@
 #include "bugworldapp.h"
 
 #include "macbank.h"
-#include "openalplayer.h"
+#include "openalplayer"
 
 #include "appenvironment.h"
 
@@ -21,7 +21,7 @@ int main(int argc, char** args)
     OpenALPlayer* player = new OpenALPlayer;
 
     app.setBank(bank);
-    app.setPlayer(player);
+    app.setAudioPlayer(player);
 
     environment.app = &app;
 

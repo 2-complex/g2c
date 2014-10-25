@@ -34,12 +34,12 @@ App::~App()
 
 void App::setBank(Bank*)
 {
-	
+
 }
 
-void App::setPlayer(Player*)
+void App::setAudioPlayer(AudioPlayer*)
 {
-	
+
 }
 
 void App::init()

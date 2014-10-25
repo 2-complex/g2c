@@ -32,7 +32,7 @@ namespace g2c {
 
 Context* Context::currentContext = NULL;
 
-Context::Context(Player* player) : index(0), player(player)
+Context::Context(AudioPlayer* player) : index(0), player(player)
 {
     index = player->createContext();
 }
@@ -51,7 +51,7 @@ void Context::makeCurrent()
         g2cerror("Attempt to make context current which was not initialized properly.\n");
         exit(0);
     }
-    
+
     currentContext = this;
     player->makeContextCurrent(index);
 }
@@ -63,15 +63,15 @@ Source::Source() : index(0)
         g2cerror("Attempt to create Source with no current context.\n");
         exit(0);
     }
-    
+
     player = Context::currentContext->player;
-    
+
     if( !player )
     {
         g2cerror("Attempt to make Source with no player.\n");
         exit(0);
     }
-    
+
     index = player->createSource();
 }
 
@@ -82,7 +82,7 @@ Source::~Source()
         g2cerror("Attempt to destroy Source which was not initialized properly.\n");
         exit(0);
     }
-    
+
     player->destroySource(index);
 }
 
@@ -94,23 +94,23 @@ bool Source::isPlaying() const
 Sound::Sound() : index(0), source(NULL), loop(false)
 {
     type = "Sound";
-    
+
     if( !Context::currentContext )
     {
         g2cerror("Attempt to create Sound with no current context.\n");
         exit(0);
     }
-    
+
     player = Context::currentContext->player;
-    
+
     if( !player )
     {
         g2cerror("Attempt to create Sound with no player set.\n");
         exit(0);
     }
-    
+
     index = player->createSound();
-    
+
     if( index <= 0 )
     {
         g2cerror("Player failed to create sound.\n");
@@ -125,7 +125,7 @@ Sound::~Sound()
         g2cerror("Attempt to destroy Sound which was not initialized properly.\n");
         exit(0);
     }
-    
+
     player->destroySound(index);
 }
 
@@ -136,7 +136,7 @@ void Sound::play(double gain) const
         g2cerror("Attempt to play Sound with no source.\n");
         exit(0);
     }
-    
+
     player->playSound(index, source->index, loop, gain);
 }
 
@@ -147,7 +147,7 @@ void Sound::stop() const
         g2cerror("Attempt to stop Sound with no source.\n");
         exit(0);
     }
-    
+
     player->stopSource(source->index);
 }
 
@@ -166,13 +166,13 @@ void Sound::handleChild(const parse::Node* n)
     parse::Node* value = n->data.value;
     if(n_name == "file")
         file = value->data.s;
-    
+
     if(n_name == "name")
         name = value->data.s;
-    
+
     if(n_name == "file")
         file = value->data.s;
-    
+
     if(n_name == "loop")
         loop = value->data.i;
 }
@@ -185,7 +185,7 @@ void Sound::load(int sampleRate, int numSamples, int numChannels,
         g2cerror("Attempt to load sound with no player.");
         exit(0);
     }
-    
+
     player->loadSound(index, sampleRate, numSamples, numChannels,
         bytesPerSample, data);
 }
