@@ -2,6 +2,7 @@
 #include "worldapp.h"
 #include "sprites.h"
 #include "transforms.h"
+#include "rendererg.h"
 
 using namespace g2c;
 
@@ -21,13 +22,13 @@ void WorldApp::reshape(int width, int height)
 void WorldApp::init()
 {
     world = new World;
-    renderer =  new RendererGL2;
+    renderer =  new RendererG;
     renderer->init();
 
     glEnable(GL_BLEND);
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_ALPHA);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     Sprite::renderer = renderer;
 
