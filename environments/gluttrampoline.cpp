@@ -13,7 +13,6 @@ void GlutTrampoline::enables()
 {
     glEnable(GL_TEXTURE_2D);
 
-    glEnable(GL_ALPHA);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
 
@@ -36,7 +35,7 @@ void GlutTrampoline::enables()
 void GlutTrampoline::reshape(int w, int h)
 {
     Glut::reshape(w, h);
-    
+
     if(app)
         app->reshape(w, h);
     else

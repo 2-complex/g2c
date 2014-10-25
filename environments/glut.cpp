@@ -43,7 +43,38 @@ Glut::Glut()
 {
 }
 
-Glut::~Glut() {}
+Glut::~Glut()
+{
+}
+
+Mat4 Glut::getModelView() const
+{
+    double m[16];
+    glGetDoublev(GL_MODELVIEW_MATRIX, m);
+    Mat4 M;
+    M.set(m);
+    return M;
+}
+
+Mat4 Glut::getProjection() const
+{
+    double m[16];
+    glGetDoublev(GL_PROJECTION_MATRIX, m);
+    Mat4 M;
+    M.set(m);
+    return M;
+}
+
+int Glut::getWindowWidth() const
+{
+    return windowWidth;
+}
+
+int Glut::getWindowHeight() const
+{
+    return windowHeight;
+}
+
 
 Vec2 Glut::flip(const Vec2& v) const
 {
@@ -61,7 +92,24 @@ void Glut::display()
 
     step( currentTime() );
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
     draw();
+
+    glPopMatrix();
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+
+    glutSwapBuffers();
 
     if( animate )
         glutPostRedisplay();
@@ -119,9 +167,10 @@ void fdisplay() { gGlut->display(); }
 void freshape(int w, int h) { gGlut->reshape(w,h); }
 
 
-void Glut::initWindow(const char* name,
-                             int width,
-                             int height)
+void Glut::initWindow(
+    const char* name,
+    int width,
+    int height)
 {
     int argc = 0;
     char** args = NULL;

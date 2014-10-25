@@ -39,9 +39,13 @@ Environment::Environment()
     : dragging(false)
     , initted(false)
     , glutInitted(false)
-    , animate(true) {}
+    , animate(true)
+{
+}
 
-Environment::~Environment() {}
+Environment::~Environment()
+{
+}
 
 Mat4 Environment::getModelView() const
 {

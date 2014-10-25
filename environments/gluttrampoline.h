@@ -4,6 +4,7 @@
 
 #include "app.h"
 #include "glut.h"
+#include "environment.h"
 
 using namespace g2c;
 
