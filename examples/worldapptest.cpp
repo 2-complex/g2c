@@ -10,10 +10,10 @@
 
 #include "openalplayer.h"
 
-int main(int argc, char** args)
+
+void launch(App* app)
 {
     GlutTrampoline trampoline;
-    WorldApp app;
 
 #if __APPLE_CC__
     MacFileSystemBank bank;
@@ -25,12 +25,18 @@ int main(int argc, char** args)
 
     trampoline.initWindow("World", 800, 600);
 
-    app.setBank(&bank);
-    app.setAudioPlayer(&player);
+    app->setBank(&bank);
+    app->setAudioPlayer(&player);
 
-    trampoline.app = &app;
+    trampoline.app = app;
     trampoline.mainLoop();
+}
 
+
+int main(int argc, char** args)
+{
+    WorldApp app;
+    launch(&app);
     return 0;
 }
 
