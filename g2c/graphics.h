@@ -187,9 +187,9 @@ private:
 
 
     Assumption Use Case 2:  An Assumption can represent a material.  Since a material is a
-    combination of shader, texture, and other parameters, Assumptions have an effect member variable for this purpose.
-    To make a material as an assumption, assign its effect member variable and any uniform
-    parameters it needs.
+    combination of shader, texture, and other parameters, Assumptions have an effect member
+    variable for this purpose.  To make a material as an assumption, assign its effect member
+    variable and any uniform parameters it needs.
 
     Assumption wood;
     wood.effect = phongEffect;
@@ -218,7 +218,10 @@ protected:
     virtual void handleChild(const parse::Node* n);
 };
 
-/*! Buffers are for storing float data for vertex attributes.*/
+/*! Buffers are for storing float data for vertex attributes.  Initialize a Buffer using
+    using one of the constructors or by using operator= with a vector or by using the
+    one of the overloaded set() functions.  Load per-vertex data as an array of floats, then
+    use a Field object to point out repeating patterns to be loaded as vertex attributes.*/
 class Buffer : public Element
 {
 friend class Effect;

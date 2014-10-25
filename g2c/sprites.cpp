@@ -1115,7 +1115,6 @@ void RendererGL1::drawMesh(const Mesh* mesh,
                            const Texture* texture) const
 {
 #if !defined(STUB_GL1)
-
     if( !mesh )
         mesh = quad;
 
