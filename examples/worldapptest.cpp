@@ -26,7 +26,7 @@ int main(int argc, char** args)
     environment.initWindow("World", 800, 600);
 
     app.setBank(&bank);
-    app.setPlayer(&player);
+    app.setAudioPlayer(&player);
 
     environment.app = &app;
 

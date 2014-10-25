@@ -19,27 +19,18 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef _OPENAL_PLAYER_
-#define _OPENAL_PLAYER_
+#ifndef _AUDIO_PLAYER_
+#define _AUDIO_PLAYER_
 
-#include "audioplayer.h"
+#include <stdint.h>
 
-#if __APPLE_CC__
-#include <AudioToolbox/AudioToolbox.h>
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
-#else
-#include <AL/al.h>
-#include <AL/alc.h>
-#endif
+namespace g2c
+{
 
-#include <map>
-
-namespace g2c {
-
-class OpenALPlayer : public AudioPlayer
+class AudioPlayer
 {
 public:
+    virtual ~AudioPlayer();
 
     virtual int createContext();
     virtual void destroyContext(int index);
@@ -60,22 +51,7 @@ public:
         int bytesPerSample, const uint8_t* data);
 
     virtual void playSound(int soundIndex, int sourceIndex, bool loop, double gain);
-
-private:
-
-    struct ContextInfo {
-        ALCdevice* device;
-        ALCcontext* context;
-    };
-
-    std::map<int, ContextInfo> contextInfo;
-
-    static int alcDeviceRefCounter;
-    static ALCdevice* alcDevice;
-
-    int getOpenALFormat(int numChannels, int bytesPerSample);
 };
-
 
 }
 

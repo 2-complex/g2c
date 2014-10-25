@@ -1,5 +1,6 @@
 *.dSYM
 
+atlas
 modelfile
 serialize
 ship

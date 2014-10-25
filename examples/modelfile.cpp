@@ -44,7 +44,7 @@ void MyPanEnvironment::draw() const
 	Assumption* context = model.assumptions["context"];
 	(*context)["modelView"] = getModelView();
 	(*context)["projection"] = getProjection();
-	
+
 	model.draw();
 }
 

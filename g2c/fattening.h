@@ -19,38 +19,46 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef _PLAYER_
-#define _PLAYER_
+
+#ifndef _FATTENING_
+#define _FATTENING_
+
+#include <string>
+
+#include "graphics.h"
+#include "sprites.h"
 
 #include <stdint.h>
+#include <vector>
 
-namespace g2c {
 
-class Player {
-public:
-    virtual ~Player();
-    
-    virtual int createContext();
-    virtual void destroyContext(int index);
-    
-    virtual int createSource();
-    virtual void destroySource(int index);
-    
-    virtual int createSound();
-    virtual void destroySound(int index);
-    
-    virtual void makeContextCurrent(int index);
-    
-    virtual bool isSourcePlaying(int index);
-    
-    virtual void stopSource(int index);
-    
-    virtual void loadSound(int index, int sampleRate, int numSamples, int numChannels,
-        int bytesPerSample, const uint8_t* data);
-    
-    virtual void playSound(int soundIndex, int sourceIndex, bool loop, double gain);
-};
+namespace g2c
+{
+    struct FatteningGeometryInfo
+    {
+        Geometry* geometry;
+        Buffer* buffer;
+        IndexBuffer* indexBuffer;
+    };
 
-}
+    class Fattening
+    {
+    public:
+        std::vector<double> position;
+        std::vector<double> texcoord;
+        std::vector<int> indices;
+
+        void clear();
+        void add(const Vec2& v, const Vec2& u);
+        void add(int a, int b, int c);
+
+        void fatten(const Polygon& polygon, double r);
+        FatteningGeometryInfo newGeometry();
+        void populateModel(Model* model, Shape* shape);
+    };
+
+} // end namespace
+
 
 #endif
+

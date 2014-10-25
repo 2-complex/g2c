@@ -1,7 +1,5 @@
 
 #include "worldapp.h"
-
-#include "appenvironment.h"
 #include "sprites.h"
 #include "transforms.h"
 #include "rendererg.h"
@@ -23,8 +21,6 @@ void WorldApp::reshape(int width, int height)
 
 void WorldApp::init()
 {
-    glewInit();
-
     world = new World;
     renderer =  new RendererG;
     renderer->init();

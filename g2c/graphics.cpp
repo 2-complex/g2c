@@ -471,8 +471,8 @@ bool Effect::compileShader(GLuint *shader, GLenum type, const char* code)
     {
         GLchar *log = (GLchar *)malloc(logLength);
         glGetShaderInfoLog(*shader, logLength, &logLength, log);
-	if( logLength )
-        	g2clog("Shader compile log:\n%s", log);
+        if( logLength )
+            g2clog("Shader compile log:\n%s", log);
         free(log);
     }
 
@@ -562,8 +562,6 @@ void Effect::handleChild(const parse::Node* n)
     
     if( !(fragmentCode=="" || vertexCode=="") )
     {
-	g2clog("%s\n", fragmentCode.c_str());
-	g2clog("%s\n", vertexCode.c_str());
 	loadShaders();
     }
 }
@@ -643,7 +641,8 @@ void Assumption::handleChild(const parse::Node* n)
             break;
             
             case 16:
-                (*this)[n_name] = Mat4(v[0], v[1], v[2], v[3],
+                (*this)[n_name] = Mat4(
+                    v[0], v[1], v[2], v[3],
                                        v[4], v[5], v[6], v[7],
                                        v[8], v[9], v[10], v[11],
                                        v[12], v[13], v[14], v[15]);
