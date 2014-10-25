@@ -20,8 +20,8 @@
 */
 
 
-#ifndef _ENVIRONMENT_
-#define _ENVIRONMENT_
+#ifndef _GLUT_
+#define _GLUT_
 
 #include "glutlistener.h"
 #include "opengl.h"
@@ -30,14 +30,14 @@
 
 namespace g2c {
 
-class Environment : public GlutListener
+class Glut : public GlutListener
 {
 friend void fdisplay();
 friend void freshape(int w, int h);
 
 public:
-    Environment();
-    virtual ~Environment();
+    Glut();
+    virtual ~Glut();
 	
     /*! If true, calls display over and over*/
     bool animate;
@@ -51,7 +51,7 @@ public:
     
     /*! initWindow Initilaizes glut.  Sets up the gl context, sets flags etc.
         Must be called before the mainLoop.*/
-    void initWindow(const char* windowName="Environment",
+    void initWindow(const char* windowName="Glut",
                   	int windowSizeX=640,
                   	int windowSizeY=480);
     

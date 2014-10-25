@@ -30,6 +30,10 @@ namespace g2c {
 
 class Context;
 
+/*! A Context represents a 3-dimensional space where sounds can eminate from sources.
+    To use a context, construct with a pointer to an object which is a subclass of
+    AudioPlayer, then call makeCurrent().  Once the context is curent, you can use 
+    Source and Sound objects to make sounds.*/
 class Context {
 friend class Sound;
 friend class Source;
@@ -37,6 +41,9 @@ public:
     explicit Context(AudioPlayer* player);
     virtual ~Context();
 
+    /*! Call this function to use the context.  Future calls on Source and Sound objects
+        will apply to this context, and they will use the AudioPlayer object with which
+        the context was initialized.*/
     void makeCurrent();
 
 private:
@@ -46,12 +53,21 @@ private:
     static Context* currentContext;
 };
 
+
+/*! A Source represents a position in space from which a sound eminates.  To use play a sound with
+    a source, instantate a Source object, assign the source of a Sound object to it and call the
+    sound's play() function.
+
+    A Source can play one sound at a time.  If a sound is playing on a Source and another sound
+    plays before that sound is finished.  The old sound will stop immediately and the new sound
+    starts immediately. */
 class Source {
 friend class Sound;
 public:
     Source();
     virtual ~Source();
 
+    /*! Returns true if the sound is currently playing.*/
     bool isPlaying() const;
 
 private:
@@ -59,6 +75,9 @@ private:
     AudioPlayer* player;
 };
 
+/*! A Sound represents a single sound effect resource.  To play a sound, make sure a context is current,
+    initialize using initWithWave(), assign a Source object to the source member variable, then call
+    the play() function.*/
 class Sound : public Serializable {
 public:
     Sound();
@@ -66,13 +85,22 @@ public:
 
     std::string file;
 
+    /*! Set the source of the sound to a Source object and call play() to play the sound.*/
     mutable Source* source;
 
+    /*! Set this flag to true to make the sound automatically play over and over.*/
     bool loop;
 
+    /*! Initialize this sound with a Wave object.  A Wave object stores raw PCM sound data in an array
+        in CPU memory.  A Sound represents an object ready for playing using a low-level sound engine.
+        Use this function to initialize the Sound with PCM data from the Wave.*/
     void initWithWave(const Wave& wave);
 
+    /*! Play the sound.  Make sure a Context is current, and the Sound has been initialized and assigned
+        a Source.*/
     void play(double gain = 1.0) const;
+
+    /*! Stop an already playing sound immediately.*/
     void stop() const;
 
     virtual std::string serializeElements(std::string indent = "") const;

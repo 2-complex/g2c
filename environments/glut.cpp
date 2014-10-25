@@ -20,7 +20,7 @@
 */
 
 
-#include "environment.h"
+#include "glut.h"
 
 #include "util.h"
 #include "lin/lin.h"
@@ -33,9 +33,9 @@ void keyboard(unsigned char inkey, int x, int y);
 
 namespace g2c {
 
-Environment* gEnvironment = NULL;
+Glut* gGlut = NULL;
 
-Environment::Environment()
+Glut::Glut()
     : dragging(false)
     , initted(false)
     , glutInitted(false)
@@ -43,11 +43,11 @@ Environment::Environment()
 {
 }
 
-Environment::~Environment()
+Glut::~Glut()
 {
 }
 
-Mat4 Environment::getModelView() const
+Mat4 Glut::getModelView() const
 {
     double m[16];
     glGetDoublev(GL_MODELVIEW_MATRIX, m);
@@ -56,7 +56,7 @@ Mat4 Environment::getModelView() const
     return M;
 }
 
-Mat4 Environment::getProjection() const
+Mat4 Glut::getProjection() const
 {
     double m[16];
     glGetDoublev(GL_PROJECTION_MATRIX, m);
@@ -65,23 +65,23 @@ Mat4 Environment::getProjection() const
     return M;
 }
 
-int Environment::getWindowWidth() const
+int Glut::getWindowWidth() const
 {
     return windowWidth;
 }
 
-int Environment::getWindowHeight() const
+int Glut::getWindowHeight() const
 {
     return windowHeight;
 }
 
 
-Vec2 Environment::flip(const Vec2& v) const
+Vec2 Glut::flip(const Vec2& v) const
 {
     return Vec2(v.x, windowHeight - v.y);
 }
 
-void Environment::display()
+void Glut::display()
 {
     if( !initted )
     {
@@ -115,7 +115,7 @@ void Environment::display()
         glutPostRedisplay();
 }
 
-void Environment::reshape(int w, int h)
+void Glut::reshape(int w, int h)
 {
     windowHeight = h;
     windowWidth = w;
@@ -131,7 +131,7 @@ void Environment::reshape(int w, int h)
 }
 
 
-void Environment::button( int b, int state, int x, int y )
+void Glut::button( int b, int state, int x, int y )
 {
     Vec2 c = flip(Vec2(x,y));
 
@@ -151,7 +151,7 @@ void Environment::button( int b, int state, int x, int y )
     }
 }
 
-void Environment::motion(int x, int y)
+void Glut::motion(int x, int y)
 {
     Vec2 c = flip(Vec2(x,y));
     mouseDragged(c);
@@ -163,11 +163,11 @@ void Environment::motion(int x, int y)
 }
 
 
-void fdisplay() { gEnvironment->display(); }
-void freshape(int w, int h) { gEnvironment->reshape(w,h); }
+void fdisplay() { gGlut->display(); }
+void freshape(int w, int h) { gGlut->reshape(w,h); }
 
 
-void Environment::initWindow(
+void Glut::initWindow(
     const char* name,
     int width,
     int height)
@@ -190,7 +190,7 @@ void Environment::initWindow(
 }
 
 
-void Environment::enables()
+void Glut::enables()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -204,7 +204,7 @@ void Environment::enables()
 }
 
 
-void Environment::mainLoop()
+void Glut::mainLoop()
 {
     if( !glutInitted )
     {
@@ -213,7 +213,7 @@ void Environment::mainLoop()
 
     glutInitted = true;
 
-    gEnvironment = this;
+    gGlut = this;
     setGlobalGlutListener(this);
     initGlutListener();
 
@@ -225,16 +225,16 @@ void Environment::mainLoop()
     glutMainLoop();
 }
 
-void Environment::init()
+void Glut::init()
 {
 }
 
-void Environment::step(double /*t*/)
+void Glut::step(double /*t*/)
 {
     animate = false;
 }
 
-void Environment::draw() const
+void Glut::draw() const
 {
 }
 

@@ -661,7 +661,7 @@ void Assumption::handleChild(const parse::Node* n)
     }
 }
 
-Buffer::Buffer() : size(0)
+Buffer::Buffer() : index(0), size(0)
 {
     type = "Buffer";
 }
@@ -709,9 +709,64 @@ Buffer::Buffer(const float* v, int size) : size(size)
     initWithFloatArray(v);
 }
 
+
+
 Buffer::~Buffer()
 {
-    glDeleteBuffers(1, &index);
+    if( index )
+        glDeleteBuffers(1, &index);
+}
+
+Buffer& Buffer::operator=(const vector<double>& v)
+{
+    type = "Buffer";
+    size = v.size();
+    float* fv = new float[size];
+    for(int i = 0; i < size; i++)
+        fv[i] = v[i];
+    
+    size = v.size();
+    initWithFloatArray(fv);
+    
+    delete[] fv;
+    return *this;
+}
+
+Buffer& Buffer::operator=(const vector<float>& v)
+{
+    type = "Buffer";
+    size = v.size();
+    float* fv = new float[size];
+    for(int i = 0; i < size; i++)
+        fv[i] = v[i];
+    
+    initWithFloatArray(fv);
+    delete[] fv;
+
+    return *this;
+}
+
+
+Buffer& Buffer::set(const float* v, int size)
+{
+    this->size = size;
+    initWithFloatArray(v);
+    return *this;
+}
+
+
+Buffer& Buffer::set(const double* v, int size)
+{
+    this->size = size;
+
+    type = "Buffer";
+    float* fv = new float[size];
+    for(int i = 0; i < size; i++)
+        fv[i] = v[i];
+
+    initWithFloatArray(fv);
+    delete[] fv;
+    return *this;
 }
 
 
@@ -769,13 +824,15 @@ void Buffer::handleChild(const parse::Node* n)
 
 void Buffer::initWithFloatArray(const float* v)
 {
+    if( index )
+        glDeleteBuffers(1, &index);
     glGenBuffers(1, &index);
 
     glBindBuffer(GL_ARRAY_BUFFER, index);
     glBufferData(GL_ARRAY_BUFFER, size * sizeof(GLfloat), v, GL_STREAM_DRAW);
 }
 
-IndexBuffer::IndexBuffer() : size(0)
+IndexBuffer::IndexBuffer() : index(0), size(0)
 {
     type = "IndexBuffer";
 }
@@ -825,7 +882,62 @@ IndexBuffer::IndexBuffer(const unsigned short* v, int size) : size(size)
 
 IndexBuffer::~IndexBuffer()
 {
-    glDeleteBuffers(1, &index);
+    if( index )
+        glDeleteBuffers(1, &index);
+}
+
+IndexBuffer& IndexBuffer::operator=(const std::vector<int>& v)
+{
+    type = "IndexBuffer";
+    size = v.size();
+    unsigned short* sv = new unsigned short[size];
+    for(int i = 0; i < size; i++)
+        sv[i] = v[i];
+    
+    size = v.size();
+    initWithShortArray(sv);
+    
+    delete[] sv;
+
+    return *this;
+}
+
+IndexBuffer& IndexBuffer::operator=(const std::vector<unsigned short>& v)    
+{
+    type = "IndexBuffer";
+    size = v.size();
+    unsigned short* sv = new unsigned short[size];
+    for(int i = 0; i < size; i++)
+        sv[i] = v[i];
+    
+    size = v.size();
+    initWithShortArray(sv);
+    
+    delete[] sv;
+
+    return *this;
+}
+
+IndexBuffer& IndexBuffer::set(const int* v, int size)
+{
+    this->size = size;
+    
+    unsigned short* sv = new unsigned short[size];
+    for(int i = 0; i < size; i++)
+        sv[i] = v[i];
+    
+    initWithShortArray(sv);
+    delete[] sv;
+    
+    return *this;
+}
+
+IndexBuffer& IndexBuffer::set(const unsigned short* v, int size)
+{
+    this->size = size;
+    initWithShortArray(v);
+
+    return *this;
 }
 
 
@@ -881,6 +993,8 @@ void IndexBuffer::handleChild(const parse::Node* n)
 
 void IndexBuffer::initWithShortArray(const unsigned short* v)
 {
+    if( index )
+        glDeleteBuffers(1, &index);
     glGenBuffers(1, &index);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index);

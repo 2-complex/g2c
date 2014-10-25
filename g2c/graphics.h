@@ -57,7 +57,7 @@ public:
     Value();
     Value(const Value& v);
     virtual ~Value();
-
+    
     Value(float t);
     Value(const Vec2& t);
     Value(const Vec3& t);
@@ -66,11 +66,11 @@ public:
     Value(const Mat3& t);
     Value(const Mat4& t);
     Value(const Texture* t);
-
+    
     Value& operator=(const Value& v);
-
+    
     void mimmic(const Value& v);
-
+    
     enum Type
     {
         NONE,
@@ -83,7 +83,7 @@ public:
         MAT4,
         TEXTURE
     } type;
-
+    
     float getFloat() const;
     Vec2 getVec2() const;
     Vec3 getVec3() const;
@@ -92,10 +92,10 @@ public:
     Mat3 getMat3() const;
     Mat4 getMat4() const;
     const Texture* getTexture() const;
-
+    
     void applyToLocation(GLuint location) const;
     std::string toString() const;
-
+    
     std::string textureName;
 private:
     union Data
@@ -103,7 +103,7 @@ private:
         GLfloat* ptr;
         const Texture* texture;
     } data;
-
+    
     int size;
 };
 
@@ -118,12 +118,12 @@ friend class Shape;
 public:
     Effect();
     virtual ~Effect();
-
+    
     std::string vertexCode;
     std::string fragmentCode;
-
+    
     void compile();
-
+    
 protected:
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
@@ -131,27 +131,27 @@ protected:
 private:
     void assume(const std::map<std::string, Value>* assumption) const;
     void use() const;
-
+    
     void bindAttributeToField(const std::string& name, const Field& field) const;
     void disableEnabledAttributes() const;
-
+    
     bool loadShaders();
     void loadVertexShader(const char* s);
     void loadFragmentShader(const char* s);
     bool compileShader(GLuint *shader, GLenum type, const char* code);
     bool linkProgram();
-
+    
     void addAttributesFromProgram();
     void addUniformsFromProgram();
-
+    
     void addAttribute(const char* name);
     void addUniform(const char* name);
 
     mutable std::vector<GLint> enabledAttributes;
-
+    
     std::map<std::string, GLint> attributeLocationMap;
     std::map<std::string, GLint> uniformLocationMap;
-
+    
     GLuint program;
     GLuint vertShader;
     GLuint fragShader;
@@ -171,7 +171,7 @@ private:
 
     uniform mat4 model;
     uniform mat4 model_IT;
-    uniform mat4 viewProjection;
+    uniform mat4 viewProjection; 
 
     Then an assumption representing the camera might be initialized like this:
 
@@ -181,15 +181,15 @@ private:
     camera["viewProjection"] = lookAt(...) * perspective(...);
 
     All shapes would need to add that Assumption to their assumptions list:
-
+    
     Shape cube;
     cube.assumptions.push_back(camera);
 
 
     Assumption Use Case 2:  An Assumption can represent a material.  Since a material is a
-    combination of shader, texture, and other parameters, Assumptions have an effect member variable for this purpose.
-    To make a material as an assumption, assign its effect member variable and any uniform
-    parameters it needs.
+    combination of shader, texture, and other parameters, Assumptions have an effect member
+    variable for this purpose.  To make a material as an assumption, assign its effect member
+    variable and any uniform parameters it needs.
 
     Assumption wood;
     wood.effect = phongEffect;
@@ -208,18 +208,22 @@ class Assumption
 {
 public:
     Assumption();
-
+    
     bool active;
     std::string effectName;
     Effect* effect;
-
+    
 protected:
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
 };
 
-/*! Buffers are for storing float data for vertex attributes.*/
-class Buffer : public Element {
+/*! Buffers are for storing float data for vertex attributes.  Initialize a Buffer using
+    using one of the constructors or by using operator= with a vector or by using the
+    one of the overloaded set() functions.  Load per-vertex data as an array of floats, then
+    use a Field object to point out repeating patterns to be loaded as vertex attributes.*/
+class Buffer : public Element
+{
 friend class Effect;
 public:
     Buffer();
@@ -228,6 +232,12 @@ public:
     Buffer(const double* v, int size);
     Buffer(const float* v, int size);
     virtual ~Buffer();
+
+    Buffer& operator=(const std::vector<double>& v);
+    Buffer& operator=(const std::vector<float>& v);
+    Buffer& set(const double* v, int size);
+    Buffer& set(const float* v, int size);
+
 
 protected:
     virtual std::string serializeElements(std::string indent = "") const;
@@ -243,7 +253,8 @@ private:
 /*! IndexBuffer is a list of integer indices.  Initialize with a vector or array of ints or unsigned
     shorts, then assign as the indices member of a Geometry.  Three consecutive indices represent a
     triangle.*/
-class IndexBuffer : public Element {
+class IndexBuffer : public Element
+{
 friend class Geometry;
 public:
     IndexBuffer();
@@ -252,6 +263,11 @@ public:
     IndexBuffer(const int* v, int size);
     IndexBuffer(const unsigned short* v, int size);
     virtual ~IndexBuffer();
+
+    IndexBuffer& operator=(const std::vector<int>& v);
+    IndexBuffer& operator=(const std::vector<unsigned short>& v);    
+    IndexBuffer& set(const int*, int size);
+    IndexBuffer& set(const unsigned short*, int size);
 
 protected:
     virtual std::string serializeElements(std::string indent = "") const;
@@ -277,20 +293,21 @@ private:
     Fields for position and normal attributes would be something along the lines of:
     positionField = Field(buffer, 3, 6, 0);
     normalField   = Field(buffer, 3, 6, 3);*/
-class Field : public Element {
+class Field : public Element
+{
 friend class Effect;
 public:
     Field();
     Field(const Buffer* buffer, GLint size, GLsizei stride=0, int offset=0);
     virtual ~Field();
-
+    
     std::string bufferName;
     const Buffer* buffer;
-
+    
 protected:
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
-
+    
 private:
     GLint size;
     GLsizei stride;
@@ -300,7 +317,7 @@ private:
 
 /*! Maps the names of vertex attributes to Fields in a buffer encoding those attributes, also
     contains a pointer to an IndexBuffer which stores triples of indices which connect as
-    triangles.  A Shape uses a Geometry to draw together with the effect and uniforms it assumes
+    triangles.  A Shape uses a Geometry to draw together with the effect and uniforms it assumes 
     from its assumption list.*/
 class Geometry
     : public std::map<std::string, Field>
@@ -310,7 +327,7 @@ friend class Shape;
 public:
     Geometry();
     virtual ~Geometry();
-
+    
     std::string indicesName;
     const IndexBuffer* indices;
     void draw() const;
@@ -318,7 +335,7 @@ public:
 protected:
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
-
+    
 private:
     void bindAttributes(const Effect* effect);
 };
@@ -332,20 +349,20 @@ private:
 class Shape : public Element {
 public:
     Shape();
-
+    
     /*! Visible flag.  Drawing with visible set to false does nothing.*/
     bool visible;
-
+    
     std::string geometryName;
     std::vector<std::string> assumptionNames;
-
+    
     /*! A pointer to the Geometry to use when drawing.*/
     Geometry* geometry;
-
+    
     /*! A list of pointers to Assumptions.  Shape::draw() iterates through this list and assumes
         an effect and uniform parameters on that effect before drawing the geometry.*/
     std::list<Assumption*> assumptions;
-
+    
     /*! Draw the shape.  Iterates through the assumptions to obtain an Effect and any uniform
         parameters that Effect needs.*/
     void draw() const;
