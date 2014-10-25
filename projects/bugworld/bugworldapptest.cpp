@@ -3,7 +3,7 @@
 #include "bugworldapp.h"
 
 #include "macbank.h"
-#include "openalplayer"
+#include "openalplayer.h"
 
 #include "appenvironment.h"
 
