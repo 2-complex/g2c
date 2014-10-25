@@ -1,17 +1,39 @@
 
 #include "spriteenvironment.h"
+#include "launch.h"
 
-class ShipEnvironment : public SpriteEnvironment {
+class ShipApp : public App
+{
 	Sprite ship;
 	Actor enterprise;
-	
+	Bank* bank;
+	RendererGL2 renderer;
+
 	void init();
 	void draw() const;
+
+	void setBank(Bank* bank);
 };
 
-void ShipEnvironment::init()
+
+void ShipApp::setBank(Bank* bank)
 {
-	bank.initTextureWithPath(&ship, "ship.png");
+	this->bank = bank;
+}
+
+
+void ShipApp::init()
+{
+	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_ALPHA);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+        renderer.init();
+
+	Sprite::renderer = &renderer;
+
+	bank->initTextureWithPath(&ship, "ship.png");
 	ship.numberOfRows = 2;
 	ship.numberOfColumns = 32;
 	
@@ -21,16 +43,15 @@ void ShipEnvironment::init()
 	enterprise.frame = 7;
 }
 
-void ShipEnvironment::draw() const
+void ShipApp::draw() const
 {
 	enterprise.draw();
 }
 
 int main(int argc, char** args)
 {
-	ShipEnvironment e;
-	e.mainLoop();
-	
+	ShipApp app;
+	launch(&app);
 	return 0;
 }
 
