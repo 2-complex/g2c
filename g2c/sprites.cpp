@@ -1082,12 +1082,12 @@ Renderer::Renderer()
     quad->elementType = Mesh::kTriangles;
 
     const float temp_positions[] = { 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0 };
-    const short temp_indices[] = { 0, 1, 2,  0, 2, 3 };
+    const unsigned short temp_indices[] = { 0, 1, 2,  0, 2, 3 };
 
     for(int i = 0; i < sizeof(temp_positions)/sizeof(float); i++)
     	quad->positions.push_back(temp_positions[i]);
 
-    for(int i = 0; i < sizeof(temp_indices)/sizeof(short); i++)
+    for(int i = 0; i < sizeof(temp_indices)/sizeof(unsigned short); i++)
         quad->indices.push_back(temp_indices[i]);
 }
 
@@ -1152,7 +1152,7 @@ void RendererGL1::drawMesh(const Mesh* mesh,
         dimension = 2;
     }
 
-    const short* indices = &(mesh->indices[0]);
+    const unsigned short* indices = &(mesh->indices[0]);
     const float* positions = &(mesh->positions[0]);
 
     // Determine the size of the positions array from
@@ -1229,7 +1229,7 @@ void RendererGL2::init()
 
     glGenBuffers(1, &indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(short), &(quad->indices[0]), GL_STREAM_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned short), &(quad->indices[0]), GL_STREAM_DRAW);
 
     glGenBuffers(1, &polygonBuffer);
     glGenBuffers(1, &polygonIndexBuffer);
@@ -1352,7 +1352,7 @@ void RendererGL2::drawMesh(
             mesh->numberOfVertices()*3*sizeof(float), &(mesh->positions[0]), GL_STREAM_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, polygonIndexBuffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-            mesh->numberOfElements()*3*sizeof(short), &(mesh->indices[0]), GL_STREAM_DRAW);
+            mesh->numberOfElements()*3*sizeof(unsigned short), &(mesh->indices[0]), GL_STREAM_DRAW);
     }
 
     glUseProgram(program);
@@ -1611,8 +1611,8 @@ void Polygon::update() const
         case kOutline:
             for( int i = 0; i < n; i++ )
             {
-                mesh->indices[2*i] = (short)i;
-                mesh->indices[2*i + 1] = (short)((i+1)%n);
+                mesh->indices[2*i] = (unsigned short)i;
+                mesh->indices[2*i + 1] = (unsigned short)((i+1)%n);
             }
         break;
 
@@ -1664,9 +1664,9 @@ void Polygon::triangulate() const
         // middle point from p, and add the triangle to indices.
         if( empty )
         {
-            mesh->indices[k++] = (short)(p[i]);
-            mesh->indices[k++] = (short)(p[(i+1)%n]);
-            mesh->indices[k++] = (short)(p[(i+2)%n]);
+            mesh->indices[k++] = (unsigned short)(p[i]);
+            mesh->indices[k++] = (unsigned short)(p[(i+1)%n]);
+            mesh->indices[k++] = (unsigned short)(p[(i+2)%n]);
 
             for( int j = (i+1)%n; j < n-1; j++ )
                 p[j] = p[j+1];

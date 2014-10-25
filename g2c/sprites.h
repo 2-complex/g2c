@@ -182,7 +182,8 @@ namespace g2c {
         Mesh();
         virtual ~Mesh();
 
-        enum ElementType {
+        enum ElementType
+        {
             kTriangles,
             kLines
         };
@@ -192,7 +193,7 @@ namespace g2c {
         ElementType elementType;
 
         std::vector<float> positions;
-        std::vector<short> indices;
+        std::vector<unsigned short> indices;
 
         int numberOfVertices() const;
         int numberOfElements() const;
@@ -258,7 +259,7 @@ namespace g2c {
     class RendererGL2 : public Renderer {
     public:
         RendererGL2();
-        ~RendererGL2();
+        virtual ~RendererGL2();
 
     private:
         GLuint buffer;
@@ -282,7 +283,8 @@ namespace g2c {
 
     protected:
         bool initialized;
-        virtual void drawMesh(const Mesh* m,
+        virtual void drawMesh(
+            const Mesh* m,
                               const Mat4& matrix,
                               const Mat3& texMatrix,
                               const Color& color,
