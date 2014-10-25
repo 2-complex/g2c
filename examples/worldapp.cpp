@@ -1,9 +1,6 @@
 
 #include "worldapp.h"
-
-#include "appenvironment.h"
 #include "sprites.h"
-
 #include "transforms.h"
 
 using namespace g2c;
