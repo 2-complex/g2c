@@ -79,8 +79,13 @@ triangle: $(DEPS) triangle.cpp
 worldfile: $(DEPS) worldfile.cpp
 	$(call build_with_source, worldfile.cpp, worldfile)
 
-worldapptest: $(DEPS) worldapptest.cpp worldapp.cpp
-	$(call build_with_source, worldapptest.cpp worldapp.cpp, worldapptest)
+launch.o: $(DEPS) launch.h launch.cpp
+	c++  $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) \
+		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
+		launch.cpp -c
+
+worldapptest: $(DEPS) launch.o worldapptest.cpp worldapp.cpp
+	$(call build_with_source, launch.o worldapptest.cpp worldapp.cpp, worldapptest)
 
 
 clean:
