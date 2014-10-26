@@ -18,6 +18,7 @@ EXES = \
 	ship \
 	sound \
 	sprite \
+	steam \
 	tetrahedron \
 	text \
 	triangle \
