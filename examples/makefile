@@ -75,8 +75,8 @@ sprite: $(DEPS) launch.o sprite.cpp
 tetrahedron: $(DEPS) tetrahedron.cpp
 	$(call build_with_source, tetrahedron.cpp, tetrahedron)
 
-steam: $(DEPS) steam.cpp
-	$(call build_with_source, steam.cpp, steam)
+steam: $(DEPS) launch.o steam.cpp
+	$(call build_with_source, launch.o steam.cpp, steam)
 
 text: $(DEPS) text.cpp
 	$(call build_with_source, text.cpp, text)

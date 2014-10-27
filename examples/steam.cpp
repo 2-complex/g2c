@@ -1,6 +1,7 @@
 
 #include "panenvironment.h"
 #include "graphics.h"
+#include "launch.h"
 
 using namespace std;
 
@@ -14,7 +15,7 @@ struct Particle
         deltaCenter = Vec3(
             (randInt(110) - 50) / 1500.0,
             (randInt(110) - 50) / 1500.0,
-            .3);
+            0.3);
         deltaRadius = 0.1;
     }
 
@@ -25,7 +26,7 @@ struct Particle
     double deltaRadius;
 };
 
-class SteamEnvironment : public PanEnvironment
+class SteamApp : public App
 {
     Buffer buffer;
     IndexBuffer indexBuffer;
@@ -39,15 +40,42 @@ class SteamEnvironment : public PanEnvironment
     double last_t;
     vector<Particle> particles;
 
+    double cameraRadius;
+    Mat4 projection;
+    Mat4 modelView;
+    Bank* bank;
+
     void init();
+    void reshape(int width, int height);
     void step(double t);
     void draw() const;
+
+    void setBank(Bank* bank);
 };
 
-void SteamEnvironment::init()
+void SteamApp::setBank(Bank* bank)
 {
-    animate = true;
+    this->bank = bank;
+}
 
+void SteamApp::reshape(int width, int height)
+{
+    projection = perspective(
+        40.0,
+        1.0 * width / height,
+        0.1 * cameraRadius,
+        1000 * cameraRadius );
+
+    modelView = g2c::lookAt(
+        Vec3(1, 5, 1),
+        Vec3(0, 0, 0),
+        Vec3(0, 0, 1));
+
+    glViewport(0,0,width,height);
+}
+
+void SteamApp::init()
+{
     float vertexArray[] =
     {
          -1.0, -1.0, 0.0,
@@ -106,9 +134,11 @@ void SteamEnvironment::init()
 
     material["color"] = Vec4(1.0, 1.0, 1.1, 1.0);
     last_t = 0;
+
+    cameraRadius = 4.0;
 }
 
-void SteamEnvironment::step(double t)
+void SteamApp::step(double t)
 {
     if ( t - last_t > 1.0 / 30.0 )
     {
@@ -136,10 +166,10 @@ void SteamEnvironment::step(double t)
     }
 }
 
-void SteamEnvironment::draw() const
+void SteamApp::draw() const
 {
-    camera["modelView"] = getModelView();
-    camera["projection"] = getProjection();
+    camera["modelView"] = modelView;
+    camera["projection"] = projection;
 
     glDisable(GL_DEPTH_TEST);
     glBlendFunc(GL_ONE, GL_ONE);
@@ -154,12 +184,10 @@ void SteamEnvironment::draw() const
     }
 }
 
-int main()
+int main(int argc, char** args)
 {
-    SteamEnvironment e;
-    e.mainLoop();
-
+    SteamApp app;
+    launch(&app);
     return 0;
 }
-
 
