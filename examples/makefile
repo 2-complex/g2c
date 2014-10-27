@@ -69,7 +69,7 @@ ship: $(DEPS) ship.cpp
 sound: $(DEPS) sound.cpp
 	$(call build_with_source, sound.cpp, sound)
 
-sprite: $(DEPS) sprite.cpp
+sprite: $(DEPS) launch.o sprite.cpp
 	$(call build_with_source, launch.o sprite.cpp, sprite)
 
 tetrahedron: $(DEPS) tetrahedron.cpp

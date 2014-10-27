@@ -1,6 +1,7 @@
 
 #include "spriteenvironment.h"
 #include "launch.h"
+#include "transforms.h"
 
 class ShipApp : public App
 {
@@ -10,28 +11,26 @@ class ShipApp : public App
     RendererGL2 renderer;
 
     void init();
+    void reshape(int width, int height);
     void draw() const;
 
     void setBank(Bank* bank);
 };
-
 
 void ShipApp::setBank(Bank* bank)
 {
     this->bank = bank;
 }
 
+void ShipApp::reshape(int width, int height)
+{
+    renderer.projection = orthographic(0,width,0,height,-1,1);
+}
 
 void ShipApp::init()
 {
-    glEnable(GL_BLEND);
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_ALPHA);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-        renderer.init();
-
     Sprite::renderer = &renderer;
+    renderer.init();
 
     bank->initTextureWithPath(&ship, "ship.png");
     ship.numberOfRows = 2;

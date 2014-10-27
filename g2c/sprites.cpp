@@ -1198,12 +1198,12 @@ void RendererGL1::drawMesh(const Mesh* mesh,
 #endif
 }
 
-RendererGL2::RendererGL2() :
-    initialized(false),
-    program(0),
-    vertexShader(0),
-    fragmentShader(0),
-    defaultTexture(NULL)
+RendererGL2::RendererGL2()
+    : initialized(false)
+    , program(0)
+    , vertexShader(0)
+    , fragmentShader(0)
+    , defaultTexture(NULL)
 {
 
 }
