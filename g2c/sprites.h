@@ -59,8 +59,10 @@ namespace g2c {
     class Polygon;
 
 
-    class Mat4Property : public Mat4,
-                         public Serializable {
+    class Mat4Property
+        : public Mat4
+        , public Serializable
+    {
     public:
         Mat4Property();
         Mat4Property(const Mat4& m);
@@ -69,8 +71,10 @@ namespace g2c {
         void initWithParseNode(const parse::Node* n);
     };
 
-    class Vec2Property : public Vec2,
-                         public Serializable {
+    class Vec2Property
+        : public Vec2
+        , public Serializable
+    {
     public:
         Vec2Property();
         Vec2Property(const Vec2& v);
@@ -79,8 +83,10 @@ namespace g2c {
         void initWithParseNode(const parse::Node* n);
     };
 
-    class Vec3Property : public Vec3,
-                         public Serializable {
+    class Vec3Property
+        : public Vec3
+        , public Serializable
+    {
     public:
         Vec3Property();
         Vec3Property(const Vec3& v);
@@ -89,7 +95,8 @@ namespace g2c {
         void initWithParseNode(const parse::Node* n);
     };
 
-    class Color : public Vec4 {
+    class Color : public Vec4
+    {
     public:
         Color() : Vec4(), r(x), g(y), b(z), a(w) { r = g = b = a = 1.0; }
         Color(double r, double g, double b, double a) : Vec4(r, g, b, a), r(x), g(y), b(z), a(w) {}
@@ -100,8 +107,10 @@ namespace g2c {
         double &r, &g, &b, &a;
     };
 
-    class ColorProperty : public Color,
-                          public Serializable {
+    class ColorProperty
+        : public Color
+        , public Serializable
+    {
     public:
         ColorProperty();
         ColorProperty(const Color& c);
@@ -117,8 +126,10 @@ namespace g2c {
         to remove child nodes.  Node::draw() iterates through the children and calls draw on each
         one.  Subclasses of Node implement drawInTree(worldMatrix, worldColor) to draw using the
         given matrix and color. */
-    class Node : public Serializable,
-                 public Listener {
+    class Node
+        : public Serializable
+        , public Listener
+    {
     public:
         Node();
         virtual ~Node();
@@ -203,7 +214,7 @@ namespace g2c {
         library.
 
         To implement a renderer, implement init() and drawMesh().  Whichever renderer
-        Sprite::renderer is set to gets used to draw all sprite graphics.  */
+        Sprite::renderer is set to gets used to draw all sprite graphics.*/
     class Renderer
     {
     public:
@@ -224,10 +235,10 @@ namespace g2c {
             unit square.   */
         virtual void drawMesh(
             const Mesh* mesh,
-                              const Mat4& matrix,
-                              const Mat3& texMatrix,
-                              const Color& color,
-                              const Texture* texture) const = 0;
+            const Mat4& matrix,
+            const Mat3& texMatrix,
+            const Color& color,
+            const Texture* texture) const = 0;
     };
 
     /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 1
@@ -244,10 +255,10 @@ namespace g2c {
         virtual void init();
         virtual void drawMesh(
             const Mesh* mesh,
-                              const Mat4& matrix,
-                              const Mat3& texMatrix,
-                              const Color& color,
-                              const Texture* texture) const;
+            const Mat4& matrix,
+            const Mat3& texMatrix,
+            const Color& color,
+            const Texture* texture) const;
     };
 
     /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 2
@@ -282,11 +293,12 @@ namespace g2c {
 
     protected:
         bool initialized;
-        virtual void drawMesh(const Mesh* m,
-                              const Mat4& matrix,
-                              const Mat3& texMatrix,
-                              const Color& color,
-                              const Texture* texture) const;
+        virtual void drawMesh(
+            const Mesh* m,
+            const Mat4& matrix,
+            const Mat3& texMatrix,
+            const Color& color,
+            const Texture* texture) const;
     };
 
 
@@ -482,6 +494,8 @@ namespace g2c {
     };
 
 
+    /*! Represents an axis aligned rectangle.  Mainly for use by Atlas which uses it to sample
+        a texture from various do draw sprite graphics.*/
     class Rectangle : public Serializable
     {
     public:
@@ -647,7 +661,7 @@ namespace g2c {
     };
 
     /* ! Layer is a type of Node meant to contain a group of similarly drawn objects.  Layer's
-         color and matrix property determine */
+         color and matrix property contribute to the matrix and color of each of its decendants. */
     class Layer : public Node
     {
     public:
@@ -659,7 +673,10 @@ namespace g2c {
         virtual Mat4 getMatrix() const;
     };
 
-    class World : public Layer {
+    /*! World is a big container that contains Sounds, Sprites and also represents the root
+        of a tree of Nodes which can be traversed and drawn by calling draw().*/
+    class World : public Layer
+    {
         friend class Actor;
     public:
         World();
@@ -722,6 +739,9 @@ namespace g2c {
         mutable std::vector<Source*> sources;
     };
 
+    /*! Animation is meant to be overridden to attain a motion of some sort.  To use,
+        subclass Animation, override begin() step(double) and end(), then instantiate
+        by calling new, and add to an Animator's set.  The Animator will call delete.*/
     class Animation {
     friend class Animator;
     public:
@@ -729,18 +749,39 @@ namespace g2c {
         Animation(double instart, double induration);
         virtual ~Animation();
 
+        /*! If this flag is set, the Animator will forbid user events (keystrokes and mouse clicks
+            etc) from reaching any of the listeners in its listener set while this Animation is running.*/
         bool stopsEvents;
+
+        /*! Set to true for an animation that runs indefinitely.*/
         bool forever;
+
+        /*! The Animator sets this flag during the Animation's interval.*/
         bool running;
 
         double last;
+
+        /*! start and duration determine the interval of time within which the Animation will run.
+            Recommend these are set in the constructor and then left alone.*/
         double start;
+
+        /*! start and duration determine the interval of time within which the Animation will run.
+            If forever is true, duration determines the scale of the time argument.*/
         double duration;
 
+        /*! The Animator will call advance() every frame while the animation is running.  */
         virtual void advance(double t);
 
+        /*! The Animator will call begin() exactly once when the Animation's interval begins.
+            Override to initialize the motion.*/
         virtual void begin();
+
+        /*! The Animator will call step() every frame during the Animation's interval.  The argument
+            t varies from 0 to 1 during the time interval */
         virtual void step(double t);
+
+        /*! Unless forever is true, end() will be called exactly once at the end of the
+            Animation's interval.*/
         virtual void end();
 
         void print() const;
@@ -750,7 +791,14 @@ namespace g2c {
         int referenceCounter;
     };
 
-    class Animator {
+    
+    /*! Animator is a collection of animations that are running our about to run.  To use,
+        instantiate, use add() to add Animation objects, then call step() every frame
+        passing an absolute time in seconds.  Animator calls the animations' begin(),
+        step() and end() functions at the appropriate times and also destroys the animations
+        when they're finished.*/
+    class Animator
+    {
     public:
         Animator();
         virtual ~Animator();
@@ -760,15 +808,29 @@ namespace g2c {
         std::set<Animation*> S;
         std::vector<Listener*> listeners;
 
+	/*! Adds an Animation to the Animator.  Animation is meant to be subclassed to get
+            custom behavior on its begin() step() and end() calls.  When an animation is
+            added, the Animator calls begin(), step() and end() on it from its step() function.*/
         void add(Animation*);
+
+        /*! Removes an Animation from the Animator, so it no longer calls begin() step() and end().*/
         void remove(Animation*);
 
+        /*! Use retain to modify the reference count to an Animation.  This will make it so
+            you can be in charge of deleting the Animation yourself, for instance.*/
         void retain(Animation*);
+
+        /*! Use release to modify the reference count of an Animation object.*/
         bool release(Animation*);
 
+        /*! Call this function every frame of animation to have the animator move all its
+            Animations forward.*/
         void step(double t);
 
+        /*! Ends all animations.*/
         void end();
+
+        /*! Removes all animations from the Animator.*/
         void clear();
 
         int animationsAdded;
