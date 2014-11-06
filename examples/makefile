@@ -81,8 +81,8 @@ steam: $(DEPS) launch.o steam.cpp
 text: $(DEPS) text.cpp
 	$(call build_with_source, text.cpp, text)
 
-triangle: $(DEPS) triangle.cpp
-	$(call build_with_source, triangle.cpp, triangle)
+triangle: $(DEPS) launch.o triangle.cpp
+	$(call build_with_source, launch.o triangle.cpp, triangle)
 
 worldfile: $(DEPS) worldfile.cpp
 	$(call build_with_source, worldfile.cpp, worldfile)
