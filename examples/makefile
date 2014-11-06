@@ -13,10 +13,12 @@ include $(G2C_SOURCE_DIR)/platform.mk
 EXES = \
 	atlas \
 	modelfile \
+	quad \
 	serialize \
 	ship \
 	sound \
 	sprite \
+	steam \
 	tetrahedron \
 	text \
 	triangle \
@@ -55,6 +57,9 @@ atlas: $(DEPS) atlas.cpp
 modelfile: $(DEPS) modelfile.cpp
 	$(call build_with_source, modelfile.cpp, modelfile)
 
+quad: $(DEPS) quad.cpp
+	$(call build_with_source, quad.cpp, quad)
+
 serialize: $(DEPS) serialize.cpp
 	$(call build_with_source, serialize.cpp, serialize)
 
@@ -64,14 +69,14 @@ ship: $(DEPS) ship.cpp
 sound: $(DEPS) sound.cpp
 	$(call build_with_source, sound.cpp, sound)
 
-sprite: $(DEPS) sprite.cpp
-	$(call build_with_source, sprite.cpp, sprite)
+sprite: $(DEPS) launch.o sprite.cpp
+	$(call build_with_source, launch.o sprite.cpp, sprite)
 
 tetrahedron: $(DEPS) tetrahedron.cpp
 	$(call build_with_source, tetrahedron.cpp, tetrahedron)
 
-steam: $(DEPS) steam.cpp
-	$(call build_with_source, steam.cpp, steam)
+steam: $(DEPS) launch.o steam.cpp
+	$(call build_with_source, launch.o steam.cpp, steam)
 
 text: $(DEPS) text.cpp
 	$(call build_with_source, text.cpp, text)
@@ -82,8 +87,13 @@ triangle: $(DEPS) triangle.cpp
 worldfile: $(DEPS) worldfile.cpp
 	$(call build_with_source, worldfile.cpp, worldfile)
 
-worldapptest: $(DEPS) worldapptest.cpp worldapp.cpp
-	$(call build_with_source, worldapptest.cpp worldapp.cpp, worldapptest)
+launch.o: $(DEPS) launch.h launch.cpp
+	c++  $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) \
+		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
+		launch.cpp -c
+
+worldapptest: $(DEPS) launch.o worldapptest.cpp worldapp.cpp
+	$(call build_with_source, launch.o worldapptest.cpp worldapp.cpp, worldapptest)
 
 
 clean:

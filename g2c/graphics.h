@@ -222,7 +222,8 @@ protected:
     using one of the constructors or by using operator= with a vector or by using the
     one of the overloaded set() functions.  Load per-vertex data as an array of floats, then
     use a Field object to point out repeating patterns to be loaded as vertex attributes.*/
-class Buffer : public Element {
+class Buffer : public Element
+{
 friend class Effect;
 public:
     Buffer();
@@ -231,6 +232,12 @@ public:
     Buffer(const double* v, int size);
     Buffer(const float* v, int size);
     virtual ~Buffer();
+
+    Buffer& operator=(const std::vector<double>& v);
+    Buffer& operator=(const std::vector<float>& v);
+    Buffer& set(const double* v, int size);
+    Buffer& set(const float* v, int size);
+
 
 protected:
     virtual std::string serializeElements(std::string indent = "") const;
@@ -246,7 +253,8 @@ private:
 /*! IndexBuffer is a list of integer indices.  Initialize with a vector or array of ints or unsigned
     shorts, then assign as the indices member of a Geometry.  Three consecutive indices represent a
     triangle.*/
-class IndexBuffer : public Element {
+class IndexBuffer : public Element
+{
 friend class Geometry;
 public:
     IndexBuffer();
@@ -255,9 +263,14 @@ public:
     IndexBuffer(const int* v, int size);
     IndexBuffer(const unsigned short* v, int size);
     virtual ~IndexBuffer();
-    
+
+    IndexBuffer& operator=(const std::vector<int>& v);
+    IndexBuffer& operator=(const std::vector<unsigned short>& v);    
+    IndexBuffer& set(const int*, int size);
+    IndexBuffer& set(const unsigned short*, int size);
+
 protected:
-    virtual std::string serializeElements(std::	string indent = "") const;
+    virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
 
 private:
@@ -280,7 +293,8 @@ private:
     Fields for position and normal attributes would be something along the lines of:
     positionField = Field(buffer, 3, 6, 0);
     normalField   = Field(buffer, 3, 6, 3);*/
-class Field : public Element {
+class Field : public Element
+{
 friend class Effect;
 public:
     Field();

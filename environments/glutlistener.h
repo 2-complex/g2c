@@ -20,8 +20,8 @@
 */
 
 
-#ifndef _LISTENER_
-#define _LISTENER_
+#ifndef _GLUT_LISTENER_
+#define _GLUT_LISTENER_
 
 #include "lin/lin.h"
 
@@ -29,18 +29,23 @@
 
 namespace g2c {
 
+class GlutListener;
 
-class Listener;
-
-class Listener {
+class GlutListener
+{
+    friend void fbutton( int b, int state, int x, int y );
+    friend void fkeyboard(unsigned char inkey, int x, int y);
+    friend void fkeyboardUp(unsigned char inkey, int x, int y);
+    friend void fspecial(int inkey, int x, int y);
+    friend void fmotion(int x, int y);
     
 private:
     std::set<unsigned char> keys;
     
 public:
-    Listener();
-    virtual ~Listener();
-
+    GlutListener();
+    virtual ~GlutListener();
+    
     /*! button get called by the like-named glut function.
         Think twice before overriding if the same job could be done with mouseUp
         mouseDragged mouseDown.*/
@@ -84,10 +89,14 @@ public:
  
     /*! The base-class behavior is to appeal to the delegate if it's non-null
         for each virtual function.*/
-    Listener* delegate;
+    GlutListener* delegate;
 };
+
+void setGlobalGlutListener(GlutListener* glutListener);
+void initGlutListener();
 
 } // end namespace
 
-
 #endif
+
+

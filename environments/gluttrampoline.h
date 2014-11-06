@@ -1,16 +1,18 @@
 
-#ifndef _APP_ENVIRONMENT_
-#define _APP_ENVIRONMENT_
+#ifndef _GLUT_TRAMPOLINE_
+#define _GLUT_TRAMPOLINE_
 
 #include "app.h"
+#include "glut.h"
 #include "environment.h"
 
 using namespace g2c;
 
-class AppEnvironment : public Environment {
+class GlutTrampoline : public Glut
+{
 public:
-	AppEnvironment();
-	virtual ~AppEnvironment();
+	GlutTrampoline();
+	virtual ~GlutTrampoline();
 
 private:
 	bool touchOn;

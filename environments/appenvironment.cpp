@@ -11,7 +11,7 @@ AppEnvironment::~AppEnvironment() {}
 
 void AppEnvironment::enables()
 {
-	glEnable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
 
     glEnable(GL_ALPHA);
     glEnable(GL_DEPTH_TEST);
@@ -29,8 +29,8 @@ void AppEnvironment::enables()
     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE); // ?
 
     glCullFace(GL_NONE);
-	
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void AppEnvironment::reshape(int w, int h)
