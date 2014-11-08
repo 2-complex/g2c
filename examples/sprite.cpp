@@ -1,5 +1,4 @@
 
-#include "spriteenvironment.h"
 #include "launch.h"
 #include "transforms.h"
 

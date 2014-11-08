@@ -39,6 +39,8 @@ void AtlasEnvironment::keyDown(unsigned char c)
 
 void AtlasEnvironment::init()
 {
+    g2clog("Hit + and - keys to advance through sprites.\n");
+
     bank.initTextureWithPath(&treeAtlas, "treeatlas.png");
 
     treeAtlas.center = true;
@@ -77,7 +79,7 @@ int main(int argc, char** args)
     AtlasEnvironment e;
     e.animate = true;
     e.mainLoop();
-    
+
     return 0;
 }
 

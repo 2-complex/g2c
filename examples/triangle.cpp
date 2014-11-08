@@ -1,6 +1,8 @@
 
 #include "environment.h"
 
+using namespace g2c;
+
 class MyEnvironment : public Environment
 {
 protected:
@@ -21,6 +23,6 @@ int main()
 {
 	MyEnvironment e;
 	e.mainLoop();
-	
+
 	return 0;
 }
