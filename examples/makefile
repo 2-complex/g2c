@@ -72,6 +72,9 @@ sound: $(DEPS) sound.cpp
 sprite: $(DEPS) launch.o sprite.cpp
 	$(call build_with_source, launch.o sprite.cpp, sprite)
 
+star: $(DEPS) launch.o star.cpp
+	$(call build_with_source, launch.o star.cpp, star)
+
 tetrahedron: $(DEPS) tetrahedron.cpp
 	$(call build_with_source, tetrahedron.cpp, tetrahedron)
 

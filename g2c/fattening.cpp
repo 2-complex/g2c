@@ -147,7 +147,7 @@ void Fattening::fatten(
     }
 }
 
-FatteningGeometryInfo Fattening::newGeometry()
+FatteningGeometryInfo Fattening::newGeometry(const string& name)
 {
     vector<double> v;
 
@@ -167,12 +167,18 @@ FatteningGeometryInfo Fattening::newGeometry()
     vector<int> newindices;
     int indexCount = newindices.size();
 
+    newBuffer->name = name + "Buffer";
+
     for( int i = 0; i < indexCount; i++ )
         newindices.push_back(indices[i]);
 
     IndexBuffer* newIndexBuffer = new IndexBuffer(indices);
 
+    newIndexBuffer->name = name + "IndexBuffer";
+
     Geometry* newGeometry = new Geometry;
+
+    newGeometry->name = name + "Geometry";
 
     (*newGeometry)["position"] = Field(newBuffer, 3,5,0);
     (*newGeometry)["texcoord"] = Field(newBuffer, 2,5,3);
@@ -189,7 +195,7 @@ FatteningGeometryInfo Fattening::newGeometry()
 
 void Fattening::populateModel(Model* model, Shape* shape)
 {
-    FatteningGeometryInfo info = newGeometry();
+    FatteningGeometryInfo info = newGeometry(shape->name);
 
     model->add(info.geometry, true);
     model->add(info.buffer, true);

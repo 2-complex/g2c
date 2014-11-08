@@ -53,7 +53,7 @@ namespace g2c
         void add(int a, int b, int c);
 
         void fatten(const Polygon& polygon, double r);
-        FatteningGeometryInfo newGeometry();
+        FatteningGeometryInfo newGeometry(const std::string& name);
         void populateModel(Model* model, Shape* shape);
     };
 
