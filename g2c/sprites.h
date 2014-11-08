@@ -199,6 +199,8 @@ namespace g2c {
             kLines
         };
 
+        static Renderer* renderer;
+
         void resize(int inNumberOfVertices, int inNumberOfElements);
 
         ElementType elementType;
@@ -538,8 +540,6 @@ namespace g2c {
         Polygon polygon;
 
         static bool drawLines;
-
-        static Renderer* renderer;
 
         virtual Mat3 getTexMatrix(int frame = 0) const;
         virtual double getWidth(int frame = 0) const;

@@ -1,16 +1,22 @@
 
-#include "spriteenvironment.h"
+#include "app.h"
+#include "sprites.h"
+#include "launch.h"
+#include "transforms.h"
 
 using namespace std;
+using namespace g2c;
 
-class ShipEnvironment : public SpriteEnvironment
+class ShipApp : public App
 {
 public:
-    ShipEnvironment();
+    ShipApp();
 
 private:
     Sprite ship;
     Actor enterprise;
+    Bank* bank;
+    RendererGL2 renderer;
 
     set<unsigned char> keys;
 
@@ -21,41 +27,58 @@ private:
     double then;
 
     void init();
+    void reshape(int width, int height);
+    void setBank(Bank* bank);
+
     void step(double t);
     void draw() const;
 
     void keyDown(unsigned char c);
     void keyUp(unsigned char c);
-
-    void button();
 };
 
-ShipEnvironment::ShipEnvironment() : theta(0.0), then(0.0) {}
+ShipApp::ShipApp()
+    : theta(0.0)
+    , then(0.0)
+{
+}
 
-void ShipEnvironment::keyDown(unsigned char c)
+void ShipApp::keyDown(unsigned char c)
 {
     keys.insert(c);
 }
 
-void ShipEnvironment::keyUp(unsigned char c)
+void ShipApp::keyUp(unsigned char c)
 {
     keys.erase(c);
 }
 
-void ShipEnvironment::init()
+void ShipApp::setBank(Bank* bank)
 {
-    bank.initTextureWithPath(&ship, "ship.png");
+    this->bank = bank;
+}
+
+void ShipApp::init()
+{
+    bank->initTextureWithPath(&ship, "ship.png");
     ship.numberOfRows = 2;
     ship.numberOfColumns = 32;
     ship.center = true;
     ship.flipRows = true;
 
     enterprise.sprite = &ship;
-
     enterprise.position.set(100, 100);
+
+    renderer.init();
+    Mesh::renderer = &renderer;
 }
 
-void ShipEnvironment::step(double t)
+void ShipApp::reshape(int width, int height)
+{
+    renderer.projection = orthographic(0,width,0,height,-1,1);
+}
+
+void ShipApp::step(double t)
 {
     double now = t;
 
@@ -85,16 +108,15 @@ void ShipEnvironment::step(double t)
     then = now;
 }
 
-void ShipEnvironment::draw() const
+void ShipApp::draw() const
 {
     enterprise.draw();
 }
 
 int main(int argc, char** args)
 {
-    ShipEnvironment e;
-    e.animate = true;
-    e.mainLoop();
+    ShipApp app;
+    launch(&app);
 
     return 0;
 }

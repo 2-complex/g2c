@@ -6,6 +6,9 @@
 #include "glut.h"
 #include "environment.h"
 
+#include "bank.h"
+#include "audioplayer.h"
+
 using namespace g2c;
 
 class GlutTrampoline : public Glut
@@ -16,6 +19,8 @@ public:
 
 private:
 	bool touchOn;
+	Bank* bank;
+	AudioPlayer* player;
 
 protected:
 	virtual void enables();
@@ -25,6 +30,8 @@ protected:
 	virtual void draw() const;
 	
 	virtual void init();
+        virtual void destroy();
+
 	virtual void keyboard(unsigned char inkey);
 	virtual void special(unsigned char inkey);
 	

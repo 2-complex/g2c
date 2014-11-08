@@ -63,8 +63,8 @@ quad: $(DEPS) quad.cpp
 serialize: $(DEPS) serialize.cpp
 	$(call build_with_source, serialize.cpp, serialize)
 
-ship: $(DEPS) ship.cpp
-	$(call build_with_source, ship.cpp, ship)
+ship: $(DEPS) launch.o ship.cpp
+	$(call build_with_source, launch.o ship.cpp, ship)
 
 sound: $(DEPS) sound.cpp
 	$(call build_with_source, sound.cpp, sound)
