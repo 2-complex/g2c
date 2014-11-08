@@ -1,7 +1,11 @@
 
-#include "spriteenvironment.h"
-#include "launch.h"
+#include "app.h"
+#include "sprites.h"
 #include "transforms.h"
+
+#include "launch.h"
+
+using namespace g2c;
 
 class ShipApp : public App
 {

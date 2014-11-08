@@ -34,7 +34,6 @@
 #include "unixbank.h"
 #endif
 
-
 #include <string>
 
 using namespace g2c;

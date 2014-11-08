@@ -20,14 +20,15 @@
 */
 
 
-
 #ifndef _WINDOWS_BANK_
 #define _WINDOWS_BANK_
 
 #include "bank.h"
 
-namespace g2c {
+namespace g2c
+{
 
+/*! An implementation of Bank for loading resources from a windows native app.*/
 class WindowsBank : public Bank {
 public:
     WindowsBank() {}

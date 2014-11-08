@@ -4,10 +4,25 @@
 #include "lin/lin.h"
 #include "util.h"
 
+#include "openalplayer.h"
+
+#if __APPLE_CC__
+#include "macbank.h"
+#else
+#include "unixbank.h"
+#endif
+
+
 using namespace std;
 
-GlutTrampoline::GlutTrampoline() : app(NULL) {}
-GlutTrampoline::~GlutTrampoline() {}
+GlutTrampoline::GlutTrampoline()
+    : app(NULL)
+{
+}
+
+GlutTrampoline::~GlutTrampoline()
+{
+}
 
 void GlutTrampoline::enables()
 {
@@ -45,7 +60,30 @@ void GlutTrampoline::reshape(int w, int h)
 void GlutTrampoline::init()
 {
     if(app)
+    {
+        player = new OpenALPlayer;
+	bank = new
+#if __APPLE_CC__
+            MacFileSystemBank;
+#else
+            UnixBank;
+#endif
+        app->setAudioPlayer(player);
+        app->setBank(bank);
         app->init();
+    }
+    else
+        g2clog( "GlutTrampoline used with no app\n" );
+}
+
+void GlutTrampoline::destroy()
+{
+    if(app)
+    {
+        app->destroy();
+        delete player;
+        delete bank;
+    }
     else
         g2clog( "GlutTrampoline used with no app\n" );
 }
