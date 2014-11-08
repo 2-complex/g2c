@@ -30,7 +30,7 @@ using namespace std;
 namespace g2c {
 
 bool Sprite::drawLines = false; // Some time put this in the renderer, perhaps.
-Renderer* Sprite::renderer = NULL;
+Renderer* Mesh::renderer = NULL;
 
 
 Mat4Property::Mat4Property() {}
@@ -471,7 +471,7 @@ void Font::drawString(const Mat4& M,
             Mat4 matrix(M * getOffsetMatrix(c-baseChar, x-l, y, k));
             Mat3 texMatrix(getTexMatrix(c-baseChar));
 
-            Sprite::renderer->drawMesh(NULL, matrix, texMatrix, color, this);
+            Mesh::renderer->drawMesh(NULL, matrix, texMatrix, color, this);
 
             x += k * charWidth(c);
         }
@@ -1519,8 +1519,8 @@ void Polygon::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 
     update();
 
-    if( Sprite::renderer && mesh )
-        Sprite::renderer->drawMesh(mesh, worldMatrix, Mat3(), worldColor, NULL);
+    if( Mesh::renderer && mesh )
+        Mesh::renderer->drawMesh(mesh, worldMatrix, Mat3(), worldColor, NULL);
     else
     {
         g2cerror( "Attempt to draw polygon with no renderer.\n" );
@@ -1875,7 +1875,13 @@ void Actor::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
         texMatrix = sampler->getTexMatrix(frame());
     }
 
-    Sprite::renderer->drawMesh(mesh, matrix, texMatrix, worldColor, sampler);
+    if( !Mesh::renderer )
+    {
+        g2cerror( "Attempt to draw Actor with no renderer.  Actor: %s\n", name.c_str() );
+        exit(0);
+    }
+
+    Mesh::renderer->drawMesh(mesh, matrix, texMatrix, worldColor, sampler);
 
     if( Sprite::drawLines )
         collisionPolygon().drawInTree(worldMatrix, worldColor);
@@ -2271,9 +2277,9 @@ Actor* World::actorInClick(const Vec2& V)
 
 void World::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 {
-    if( !Sprite::renderer )
+    if( !Mesh::renderer )
     {
-        g2cerror( "Attempt to draw with no renderer. World: %s\n", name.c_str() );
+        g2cerror( "Attempt to draw World with no renderer. World: %s\n", name.c_str() );
         exit(0);
     }
     Node::drawInTree(worldMatrix * getMatrix(), worldColor * getColor());
@@ -2281,13 +2287,13 @@ void World::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 
 void World::resize(int width, int height)
 {
-    if( !Sprite::renderer )
+    if( !Mesh::renderer )
     {
         g2cerror( "Attempt to resize with no renderer world: %s\n", name.c_str() );
         exit(0);
     }
 
-    Sprite::renderer->projection = Mat4(
+    Mesh::renderer->projection = Mat4(
         2.0 / width, 0.0, 0.0, 0.0,
         0.0, 2.0 / height, 0.0, 0.0,
         0.0, 0.0, 1.0, 0.0,

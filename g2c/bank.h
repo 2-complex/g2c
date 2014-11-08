@@ -54,16 +54,36 @@ class Bank {
 public:
     Bank() {}
     virtual ~Bank() {}
-    
+
+    /*! Populate a Data object with the binary data from the file indicated by path.*/
     virtual void initDataWithPath(Data* data, const char* path) = 0;
-    
+
+    /*! Retrieves a serializable object from persistent memory with the given key.  "Persistent"
+        means that the data persists after the app is closed and reopened, such as preferences
+        or saved games.*/
     virtual void initPersistentSerializableWithKey(Serializable* s, const char* key) = 0;
+
+    /*! Saves a serializable object to persistent memory given a key.  "Persistent" means that
+        the data persists after the app is closed and reopened, such as preferences or saved games.*/
     virtual void writePersistentSerializableWithKey(const Serializable* s, const char* key) = 0;
-    
+
+    /*! Populate a serializable object with using the json string in the file indicated by path.*/
     virtual void initSerializableWithPath(Serializable* s, const char* path) = 0;
+
+    /*! Saves a serializable object to the file indicated by the path.  This does not work in some
+        implementations.*/
     virtual void writeSerializableToPath(const Serializable* s, const char* path) = 0;
+
+    /*! Populates a Sound object with the sound from the file indicated by path.  Must be a sound file
+        of some sort, but .wav is required to work.*/
     virtual void initSoundWithPath(Sound* sound, const char* path);
+
+    /*! Initializes a texture populating it with the bitmap data from the image file at path.  Must be
+        an image file of some sort, but .png is required to work.*/
     virtual void initTextureWithPath(Texture2D* texture, const char* path) = 0;
+
+    /*! Populates a Bitmap object with data from the image file indicated by path.  Must be an image file
+        of some sort, but .png is required to work.*/
     virtual void initBitmapWithPath(Bitmap* bitmap, const char* path) = 0;
 };
 
