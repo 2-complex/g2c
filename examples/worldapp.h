@@ -14,7 +14,7 @@ public:
     virtual void setBank(Bank* inBank);
 
     virtual void init();
-    virtual void reshape(int width, int height);
+    virtual void resize(int width, int height);
     virtual void draw() const;
     virtual void destroy();
 

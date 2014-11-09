@@ -43,9 +43,9 @@ class SpriteEnvironment : public ScrollEnvironment
 public:
 	SpriteEnvironment();
 	virtual ~SpriteEnvironment();
-	
+
 	bool forwardKeyboard;
-	
+
 	void initWithPath(const char* filename);
 
 protected:
@@ -61,19 +61,19 @@ protected:
 #endif
 
 	virtual void enables();
-	
-	virtual void reshape(int x, int y);
+
+	virtual void resize(int x, int y);
 	virtual void draw() const;
-	
+
 	virtual bool mouseDown(const Vec2& C);
 	virtual void mouseDragged(const Vec2& C);
 	virtual void mouseUp(const Vec2& C);
-	
+
 	virtual void keyboard(unsigned char inkey);
-	
+
 private:
 	std::string filename;
-	
+
 	int sound_index;
 	bool editMode;
 	Actor* current;

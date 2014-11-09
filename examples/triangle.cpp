@@ -4,11 +4,7 @@
 
 using namespace g2c;
 
-<<<<<<< HEAD
-class MyEnvironment : public Environment
-=======
 class TriangleApp : public App
->>>>>>> fb5f9c21ae1c7ebc2990a93eb75b69458460a31f
 {
 protected:
     void draw() const;
@@ -26,14 +22,7 @@ void TriangleApp::draw() const
 
 int main()
 {
-<<<<<<< HEAD
-	MyEnvironment e;
-	e.mainLoop();
-
-	return 0;
-=======
     TriangleApp app;
     launch(&app);
     return 0;
->>>>>>> fb5f9c21ae1c7ebc2990a93eb75b69458460a31f
 }

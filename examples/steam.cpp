@@ -45,7 +45,7 @@ class SteamApp : public App
     Bank* bank;
 
     void init();
-    void reshape(int width, int height);
+    void resize(int width, int height);
     void step(double t);
     void draw() const;
 
@@ -57,7 +57,7 @@ void SteamApp::setBank(Bank* bank)
     this->bank = bank;
 }
 
-void SteamApp::reshape(int width, int height)
+void SteamApp::resize(int width, int height)
 {
     projection = perspective(
         40.0,

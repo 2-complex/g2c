@@ -18,6 +18,7 @@ EXES = \
 	ship \
 	sound \
 	sprite \
+	star \
 	steam \
 	tetrahedron \
 	text \
@@ -100,6 +101,8 @@ worldapptest: $(DEPS) launch.o worldapptest.cpp worldapp.cpp
 
 
 clean:
+	cd $(G2C_SOURCE_DIR) && $(MAKE) clean
+	cd $(ENVIRONMENTS_DIR) && $(MAKE) clean
 	-rm -f $(EXES)
 	-rm -f $(OBJ_DIR)/*.o
 	-rm -rf *.dSYM

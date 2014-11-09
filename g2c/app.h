@@ -43,13 +43,13 @@ public:
     virtual void setAudioPlayer(AudioPlayer*);
 
     /*! init() gets called once at the beginning of the Apps life.  The trampoline is required
-        to make an OpenGL context current at the time of calling init().*/ 
+        to make an OpenGL context current at the time of calling init().*/
     virtual void init();
 
     /*! step() gets called once per frame of animation, but the OpenGL context is
         not required to be current.  The argument is an absolute time measured in seconds.*/
     virtual void step(double t);
-    
+
     /*! draw() gets called once per frame of animation, the OpenGL context is required to be current.*/
     virtual void draw() const;
 
@@ -80,7 +80,7 @@ public:
         and-drag begins, future calls to touchDragged will be called with the same index for that
         continuous touch-and-drag motion.*/
     virtual bool touchDown(unsigned int index, const Vec2& C);
-    
+
     /*! Override touchDragged() to handle multi-touch events.  touchDragged gets called whenever
         the user moves a finger on the touch screen.*/
     virtual void touchDragged(unsigned int index, const Vec2& C);
@@ -111,7 +111,7 @@ public:
     virtual void keyboard(unsigned char inkey);
     virtual void special(int inkey);
 
-    virtual void reshape(int width, int height);
+    virtual void resize(int width, int height);
 
     bool getNeedsKeyboard();
     void finishTyping();

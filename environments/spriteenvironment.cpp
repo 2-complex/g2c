@@ -70,9 +70,9 @@ void SpriteEnvironment::initWithPath(const char* filename)
     this->filename = filename;
 }
 
-void SpriteEnvironment::reshape(int w, int h)
+void SpriteEnvironment::resize(int w, int h)
 {
-    ScrollEnvironment::reshape(w, h);
+    ScrollEnvironment::resize(w, h);
     renderer.projection = getProjection();
 }
 

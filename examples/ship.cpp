@@ -27,7 +27,7 @@ private:
     double then;
 
     void init();
-    void reshape(int width, int height);
+    void resize(int width, int height);
     void setBank(Bank* bank);
 
     void step(double t);
@@ -73,7 +73,7 @@ void ShipApp::init()
     Mesh::renderer = &renderer;
 }
 
-void ShipApp::reshape(int width, int height)
+void ShipApp::resize(int width, int height)
 {
     renderer.projection = orthographic(0,width,0,height,-1,1);
 }

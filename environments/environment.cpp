@@ -26,7 +26,7 @@
 #include "lin/lin.h"
 
 void display();
-void reshape(int w, int h);
+void resize(int w, int h);
 void motion(int x, int y);
 void button(int b, int state, int x, int y);
 void keyboard(unsigned char inkey, int x, int y);
@@ -115,7 +115,7 @@ void Environment::display()
         glutPostRedisplay();
 }
 
-void Environment::reshape(int w, int h)
+void Environment::resize(int w, int h)
 {
     windowHeight = h;
     windowWidth = w;
@@ -164,7 +164,7 @@ void Environment::motion(int x, int y)
 
 
 void fdisplay() { gEnvironment->display(); }
-void freshape(int w, int h) { gEnvironment->reshape(w,h); }
+void fresize(int w, int h) { gEnvironment->resize(w,h); }
 
 
 void Environment::initWindow(
@@ -219,7 +219,7 @@ void Environment::mainLoop()
 
     // install the functions in this file as callbacks
     glutDisplayFunc(fdisplay);
-    glutReshapeFunc(freshape);
+    glutReshapeFunc(fresize);
 
     // leave the rest to glut
     glutMainLoop();

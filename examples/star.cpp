@@ -22,7 +22,7 @@ private:
     mutable Model model;
 
     void init();
-    void reshape(int width, int height);
+    void resize(int width, int height);
     void setBank(Bank* bank);
 
     void step(double t);
@@ -62,7 +62,7 @@ void StarApp::init()
     fat.populateModel(&model, model.shapes["starShape"]);
 }
 
-void StarApp::reshape(int width, int height)
+void StarApp::resize(int width, int height)
 {
     (*(model.assumptions["context"]))["projection"] = orthographic(-width, width, -height, height, -1.0, 1.0);
     (*(model.assumptions["context"]))["modelView"] = scale(Vec3(40.0, 40.0, 1.0));
