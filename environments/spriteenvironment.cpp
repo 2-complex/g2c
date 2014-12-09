@@ -32,7 +32,7 @@ SpriteEnvironment::SpriteEnvironment() : sound_index(0), forwardKeyboard(false),
 {
     world.bank = &bank;
     world.initSound(&player);
-    Sprite::renderer = &renderer;
+    Mesh::renderer = &renderer;
 }
 
 SpriteEnvironment::~SpriteEnvironment()

@@ -57,8 +57,8 @@ atlas: $(DEPS) atlas.cpp
 modelfile: $(DEPS) modelfile.cpp
 	$(call build_with_source, modelfile.cpp, modelfile)
 
-quad: $(DEPS) quad.cpp
-	$(call build_with_source, quad.cpp, quad)
+quad: $(DEPS) launch.o quad.cpp
+	$(call build_with_source, launch.o quad.cpp, quad)
 
 serialize: $(DEPS) serialize.cpp
 	$(call build_with_source, serialize.cpp, serialize)
