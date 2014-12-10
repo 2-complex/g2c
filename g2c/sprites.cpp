@@ -595,13 +595,13 @@ string Font::serializeElements(string indent) const
 {
     string r = Sprite::serializeElements(indent);
 
-    r += TAB + indent + "'lineHeight' : " + floatToString(lineHeight) + ",\n";
-    r += TAB + indent + "'lineBottom' : " + floatToString(lineBottom) + ",\n";
+    r += TAB + indent + "\"lineHeight\" : " + floatToString(lineHeight) + ",\n";
+    r += TAB + indent + "\"lineBottom\" : " + floatToString(lineBottom) + ",\n";
     if( widthScale!=1.0 )
-        r += TAB + indent + "'widthScale' : " + floatToString(widthScale) + ",\n";
+        r += TAB + indent + "\"widthScale\" : " + floatToString(widthScale) + ",\n";
 
     if( spacing )
-        r += TAB + indent + "'spacing' : " + floatToString(spacing) + ",\n";
+        r += TAB + indent + "\"spacing\" : " + floatToString(spacing) + ",\n";
 
     string s;
     int n = 0;
@@ -617,7 +617,7 @@ string Font::serializeElements(string indent) const
             s += ", ";
     }
     s += "\n" + TAB + TAB + indent + "]";
-    r += TAB + indent + "'widths' : " + s + string(",\n");
+    r += TAB + indent + "\"widths\" : " + s + string(",\n");
 
     n = lefts.size();
     s = "[";
@@ -630,12 +630,12 @@ string Font::serializeElements(string indent) const
             s += ", ";
     }
     s += "\n" + TAB + TAB + indent + "]";
-    r += TAB + indent + "'lefts' : " + s + string(",\n");
+    r += TAB + indent + "\"lefts\" : " + s + string(",\n");
 
     if(baseChar!=' ')
     {
         char c[2] = {baseChar, 0};
-        r += TAB + indent + "'baseChar' : '" + string(c) + "',\n";
+        r += TAB + indent + "\"baseChar\" : \"" + string(c) + "\",\n";
     }
 
     return r;
@@ -2081,7 +2081,7 @@ string Button::serializeElements(string indent) const
 {
     string r = Actor::serializeElements(indent);
     if( baseFrame )
-        r += TAB + indent + "'baseFrame' : " + intToString(baseFrame) + ",\n";
+        r += TAB + indent + "\"baseFrame\" : " + intToString(baseFrame) + ",\n";
     return r;
 }
 
@@ -2130,11 +2130,11 @@ string Text::serializeElements(string indent) const
     string r = Actor::serializeElements(indent);
 
     if( font )
-        r += TAB + indent + "'fontName' : " + string("'") + font->name + "',\n";
+        r += TAB + indent + "\"fontName\" : " + string("\"") + font->name + "\",\n";
     if( s != "" )
-        r += TAB + indent + "'s' : '" + s + "',\n";
+        r += TAB + indent + "\"s\" : \"" + s + "\",\n";
     if( justification != "left" )
-        r += TAB + indent + "'justification' : '" + justification + "',\n";
+        r += TAB + indent + "\"justification\" : \"" + justification + "\",\n";
     return r;
 }
 
