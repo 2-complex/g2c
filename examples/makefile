@@ -15,6 +15,7 @@ EXES = \
 	modelfile \
 	quad \
 	serialize \
+	serializemore \
 	ship \
 	sound \
 	sprite \
@@ -52,7 +53,7 @@ endef
 DEPS := $(LIBG2C) $(LIBENVIRONMENTS) $(G2C_SOURCE_DIR)/lin/lin.h
 
 atlas: $(DEPS) atlas.cpp
-	$(call build_with_source, atlas.cpp, atlas)
+	$(call build_with_source, launch.o atlas.cpp, atlas)
 
 modelfile: $(DEPS) modelfile.cpp
 	$(call build_with_source, modelfile.cpp, modelfile)
@@ -62,6 +63,9 @@ quad: $(DEPS) launch.o quad.cpp
 
 serialize: $(DEPS) serialize.cpp
 	$(call build_with_source, serialize.cpp, serialize)
+
+serializemore: $(DEPS) serializemore.cpp
+	$(call build_with_source, serializemore.cpp, serializemore)
 
 ship: $(DEPS) launch.o ship.cpp
 	$(call build_with_source, launch.o ship.cpp, ship)
