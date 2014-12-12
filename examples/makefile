@@ -12,6 +12,7 @@ include $(G2C_SOURCE_DIR)/platform.mk
 
 EXES = \
 	atlas \
+        bitmap \
 	modelfile \
 	quad \
 	serialize \
@@ -69,6 +70,9 @@ serializemore: $(DEPS) serializemore.cpp
 
 ship: $(DEPS) launch.o ship.cpp
 	$(call build_with_source, launch.o ship.cpp, ship)
+
+bitmap: $(DEPS) launch.o bitmap.cpp
+	$(call build_with_source, launch.o bitmap.cpp, bitmap)
 
 sound: $(DEPS) sound.cpp
 	$(call build_with_source, sound.cpp, sound)
