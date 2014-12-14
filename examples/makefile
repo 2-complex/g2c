@@ -73,6 +73,9 @@ sound: $(DEPS) sound.cpp
 sprite: $(DEPS) launch.o sprite.cpp
 	$(call build_with_source, launch.o sprite.cpp, sprite)
 
+button: $(DEPS) launch.o button.cpp
+	$(call build_with_source, launch.o button.cpp, button)
+
 star: $(DEPS) launch.o star.cpp
 	$(call build_with_source, launch.o star.cpp, star)
 
