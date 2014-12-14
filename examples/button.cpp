@@ -23,11 +23,15 @@ class ButtonApp : public App
     MyButtonHandler handler;
     Bank* bank;
     RendererGL2 renderer;
+    Layer layer;
 
     void init();
     void resize(int width, int height);
     void setBank(Bank* bank);
 
+    bool mouseDown(const Vec2& C);
+    void mouseDragged(const Vec2& C);
+    void mouseUp(const Vec2& C);
     void draw() const;
 };
 
@@ -56,12 +60,28 @@ void ButtonApp::init()
 
     renderer.init();
     Mesh::renderer = &renderer;
+
+    layer.add(&onoff);
 }
 
+bool ButtonApp::mouseDown(const Vec2& C)
+{
+    return layer.mouseDown(C);
+}
+
+void ButtonApp::mouseDragged(const Vec2& C)
+{
+    layer.mouseDragged(C);
+}
+
+void ButtonApp::mouseUp(const Vec2& C)
+{
+    layer.mouseUp(C);
+}
 
 void ButtonApp::draw() const
 {
-    onoff.draw();
+    layer.draw();
 }
 
 int main(int argc, char** args)
