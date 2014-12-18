@@ -2229,6 +2229,7 @@ World::World() : bank(NULL), soundInitted(false)
     player = new AudioPlayer();
     context = new Context(player);
     context->makeCurrent();
+
     destroySoundQueue();
 
     type = "World";

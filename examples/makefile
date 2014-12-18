@@ -75,7 +75,7 @@ bitmap: $(DEPS) launch.o bitmap.cpp
 	$(call build_with_source, launch.o bitmap.cpp, bitmap)
 
 sound: $(DEPS) sound.cpp
-	$(call build_with_source, sound.cpp, sound)
+	$(call build_with_source, launch.o sound.cpp, sound)
 
 sprite: $(DEPS) launch.o sprite.cpp
 	$(call build_with_source, launch.o sprite.cpp, sprite)

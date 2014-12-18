@@ -1,31 +1,65 @@
 
-#include "spriteenvironment.h"
+#include "sound.h"
+#include "app.h"
+#include "launch.h"
 
-class SoundEnvironment : public SpriteEnvironment {
-	Sound sound;
-	Source source;
-	
-	void init();
-	bool mouseDown(const Vec2& c);
+using namespace g2c;
+
+class SoundApp : public App
+{
+    Context* context;
+    Sound* sound;
+    Source* source;
+    Bank* bank;
+    AudioPlayer* player;
+
+    void init();
+    void destroy();
+    void setBank(Bank* bank);
+    void setAudioPlayer(AudioPlayer* player);
+    bool mouseDown(const Vec2& c);
 };
 
-void SoundEnvironment::init()
+void SoundApp::init()
 {
-	bank.initSoundWithPath(&sound, "harmonica.wav");
-	sound.source = &source;
+    context = new Context(player);
+    context->makeCurrent();
+
+    sound = new Sound;
+    source = new Source;
+
+    bank->initSoundWithPath(sound, "harmonica.wav");
+    sound->source = source;
 }
 
-bool SoundEnvironment::mouseDown(const Vec2& c)
+void SoundApp::destroy()
 {
-	sound.play();
-	return true;
+    delete sound;
+    delete source;
+    delete context;
+}
+
+void SoundApp::setBank(Bank* bank)
+{
+    this->bank = bank;
+}
+
+void SoundApp::setAudioPlayer(AudioPlayer* player)
+{
+    this->player = player;
+}
+
+bool SoundApp::mouseDown(const Vec2& c)
+{
+    sound->play();
+    return true;
 }
 
 int main()
 {
-	SoundEnvironment e;
-	e.mainLoop();
-	
-	return 0;
+    SoundApp app;
+    launch(&app);
+
+    return 0;
 }
 
