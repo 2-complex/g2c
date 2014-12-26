@@ -92,8 +92,8 @@ launch.o: $(DEPS) launch.h launch.cpp
 		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		launch.cpp -c
 
-worldapptest: $(DEPS) launch.o worldapptest.cpp worldapp.cpp
-	$(call build_with_source, launch.o worldapptest.cpp worldapp.cpp, worldapptest)
+worldapp: $(DEPS) launch.o worldapp.cpp
+	$(call build_with_source, launch.o worldapp.cpp, worldapp)
 
 
 clean:
