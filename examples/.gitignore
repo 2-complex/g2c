@@ -1,6 +1,7 @@
 *.dSYM
 
 atlas
+bitmap
 modelfile
 quad
 serialize

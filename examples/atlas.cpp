@@ -1,27 +1,38 @@
 
-#include "spriteenvironment.h"
+#include "sprites.h"
+#include "app.h"
+#include "launch.h"
+#include "transforms.h"
+
 
 using namespace std;
+using namespace g2c;
 
-class AtlasEnvironment : public SpriteEnvironment {
+class AtlasApp : public App
+{
 public:
-    AtlasEnvironment();
+    AtlasApp();
 
 private:
     Atlas treeAtlas;
     Actor sherman;
+    Bank* bank;
+    RendererGL2 renderer;
+
 
     void init();
+    void reshape(int width, int height);
+    void setBank(Bank* bank);
     void draw() const;
 
     void keyDown(unsigned char c);
 };
 
-AtlasEnvironment::AtlasEnvironment()
+AtlasApp::AtlasApp()
 {
 }
 
-void AtlasEnvironment::keyDown(unsigned char c)
+void AtlasApp::keyDown(unsigned char c)
 {
     switch( c )
     {
@@ -37,11 +48,20 @@ void AtlasEnvironment::keyDown(unsigned char c)
     }
 }
 
-void AtlasEnvironment::init()
+void AtlasApp::setBank(Bank* bank)
 {
-    g2clog("Hit + and - keys to advance through sprites.\n");
+    this->bank = bank;
+}
 
-    bank.initTextureWithPath(&treeAtlas, "treeatlas.png");
+
+void AtlasApp::reshape(int width, int height)
+{
+    renderer.projection = orthographic(0,width,0,height,-1,1);
+}
+
+void AtlasApp::init()
+{
+    bank->initTextureWithPath(&treeAtlas, "treeatlas.png");
 
     treeAtlas.center = true;
 
@@ -67,19 +87,21 @@ void AtlasEnvironment::init()
     sherman.sampler = &treeAtlas;
 
     sherman.position.set(300, 300);
+
+    renderer.init();
+    Mesh::renderer = &renderer;
 }
 
-void AtlasEnvironment::draw() const
+void AtlasApp::draw() const
 {
     sherman.draw();
 }
 
 int main(int argc, char** args)
 {
-    AtlasEnvironment e;
-    e.animate = true;
-    e.mainLoop();
-
+    AtlasApp app;
+    launch(&app);
+    
     return 0;
 }
 

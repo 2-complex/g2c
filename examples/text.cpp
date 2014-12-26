@@ -1,39 +1,67 @@
 
-#include "spriteenvironment.h"
+#include "sprites.h"
+#include "app.h"
+#include "launch.h"
+#include "transforms.h"
 
-class TextEnvironment : public SpriteEnvironment {
-	Font font;
-	Text text;
-	
-	void init();
-	void draw() const;
+using namespace g2c;
+
+class TextApp : public App
+{
+    Bank* bank;
+    Font font;
+    Text text;
+    RendererGL2 renderer;
+
+    void init();
+    void reshape(int width, int height);
+    void setBank(Bank* bank);
+
+    void draw() const;
 };
 
-void TextEnvironment::init()
+void TextApp::init()
 {
-	Bitmap bitmap;
-	bank.initBitmapWithPath(&bitmap, "helv.png");
-	font.initWithBitmap(bitmap);
-	font.numberOfRows = 6;
-	font.numberOfColumns = 16;
-	
-	font.getWidthsFromBitmap(bitmap);
-	
-	text.font = &font;
-	text.s = "My Message";
-	text.x = 100;
-	text.y = 100;
+    Bitmap bitmap;
+    bank->initBitmapWithPath(&bitmap, "helv.png");
+    font.initWithBitmap(bitmap);
+    font.numberOfRows = 6;
+    font.numberOfColumns = 16;
+
+    font.getWidthsFromBitmap(bitmap);
+
+    text.font = &font;
+    text.s = "My Message";
+    text.x = 100;
+    text.y = 100;
+
+    renderer.init();
+    Mesh::renderer = &renderer;
+
+    glDisable(GL_DEPTH_TEST);
 }
 
-void TextEnvironment::draw() const
+void TextApp::setBank(Bank* bank)
 {
-	text.draw();
+    this->bank = bank;
+}
+
+void TextApp::reshape(int width, int height)
+{
+    renderer.projection = orthographic(0,width,0,height,-1,1);
+}
+
+void TextApp::draw() const
+{
+    text.draw();
 }
 
 int main()
 {
-	TextEnvironment e;
-	e.mainLoop();
-	
-	return 0;
+    TextApp app;
+    launch(&app);
+
+    return 0;
 }
+
+
