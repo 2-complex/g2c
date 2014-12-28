@@ -1,9 +1,12 @@
 
 #include "spriteenvironment.h"
 #include "graphics.h"
+#include "launch.h"
 
-class QuadEnvironment : public SpriteEnvironment
+class QuadApp : public App
 {
+    Bank* bank;
+
     Buffer* buffer;
     IndexBuffer* indexBuffer;
     Geometry geometry;
@@ -15,9 +18,10 @@ class QuadEnvironment : public SpriteEnvironment
 
     void init();
     void draw() const;
+    void setBank(Bank* bank);
 };
 
-void QuadEnvironment::init()
+void QuadApp::init()
 {
     float vertexArray[] =
     {
@@ -40,7 +44,7 @@ void QuadEnvironment::init()
     geometry.indices = indexBuffer;
 
     Bitmap bitmap;
-    bank.initBitmapWithPath(&bitmap, "tiles.png");
+    bank->initBitmapWithPath(&bitmap, "tiles.png");
     texture.initWithBitmap(bitmap);
 
     effect.vertexCode =
@@ -73,15 +77,20 @@ void QuadEnvironment::init()
     shape.assumptions.push_back(&material);
 }
 
-void QuadEnvironment::draw() const
+void QuadApp::setBank(Bank* bank)
+{
+    this->bank = bank;
+}
+
+void QuadApp::draw() const
 {
     shape.draw();
 }
 
 int main()
 {
-    QuadEnvironment e;
-    e.mainLoop();
+    QuadApp app;
+    launch(&app);
 
     return 0;
 }

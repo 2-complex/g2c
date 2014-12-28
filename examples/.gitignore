@@ -1,12 +1,14 @@
 *.dSYM
 
 atlas
+bitmap
 modelfile
 quad
 serialize
 ship
 sound
 sprite
+star
 steam
 text
 triangle
