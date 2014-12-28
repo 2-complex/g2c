@@ -60,6 +60,9 @@ atlas: $(DEPS) atlas.cpp
 modelfile: $(DEPS) modelfile.cpp
 	$(call build_with_source, modelfile.cpp, modelfile)
 
+modelapp: $(DEPS) modelapp.cpp
+	$(call build_with_source, launch.o modelapp.cpp, modelapp)
+
 quad: $(DEPS) launch.o quad.cpp
 	$(call build_with_source, launch.o quad.cpp, quad)
 
