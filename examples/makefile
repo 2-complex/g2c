@@ -12,7 +12,7 @@ include $(G2C_SOURCE_DIR)/platform.mk
 
 EXES = \
 	atlas \
-        bitmap \
+	bitmap \
 	modelfile \
 	quad \
 	serialize \
@@ -88,7 +88,7 @@ star: $(DEPS) launch.o star.cpp
 	$(call build_with_source, launch.o star.cpp, star)
 
 tetrahedron: $(DEPS) tetrahedron.cpp
-	$(call build_with_source, tetrahedron.cpp, tetrahedron)
+	$(call build_with_source, launch.o tetrahedron.cpp, tetrahedron)
 
 steam: $(DEPS) launch.o steam.cpp
 	$(call build_with_source, launch.o steam.cpp, steam)
