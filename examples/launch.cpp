@@ -1,6 +1,5 @@
 
 #include "gluttrampoline.h"
-#include "worldapp.h"
 
 void launch(App* app)
 {
@@ -11,3 +10,5 @@ void launch(App* app)
     trampoline.app = app;
     trampoline.mainLoop();
 }
+
+
