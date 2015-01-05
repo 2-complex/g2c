@@ -39,6 +39,8 @@
 #include <string>
 #include <set>
 #include <map>
+#include <stdlib.h>
+  
 
 
 namespace g2c {
