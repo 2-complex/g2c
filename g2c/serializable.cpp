@@ -60,13 +60,13 @@ void Serializable::handleChild(const parse::Node* n)
 {
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if( n_name == "name" )
         name = value->data.s;
-    
+
     if( n_name == "type" )
         type = value->data.s;
-    
+
     for(vector<Property>::iterator itr = properties.begin();
         itr!=properties.end();
         itr++ )

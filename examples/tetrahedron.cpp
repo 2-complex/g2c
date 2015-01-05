@@ -1,10 +1,42 @@
 
 #include "panenvironment.h"
 #include "graphics.h"
+#include "app.h"
+#include "launch.h"
 
 using namespace std;
 
-class TetrahedronEnvironment : public PanEnvironment
+class PanApp : public App
+{
+protected:
+    PanApp();
+    virtual ~PanApp();
+
+private:
+    double cameraTheta;
+    double cameraPhi;
+    double cameraRadius;
+    Vec3 cameraLookAtLoc;
+    int firstX;
+    int firstY;
+    double firstTheta;
+    double firstPhi;
+    Vec2 last;
+    Mat4 projection;
+
+    bool mouseDown(const Vec2& C);
+    void mouseDragged(const Vec2& C);
+    void keyboard(unsigned char inkey);
+    void resize(int width, int height);
+
+protected:
+    Vec3 getCameraLoc() const;
+    Vec3 getLookAtLoc() const;
+    void setLookAtLoc(const Vec3& V);
+    Mat4 getProjection() const;
+};
+
+class TetrahedronApp : public PanApp
 {
     Buffer buffer;
     IndexBuffer indexBuffer;
@@ -15,10 +47,100 @@ class TetrahedronEnvironment : public PanEnvironment
     Shape shape;
 
     void init();
-    void draw() const;  
+    void draw() const;
 };
 
-void TetrahedronEnvironment::init()
+using namespace std;
+
+
+PanApp::PanApp()
+    : cameraRadius(10)
+    , cameraPhi(.5)
+    , cameraTheta(-0.25)
+    , firstX(0)
+    , firstY(0)
+    , firstTheta(0)
+    , firstPhi(0)
+{
+}
+
+PanApp::~PanApp()
+{
+}
+
+bool PanApp::mouseDown(const Vec2& C)
+{
+    last = C;
+    return true;
+}
+
+void PanApp::mouseDragged(const Vec2& C)
+{
+    Vec2 delta = -0.01*(C - last);
+    cameraTheta += delta.x;
+    cameraPhi += delta.y;
+
+    if(cameraPhi > 0.5*M_PI) cameraPhi = 0.5*M_PI;
+    if(cameraPhi < -0.5*M_PI) cameraPhi = -0.5*M_PI;
+
+    last = C;
+}
+
+
+void PanApp::keyboard(unsigned char inkey)
+{
+    switch(inkey)
+    {
+        case '+':
+        case '=':
+            cameraRadius *= 0.9;
+        break;
+
+        case '_':
+        case '-':
+            cameraRadius /= 0.9;
+        break;
+
+        default:
+        break;
+    }
+}
+
+void PanApp::resize(int width, int height)
+{
+    projection = perspective(
+        20.0, /* field of view in degree */
+        1.0 * width / height, /* aspect ratio */
+        0.1 * cameraRadius, /* Z near */
+        1000 * cameraRadius ); /* Z far */
+}
+
+Vec3 PanApp::getCameraLoc() const
+{
+    return cameraLookAtLoc
+        + cameraRadius * Vec3(
+            cos(cameraTheta)*cos(cameraPhi),
+            sin(cameraTheta)*cos(cameraPhi),
+            sin(cameraPhi));
+}
+
+void PanApp::setLookAtLoc(const Vec3& V)
+{
+    cameraLookAtLoc = V;
+}
+
+Vec3 PanApp::getLookAtLoc() const
+{
+    return cameraLookAtLoc;
+}
+
+Mat4 PanApp::getProjection() const
+{
+    return projection;
+}
+
+
+void TetrahedronApp::init()
 {
     float vertexArray[] =
     {
@@ -42,7 +164,7 @@ void TetrahedronEnvironment::init()
     geometry["position"] = Field(&buffer, 3, 3, 0);
     geometry.indices = &indexBuffer;
 
-    effect.vertexCode = 
+    effect.vertexCode =
         "\n"
         "uniform mat4 modelView;\n"
         "uniform mat4 projection;\n"
@@ -51,7 +173,8 @@ void TetrahedronEnvironment::init()
         "\n"
         "void main()\n"
         "{\n"
-        "    gl_Position = projection * modelView * vec4(position, 1.0);\n"
+        "    gl_Position = projection * modelView\n"
+        "       * vec4(position, 1.0);\n"
         "}\n";
 
     effect.fragmentCode =
@@ -62,7 +185,7 @@ void TetrahedronEnvironment::init()
         "{\n"
         "    gl_FragColor = color;\n"
         "}\n";
-    
+
     effect.compile();
 
     material.effect = &effect;
@@ -74,9 +197,13 @@ void TetrahedronEnvironment::init()
     material["color"] = Vec4(1.0, 0.0, 0.0, 1.0);
 }
 
-void TetrahedronEnvironment::draw() const
+void TetrahedronApp::draw() const
 {
-    camera["modelView"] = getModelView();
+    camera["modelView"] = lookAt(
+        getCameraLoc(),
+        getLookAtLoc(),
+        Vec3(0, 0, 1));
+
     camera["projection"] = getProjection();
 
     shape.draw();
@@ -84,8 +211,8 @@ void TetrahedronEnvironment::draw() const
 
 int main()
 {
-    TetrahedronEnvironment e;
-    e.mainLoop();
+    TetrahedronApp app;
+    launch(&app);
 
     return 0;
 }
