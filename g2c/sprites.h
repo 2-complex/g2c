@@ -792,7 +792,7 @@ namespace g2c {
         int referenceCounter;
     };
 
-    
+
     /*! Animator is a collection of animations that are running our about to run.  To use,
         instantiate, use add() to add Animation objects, then call step() every frame
         passing an absolute time in seconds.  Animator calls the animations' begin(),
