@@ -41,7 +41,8 @@
 #include <map>
 
 
-namespace g2c {
+namespace g2c
+{
     class Color;
     class Node;
     class Animator;
@@ -496,9 +497,8 @@ namespace g2c {
         virtual Polygon getCollisionPolygon(int frame = 0) const = 0;
     };
 
-
-    /*! Represents an axis aligned rectangle.  Mainly for use by Atlas which uses it to sample
-        a texture from various do draw sprite graphics.*/
+    /*! Represents an axis-aligned rectangle.  Mainly for use by Atlas which uses it to sample
+        a texture from various places do draw sprite graphics.*/
     class Rectangle : public Serializable
     {
     public:
@@ -661,6 +661,17 @@ namespace g2c {
         virtual void handleChild(const parse::Node* n);
     };
 
+    /* ! Describes how a layer gets blended into the background, with alpha, added or mixed, etc. */
+    class BlendState : public Serializable
+    {
+    public:
+        BlendState();
+        virtual ~BlendState();
+
+        BoolProperty alpha;
+        BoolProperty add;
+    };
+
     /* ! Layer is a type of Node meant to contain a group of similarly drawn objects.  Layer's
          color and matrix property contribute to the matrix and color of each of its decendants. */
     class Layer : public Node
@@ -668,7 +679,7 @@ namespace g2c {
     public:
         Layer();
         virtual ~Layer() {}
-
+	
         Mat4Property matrix;
 
         virtual Mat4 getMatrix() const;

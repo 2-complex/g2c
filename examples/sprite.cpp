@@ -33,7 +33,7 @@ void ShipApp::reshape(int width, int height)
 
 void ShipApp::init()
 {
-    Sprite::renderer = &renderer;
+    Mesh::renderer = &renderer;
     renderer.init();
 
     bank->initTextureWithPath(&ship, "ship.png");

@@ -2194,8 +2194,9 @@ Integer::Integer() : ptr(NULL)
     type = "Integer";
 }
 
-Integer::Integer(Font* infont, int* inptr) : Text(infont),
-                                             ptr(inptr)
+Integer::Integer(Font* infont, int* inptr)
+    : Text(infont)
+    , ptr(inptr)
 {
     type = "Integer";
 }
@@ -2211,6 +2212,16 @@ void Integer::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
         Text::drawInTree(worldMatrix, worldColor);
 }
 
+BlendState::BlendState()
+{
+    type = "BlendState";
+    addProperty("alpha", alpha);
+    addProperty("add", add);
+}
+
+BlendState::~BlendState()
+{
+}
 
 Layer::Layer()
 {
