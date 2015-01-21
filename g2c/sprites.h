@@ -44,6 +44,7 @@
 namespace g2c
 {
     class Color;
+    class NodeState;
     class Node;
     class Animator;
     class Animation;
@@ -122,10 +123,24 @@ namespace g2c
         void initWithParseNode(const parse::Node* n);
     };
 
+    /* ! Describes how a layer gets blended into the background, with alpha, added or mixed, etc. */
+    class NodeState
+    {
+    public:
+        NodeState();
+        NodeState(const Mat4& matrix, const Vec4& color);
+        virtual ~NodeState();
+
+        Mat4 matrix;
+        Vec4 color;
+
+        NodeState operator*(const NodeState& state) const;
+    };
+
     /*! Node is a node in a transform tree.  A Node contians a vector of children and a pointer
         to a parent.  Use the function add() to add a Node to another Node as a child.  Use remove()
         to remove child nodes.  Node::draw() iterates through the children and calls draw on each
-        one.  Subclasses of Node implement drawInTree(worldMatrix, worldColor) to draw using the
+        one.  Subclasses of Node implement drawInTree(const NodeState& cumulativeState) to draw using the
         given matrix and color. */
     class Node
         : public Serializable
@@ -144,6 +159,8 @@ namespace g2c
         virtual Mat4 getWorldMatrix() const;
         virtual Color getWorldColor() const;
 
+        NodeState getState() const;
+
         Node* parent;
         PointerVectorProperty<Node*> children;
 
@@ -161,7 +178,7 @@ namespace g2c
         void clearChildren();
 
         void draw() const;
-        virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
+        virtual void drawInTree(const NodeState& cumulativeState) const;
 
         virtual Actor* actorInClick(const Mat4& worldMatrix, const Vec2& C);
 
@@ -306,7 +323,8 @@ namespace g2c
     };
 
 
-    class Polygon : public Node {
+    class Polygon : public Node
+    {
     public:
         Polygon();
         virtual ~Polygon();
@@ -357,7 +375,7 @@ namespace g2c
 
         VectorProperty<Vec2Property> vertices;
 
-        virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
+        virtual void drawInTree(const NodeState& cumulativeState) const;
 
     private:
         mutable Mesh* mesh;
@@ -377,8 +395,8 @@ namespace g2c
         the sampler to select a matrix in a texture.  If no Mesh is specified, a default square
         mesh is used.
 
-        Actors can be positioned and scaled using x,y, and k, also a frame of animation that is
-        current.  The frame gets used to compute texture coordiates when drawing the mesh. */
+        Actors can be positioned and scaled using x,y, and k. A frame of animation can also be
+        selected.  The frame gets used to compute texture coordiates when drawing the mesh. */
     class Actor : public Node
     {
     public:
@@ -422,7 +440,7 @@ namespace g2c
         virtual void removeSampler(const Sampler* sampler);
 
         /*! Draws mesh using sampler as a texture.  If mesh is NULL, uses a default unit square Mesh.*/
-        virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
+        virtual void drawInTree(const NodeState& cumulativeState) const;
 
     private:
         void init();
@@ -442,7 +460,7 @@ namespace g2c
             from the coordinates of this Actor. */
         std::string justification;
 
-        /*! A standard c++ string, this is the text that gets drawn. */
+        /*! The text that gets drawn. */
         std::string s;
 
         /*! A font object is a Sampler whose frames correspond to the characters to be drawn. */
@@ -461,7 +479,7 @@ namespace g2c
         void keyboard(unsigned char inkey);
 
         /*! Draws an image of the c++ string s using the characters in font. */
-        virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
+        virtual void drawInTree(const NodeState& cumulativeState) const;
     };
 
     class Integer : public Text {
@@ -472,7 +490,7 @@ namespace g2c
         int* ptr;
 
         /*! Draws an image of the c++ string s using the characters in font. */
-        virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
+        virtual void drawInTree(const NodeState& cumulativeState) const;
     };
 
     /*! A Sampler is a texture together with a method by which a texture is sampled to draw
@@ -594,7 +612,7 @@ namespace g2c
         int baseFrame;
         bool enabled;
 
-        virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
+        virtual void drawInTree(const NodeState& cumulativeState) const;
 
         virtual void handleChild(const parse::Node* n);
         std::string serializeElements(std::string indent) const;
@@ -661,17 +679,6 @@ namespace g2c
         virtual void handleChild(const parse::Node* n);
     };
 
-    /* ! Describes how a layer gets blended into the background, with alpha, added or mixed, etc. */
-    class BlendState : public Serializable
-    {
-    public:
-        BlendState();
-        virtual ~BlendState();
-
-        BoolProperty alpha;
-        BoolProperty add;
-    };
-
     /* ! Layer is a type of Node meant to contain a group of similarly drawn objects.  Layer's
          color and matrix property contribute to the matrix and color of each of its decendants. */
     class Layer : public Node
@@ -717,6 +724,7 @@ namespace g2c
         virtual void initWithParseNode(const parse::Node* n);
         virtual void handleChild(const parse::Node* n);
 
+
         std::string serializeSamplers(std::string indent = "") const;
 
         virtual void playSound(const std::string& name, double gain = 1.0) const;
@@ -725,7 +733,7 @@ namespace g2c
         virtual Node* getNode(const std::string& name);
         virtual Sampler* getSampler(const std::string& name);
 
-        virtual void drawInTree(const Mat4& worldMatrix, const Color& worldColor) const;
+        virtual void drawInTree(const NodeState& cumulativeState) const;
 
     private:
         bool soundInitted;

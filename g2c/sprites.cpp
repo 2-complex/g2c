@@ -790,11 +790,11 @@ void Node::draw() const
 {
     if( visible() )
     {
-        drawInTree(getMatrix(), getColor());
+        drawInTree(getState());
     }
 }
 
-void Node::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
+void Node::drawInTree(const NodeState& cumulativeState) const
 {
     for(vector<Node*>::const_iterator itr = children.begin(); itr!=children.end(); itr++)
     {
@@ -802,9 +802,7 @@ void Node::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
 
         if( node->visible() )
         {
-            node->drawInTree(
-                worldMatrix * node->getMatrix(),
-                worldColor * node->getColor() );
+            node->drawInTree(cumulativeState * node->getState());
         }
     }
 }
@@ -872,7 +870,7 @@ void Node::clearChildren()
     deleteMe.clear();
 }
 
-bool Node::vectorInside( const Mat4& /*worldMatrix*/, const Vec2& /*V*/ ) const
+bool Node::vectorInside(const Mat4& /*worldMatrix*/, const Vec2& /*V*/) const
 {
     return true;
 }
@@ -1005,6 +1003,11 @@ Mat4 Node::getMatrix() const
 Color Node::getColor() const
 {
     return color;
+}
+
+NodeState Node::getState() const
+{
+    return NodeState(getMatrix(), getColor());
 }
 
 Mat4 Node::getWorldMatrix() const
@@ -1512,7 +1515,7 @@ Polygon operator * (const Mat4& M, const Polygon& P)
     return R;
 }
 
-void Polygon::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
+void Polygon::drawInTree(const NodeState& cumulativeState) const
 {
     if( size() < 3 )
         return;
@@ -1520,7 +1523,7 @@ void Polygon::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
     update();
 
     if( Mesh::renderer && mesh )
-        Mesh::renderer->drawMesh(mesh, worldMatrix, Mat3(), worldColor, NULL);
+        Mesh::renderer->drawMesh(mesh, cumulativeState.matrix, Mat3(), cumulativeState.color, NULL);
     else
     {
         g2cerror( "Attempt to draw polygon with no renderer.\n" );
@@ -1864,9 +1867,9 @@ void Actor::removeSampler(const Sampler* s)
     Node::removeSampler(s);
 }
 
-void Actor::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
+void Actor::drawInTree(const NodeState& cumulativeState) const
 {
-    Mat4 matrix(worldMatrix);
+    Mat4 matrix(cumulativeState.matrix);
     Mat3 texMatrix;
 
     if( sampler )
@@ -1881,10 +1884,10 @@ void Actor::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
         exit(0);
     }
 
-    Mesh::renderer->drawMesh(mesh, matrix, texMatrix, worldColor, sampler);
+    Mesh::renderer->drawMesh(mesh, matrix, texMatrix, cumulativeState.color, sampler);
 
     if( Sprite::drawLines )
-        collisionPolygon().drawInTree(worldMatrix, worldColor);
+        collisionPolygon().drawInTree(cumulativeState);
 }
 
 
@@ -1987,7 +1990,7 @@ Button::Button(Sampler* insampler, int baseFrame)
     frame = baseFrame;
 }
 
-void Button::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
+void Button::drawInTree(const NodeState& cumulativeState) const
 {
     if( !sampler )
     {
@@ -1995,10 +1998,10 @@ void Button::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
         exit(0);
     }
 
-    Actor::drawInTree(worldMatrix, worldColor);
+    Actor::drawInTree(cumulativeState);
 
     if( Sprite::drawLines )
-        collisionPolygon().drawInTree(worldMatrix, worldColor);
+        collisionPolygon().drawInTree(cumulativeState);
 }
 
 bool Button::mouseDown(const Mat4& worldMatrix, const Vec2& C)
@@ -2106,16 +2109,18 @@ Text::Text(Font* infont) : Actor(infont),
     type = "Text";
 }
 
-void Text::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
+void Text::drawInTree(const NodeState& cumulativeState) const
 {
     if( font )
     {
         string news = s+(drawPipe?"|":"");
-        font->drawString(worldMatrix, worldColor,
+        font->drawString(
+            cumulativeState.matrix,
+            cumulativeState.color,
             position.x, position.y, k(),
             news.c_str(), justification);
         if( Sprite::drawLines )
-            collisionPolygon().drawInTree(worldMatrix, worldColor);
+            collisionPolygon().drawInTree(cumulativeState);
     }
     else
     {
@@ -2201,26 +2206,40 @@ Integer::Integer(Font* infont, int* inptr)
     type = "Integer";
 }
 
-void Integer::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
+void Integer::drawInTree(const NodeState& cumulativeState) const
 {
     if( ptr )
     {
-        font->drawString(worldMatrix, worldColor, position.x, position.y, k,
+        font->drawString(
+            cumulativeState.matrix,
+            cumulativeState.color,
+            position.x, position.y, k,
             intToStringWithCommas(*ptr).c_str(), justification);
     }
     else
-        Text::drawInTree(worldMatrix, worldColor);
+        Text::drawInTree(cumulativeState);
 }
 
-BlendState::BlendState()
+NodeState::NodeState()
 {
-    type = "BlendState";
-    addProperty("alpha", alpha);
-    addProperty("add", add);
 }
 
-BlendState::~BlendState()
+NodeState::NodeState(const Mat4& matrix, const Vec4& color)
+    : matrix(matrix)
+    , color(color)
 {
+}
+
+NodeState::~NodeState()
+{
+}
+
+NodeState NodeState::operator*(const NodeState& state) const
+{
+    NodeState newState(
+        matrix * state.matrix,
+        color * state.color);
+    return newState;
 }
 
 Layer::Layer()
@@ -2287,14 +2306,14 @@ Actor* World::actorInClick(const Vec2& V)
     return Node::actorInClick(getMatrix(), V);
 }
 
-void World::drawInTree(const Mat4& worldMatrix, const Color& worldColor) const
+void World::drawInTree(const NodeState& cumulativeState) const
 {
     if( !Mesh::renderer )
     {
         g2cerror( "Attempt to draw World with no renderer. World: %s\n", name.c_str() );
         exit(0);
     }
-    Node::drawInTree(worldMatrix * getMatrix(), worldColor * getColor());
+    Node::drawInTree(cumulativeState * NodeState(getMatrix(), getColor()));
 }
 
 void World::resize(int width, int height)
