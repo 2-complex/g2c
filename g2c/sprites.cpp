@@ -802,7 +802,9 @@ void Node::drawInTree(const NodeState& cumulativeState) const
 
         if( node->visible() )
         {
-            node->drawInTree(cumulativeState * node->getState());
+            NodeState newState = cumulativeState * node->getState();
+            newState.makeCurrent();
+            node->drawInTree(newState);
         }
     }
 }
@@ -2152,16 +2154,16 @@ void Text::handleChild(const parse::Node* n)
 
     if(value)
     {
-        if(n_name == "fontName")
+        if( n_name == "fontName" )
         {
             fontName = value->data.s;
             gTextToFontName[this] = value->data.s;
         }
 
-        if(n_name == "s")
+        if( n_name == "s" )
             s = value->data.s;
 
-        if(n_name == "justification")
+        if( n_name == "justification" )
             justification = value->data.s;
     }
 }
@@ -2234,12 +2236,36 @@ NodeState::~NodeState()
 {
 }
 
+void NodeState::mergeMode(const NodeState& state)
+{
+    for( map<string, int>::const_iterator itr = state.mode.begin(); itr!=state.mode.end(); itr++ )
+        mode[itr->first] = itr->second;
+}
+
 NodeState NodeState::operator*(const NodeState& state) const
 {
     NodeState newState(
         matrix * state.matrix,
         color * state.color);
+
+    newState.mode = mode;
+    newState.mergeMode(state);
+
     return newState;
+}
+
+void NodeState::makeCurrent() const
+{
+    for( map<string, int>::const_iterator itr = mode.begin(); itr != mode.end(); itr++ )
+    {
+        if( itr->first == "alpha" )
+        {
+            if( itr->second )
+                glEnable(GL_ALPHA);
+            else
+                glDisable(GL_ALPHA);
+        }
+    } 
 }
 
 Layer::Layer()

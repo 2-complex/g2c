@@ -126,6 +126,7 @@ namespace g2c
     /* ! Describes how a layer gets blended into the background, with alpha, added or mixed, etc. */
     class NodeState
     {
+    friend class Node;
     public:
         NodeState();
         NodeState(const Mat4& matrix, const Vec4& color);
@@ -133,8 +134,13 @@ namespace g2c
 
         Mat4 matrix;
         Vec4 color;
+        std::map<std::string, int> mode;
 
         NodeState operator*(const NodeState& state) const;
+
+    private:
+        void mergeMode(const NodeState& state);
+        void makeCurrent() const;
     };
 
     /*! Node is a node in a transform tree.  A Node contians a vector of children and a pointer

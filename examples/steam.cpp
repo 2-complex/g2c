@@ -1,9 +1,9 @@
 
-#include "panenvironment.h"
 #include "graphics.h"
 #include "launch.h"
 
 using namespace std;
+using namespace g2c;
 
 struct Particle
 {
