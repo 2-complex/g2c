@@ -1,5 +1,4 @@
 
-#include "panenvironment.h"
 #include "graphics.h"
 #include "app.h"
 #include "launch.h"

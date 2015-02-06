@@ -99,7 +99,7 @@ worldapp: $(DEPS) launch.o worldapp.cpp
 	$(call build_with_source, launch.o worldapp.cpp, worldapp)
 
 
-launch.o: $(DEPS) launch.h launch.cpp
+launch.o: $(launch) DEPS.h launch.cpp
 	c++  $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) \
 		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		launch.cpp -c
