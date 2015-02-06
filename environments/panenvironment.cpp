@@ -193,10 +193,11 @@ void PanEnvironment::draw2d() const
 
 Vec3 PanEnvironment::getCameraLoc() const
 {
-    return cameraLookAtLoc+
-        cameraRadius*Vec3(cos(cameraTheta)*cos(cameraPhi),
-                              sin(cameraTheta)*cos(cameraPhi),
-                              sin(cameraPhi));
+    return cameraLookAtLoc
+        + cameraRadius * Vec3(
+            cos(cameraTheta)*cos(cameraPhi),
+            sin(cameraTheta)*cos(cameraPhi),
+            sin(cameraPhi));
 }
 
 void PanEnvironment::lookAt(const Vec3& V)

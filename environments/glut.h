@@ -33,28 +33,28 @@ namespace g2c {
 class Glut : public GlutListener
 {
 friend void fdisplay();
-friend void freshape(int w, int h);
+friend void fresize(int w, int h);
 
 public:
     Glut();
     virtual ~Glut();
-	
+
     /*! If true, calls display over and over*/
     bool animate;
-	
+
     Mat4 getModelView() const;
     Mat4 getProjection() const;
-    
+
     int getWindowWidth() const;
     int getWindowHeight() const;
-    
-    
+
+
     /*! initWindow Initilaizes glut.  Sets up the gl context, sets flags etc.
         Must be called before the mainLoop.*/
     void initWindow(const char* windowName="Glut",
                   	int windowSizeX=640,
                   	int windowSizeY=480);
-    
+
     /*  Call this to start the glut main loop, this hands control over to glut
     	to handle events and draw.*/
     void mainLoop();
@@ -69,37 +69,37 @@ protected:
         camera.  When the flag gets set in button, the subsequent mouse-drag and
 	mouse-up events are interpreted to pan the camera.*/
     bool dragging;
-	
+
 	/*! While the mouse is getting dragged, this is the location of the previous
 		mouse event*/
 	Vec2 last;
-	
+
 	/*! flip reports the screen location of the point given coordinates of the
 	    form that gl button etc reports them.*/
 	Vec2 flip(const Vec2& v) const;
-	
+
 	/*! display gets called by the glut display function.  Think twice before
 		overriding if draw() can do the job.  display calls step() and init(),
 		so it is not const.*/
 	virtual void display();
-	
+
 	/*! button gets called by the like-named glut function.
 	    Think twice before overriding if the same job could be done with mouseDown
 	    mouseDragged and mouseUp.*/
 	virtual void button( int b, int state, int x, int y );
-	
+
     /*! motion gets called by the like-named glut function.
         Think twice before overriding if the same job could be done with mouseDown
         mouseDragged and mouseUp.*/
     virtual void motion( int x, int y );
-    
-    /*!  reshape gets called directly by the glut reshape function.*/
-    virtual void reshape( int w, int h );
-	
+
+    /*!  resize gets called directly by the glut resize function.*/
+    virtual void resize( int w, int h );
+
     /*! gets called by initWindow.  Override to turn things on and off, or set the
         clear-color blending or whathaveyou.*/
     virtual void enables();
-	
+
 	/*! init() is called by display() when the initted flag is set to false.
     then initted gets set true.*/
     virtual void init();
@@ -111,12 +111,12 @@ protected:
     /*! draw is called after a clear and inside a matrix push.  Override draw()
         to add graphics to the scene using ordinary gl calls like glVertex3f().*/
     virtual void draw() const;
-    
+
 private:
-	/*	window height and width updated in the reshape function*/
+	/*	window height and width updated in the resize function*/
 	double windowHeight;
 	double windowWidth;
-	
+
 	bool glutInitted;
 };
 

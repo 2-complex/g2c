@@ -47,12 +47,12 @@ void GlutTrampoline::enables()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-void GlutTrampoline::reshape(int w, int h)
+void GlutTrampoline::resize(int w, int h)
 {
-    Glut::reshape(w, h);
+    Glut::resize(w, h);
 
     if(app)
-        app->reshape(w, h);
+        app->resize(w, h);
     else
         g2clog( "GlutTrampoline used with no app\n" );
 }
@@ -150,7 +150,7 @@ bool GlutTrampoline::mouseDown(const Vec2& C)
     }
     else
         g2clog( "GlutTrampoline used with no app\n" );
-    
+
     return false;
 }
 

@@ -31,14 +31,14 @@ class ScrollEnvironment : public Environment {
 public:
 	ScrollEnvironment();
 	virtual ~ScrollEnvironment();
-	
+
 private:
 	void display();
-	
+
 protected:
-	void reshape(int w, int h);
+	void resize(int w, int h);
 	void motion(int x, int y);
-	
+
     /*  the point where the camera is centered*/
 	Vec2 center;
 };

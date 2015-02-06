@@ -29,10 +29,10 @@
 ScrollEnvironment::ScrollEnvironment() {}
 ScrollEnvironment::~ScrollEnvironment() {}
 
-void ScrollEnvironment::reshape(int w, int h)
+void ScrollEnvironment::resize(int w, int h)
 {
-	Environment::reshape(w, h);
-	
+	Environment::resize(w, h);
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(0.0, w, 0.0, h);
@@ -46,23 +46,23 @@ void ScrollEnvironment::display()
 		init();
 		initted = true;
 	}
-	
+
 	step( currentTime() );
-	
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-    
+
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
     draw();
     glPopMatrix();
-    
+
     glutSwapBuffers();
-    
+
     if(animate)
     	glutPostRedisplay();
 }
@@ -70,20 +70,20 @@ void ScrollEnvironment::display()
 void ScrollEnvironment::motion(int x, int y)
 {
 	Vec2 c = flip(Vec2(x,y));
-	
+
 	if( dragging )
 	{
 		center += c - last;
 		last = c;
 	}
-	
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	int w = getWindowWidth();
 	int h = getWindowHeight();
 	gluOrtho2D(0.0, w, 0.0, h);
 	glTranslatef(center.x, center.y, 0.0);
-	
+
 	mouseDragged(c);
 }
 

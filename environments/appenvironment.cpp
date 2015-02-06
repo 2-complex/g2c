@@ -33,12 +33,12 @@ void AppEnvironment::enables()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-void AppEnvironment::reshape(int w, int h)
+void AppEnvironment::resize(int w, int h)
 {
-	Environment::reshape(w, h);
-	
+	Environment::resize(w, h);
+
 	if(app)
-		app->reshape(w, h);
+		app->resize(w, h);
 	else
 		g2clog( "AppEnvironment used with no app\n" );
 }
@@ -113,7 +113,7 @@ bool AppEnvironment::mouseDown(const Vec2& C)
 	}
 	else
 		g2clog( "AppEnvironment used with no app\n" );
-	
+
 	return false;
 }
 

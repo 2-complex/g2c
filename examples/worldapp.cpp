@@ -19,7 +19,7 @@ public:
     virtual void setBank(Bank* inBank);
 
     virtual void init();
-    virtual void reshape(int width, int height);
+    virtual void resize(int width, int height);
     virtual void draw() const;
     virtual void destroy();
 
@@ -43,7 +43,7 @@ void WorldApp::setBank(Bank* inBank)
     this->bank = inBank;
 }
 
-void WorldApp::reshape(int width, int height)
+void WorldApp::resize(int width, int height)
 {
     renderer->projection = orthographic(0, width, 0, height, -1, 1);
 }

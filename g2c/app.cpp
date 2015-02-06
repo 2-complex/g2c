@@ -62,7 +62,7 @@ void App::keyboard(unsigned char /*inkey*/)
 {
 }
 
-void App::reshape(int /*width*/, int /*height*/)
+void App::resize(int /*width*/, int /*height*/)
 {
 }
 
