@@ -4,6 +4,7 @@
 #include "launch.h"
 
 using namespace std;
+using namespace g2c;
 
 class PanApp : public App
 {

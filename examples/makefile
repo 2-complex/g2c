@@ -5,7 +5,7 @@ ODEBUG = $(DEBUG)
 
 G2C_ROOT_DIR = ..
 G2C_SOURCE_DIR = $(G2C_ROOT_DIR)/g2c
-ENVIRONMENTS_DIR = $(G2C_ROOT_DIR)/environments
+GLUT_TRAMPOLINE_DIR = $(G2C_ROOT_DIR)/trampolines/glut
 OBJ_DIR = obj
 
 include $(G2C_SOURCE_DIR)/platform.mk
@@ -15,7 +15,6 @@ EXES = \
 	bitmap \
 	quad \
 	serialize \
-	serializemore \
 	ship \
 	sound \
 	sprite \
@@ -24,39 +23,38 @@ EXES = \
 	tetrahedron \
 	text \
 	triangle \
-	worldfile \
-	worldapptest
+	worldapp
 
 all: $(EXES)
 
 
-LIBENVIRONMENTS = $(ENVIRONMENTS_DIR)/libenvironments.a
+LIBGLUTTRAMPOLINE = $(GLUT_TRAMPOLINE_DIR)/libgluttrampoline.a
 LIBG2C = $(G2C_SOURCE_DIR)/libg2c.a
 
 $(LIBG2C): force_look
 	cd $(G2C_SOURCE_DIR) && $(MAKE) libg2c.a
 
-$(LIBENVIRONMENTS): force_look
-	cd $(ENVIRONMENTS_DIR) && $(MAKE) libenvironments.a
+$(LIBGLUTTRAMPOLINE): force_look
+	cd $(GLUT_TRAMPOLINE_DIR) && $(MAKE) libgluttrampoline.a
 
 force_look:
 	true
 
 define build_with_source
 	c++ $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) \
-		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
+		-I$(G2C_SOURCE_DIR) -I$(GLUT_TRAMPOLINE_DIR) \
 		$(1) -o $(2) \
-		$(LIBENVIRONMENTS) \
+		$(LIBGLUTTRAMPOLINE) \
 		$(LIBG2C) \
 		$(GRAPHICS_LIBRARIES) $(AUDIO_LIBRARIES)
 endef
 
-DEPS := $(LIBG2C) $(LIBENVIRONMENTS) $(G2C_SOURCE_DIR)/lin/lin.h
+DEPS := $(LIBG2C) $(LIBGLUTTRAMPOLINE) $(G2C_SOURCE_DIR)/lin/lin.h
 
-atlas: $(DEPS) atlas.cpp
+atlas: $(DEPS) launch.o atlas.cpp
 	$(call build_with_source, launch.o atlas.cpp, atlas)
 
-modelapp: $(DEPS) modelapp.cpp
+modelapp: $(DEPS) launch.o modelapp.cpp
 	$(call build_with_source, launch.o modelapp.cpp, modelapp)
 
 quad: $(DEPS) launch.o quad.cpp
@@ -71,7 +69,7 @@ ship: $(DEPS) launch.o ship.cpp
 bitmap: $(DEPS) launch.o bitmap.cpp
 	$(call build_with_source, launch.o bitmap.cpp, bitmap)
 
-sound: $(DEPS) sound.cpp
+sound: $(DEPS) launch.o sound.cpp
 	$(call build_with_source, launch.o sound.cpp, sound)
 
 sprite: $(DEPS) launch.o sprite.cpp
@@ -83,13 +81,13 @@ button: $(DEPS) launch.o button.cpp
 star: $(DEPS) launch.o star.cpp
 	$(call build_with_source, launch.o star.cpp, star)
 
-tetrahedron: $(DEPS) tetrahedron.cpp
+tetrahedron: $(DEPS) launch.o tetrahedron.cpp
 	$(call build_with_source, launch.o tetrahedron.cpp, tetrahedron)
 
 steam: $(DEPS) launch.o steam.cpp
 	$(call build_with_source, launch.o steam.cpp, steam)
 
-text: $(DEPS) text.cpp
+text: $(DEPS) launch.o text.cpp
 	$(call build_with_source, launch.o text.cpp, text)
 
 triangle: $(DEPS) launch.o triangle.cpp
@@ -99,16 +97,17 @@ worldapp: $(DEPS) launch.o worldapp.cpp
 	$(call build_with_source, launch.o worldapp.cpp, worldapp)
 
 
-launch.o: $(launch) DEPS.h launch.cpp
+launch.o: $(DEPS) launch.cpp
 	c++  $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) \
-		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
+		-I$(G2C_SOURCE_DIR) -I$(GLUT_TRAMPOLINE_DIR) \
 		launch.cpp -c
 
 
 clean:
 	cd $(G2C_SOURCE_DIR) && $(MAKE) clean
-	cd $(ENVIRONMENTS_DIR) && $(MAKE) clean
+	cd $(GLUT_TRAMPOLINE_DIR) && $(MAKE) clean
 	-rm -f $(EXES)
+	-rm -f *.o
 	-rm -f $(OBJ_DIR)/*.o
 	-rm -rf *.dSYM
 

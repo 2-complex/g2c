@@ -34,12 +34,10 @@ App::~App()
 
 void App::setBank(Bank*)
 {
-
 }
 
 void App::setAudioPlayer(AudioPlayer*)
 {
-
 }
 
 void App::init()
@@ -64,6 +62,7 @@ void App::keyboard(unsigned char /*inkey*/)
 
 void App::resize(int /*width*/, int /*height*/)
 {
+    g2clog("WARNING: An app with default resize() function will not respond to the reshaping of the screen.");
 }
 
 void App::special(int /*inkey*/)
@@ -106,22 +105,18 @@ void App::touchUp(unsigned int index, const Vec2& C)
 
 void App::controllerKeyDown(int deviceId, char c)
 {
-
 }
 
 void App::controllerKeyUp(int deviceId, char c)
 {
-
 }
 
 void App::controllerMotion(int deviceId, int inputId, double x, double y)
 {
-
 }
 
 void App::controllerTriggerMotion(int deviceId, int inputId, double x)
 {
-
 }
 
 bool App::getNeedsKeyboard()
