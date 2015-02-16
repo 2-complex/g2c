@@ -62,7 +62,7 @@ void App::keyboard(unsigned char /*inkey*/)
 
 void App::resize(int /*width*/, int /*height*/)
 {
-    g2clog("WARNING: An app with default resize() function will not respond to the reshaping of the screen.");
+    g2clog("WARNING: An app with default resize() function will not respond to the reshaping of the screen.\n");
 }
 
 void App::special(int /*inkey*/)
