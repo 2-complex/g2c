@@ -41,20 +41,6 @@ public:
     Listener();
     virtual ~Listener();
 
-    /*! button get called by the like-named glut function.
-        Think twice before overriding if the same job could be done with mouseUp
-        mouseDragged mouseDown.*/
-    virtual void button( int b, int state, int x, int y );
-
-    /*! motion gets called by the like-named glut function.
-        Think twice before overriding if the same job could be done with mouseUp
-        mouseDragged mouseDown.*/
-    virtual void motion( int x, int y );
-    
-    /*! Gets called directly by the glut function keyboard.
-        Override to handle key events.*/
-    virtual void keyboard(unsigned char inkey);
-    
     /*! keyDown gets called when a key is first pressed.
         Override to handle key events.*/
     virtual void keyDown(unsigned char inkey);
@@ -62,18 +48,13 @@ public:
     /*! keyUp gets called when a key is released.
         Override to handle key events.*/
     virtual void keyUp(unsigned char inkey);
-
-    /*! special gets called directly by the glut function special.
-        It should be overridden to handle special keys such as
-        arrow keys.*/
-    virtual void special(int inkey);
     
     /*! mouseDown() gets called when the mouse button is first depressed.
         Override mouseDown to implement new mouse click behavior.  Return true
         to stop Environment from interpreting the mouse event and panning the
         camera.*/
     virtual bool mouseDown(const Vec2& C);
-    
+
     /*! mouseDragged() gets called when the mouse is dragged.*/
     virtual void mouseDragged(const Vec2& C);
 
