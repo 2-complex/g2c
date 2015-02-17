@@ -25,7 +25,8 @@
 #include "opengl.h"
 
 
-namespace g2c {
+namespace g2c
+{
 
 Listener* gListener = NULL;
 

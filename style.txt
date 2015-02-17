@@ -8,10 +8,9 @@ other documentation shall be used to describe what functions, classes and other 
 do without carrying implication of ease or difficulty of use.
 
 
-Filenames shall be all lower case.
+Filenames lower case.
 
-
-Contrary to popular convention, classes may share a file.  In fact classes should share a file
+Contrary to popular convention, classes may share a file.  In fact, classes should share a file
 when they all depend on each other.
 
 If class B depends on class A, A may be separated into a file of its own when there is a use-case
@@ -19,9 +18,7 @@ for A without B.
 
 When a class is defined in a single file of its own, that file is named after the class.
 
-
 Lines of code shall not exceed 100 characters in length.
-
 
 When a line starts to gets long, break it up like this:
 
@@ -53,7 +50,7 @@ Mat4 m = Mat4(
 	  0,   0, -3,  0
 	  0,   0,  0,  1 );
 
-But not avoid when changing one line might involve tweaking a bunch of lines around,
+But avoid when changing one line might involve tweaking a bunch of lines around,
 such as in a string constant for shadercode, so do this:
 
 string code = "\n"
@@ -108,4 +105,5 @@ if( ... ) foo();
 No tab characters allowed in c/c++ files or header files.
 
 End of line characters are '\n', that's ascii character 10, not ascii character 13.
+
 
