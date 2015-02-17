@@ -41,6 +41,11 @@ public:
     Listener();
     virtual ~Listener();
 
+    /*! keyboard gets called when a key should type a letter, i.e. once at the
+        same time as keyDown and then, after a pause, repeatedly according to
+        the keyboard repeat rate.*/
+    virtual void keyboard(unsigned char inkey);
+
     /*! keyDown gets called when a key is first pressed.
         Override to handle key events.*/
     virtual void keyDown(unsigned char inkey);

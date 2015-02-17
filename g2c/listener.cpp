@@ -25,13 +25,18 @@
 #include "opengl.h"
 
 
-namespace g2c
-{
+namespace g2c {
 
 Listener* gListener = NULL;
 
 Listener::Listener() : listening(true), delegate(NULL) {}
 Listener::~Listener() {}
+
+void Listener::keyboard(unsigned char inkey)
+{
+    if( delegate )
+        delegate->keyboard(inkey);
+}
 
 void Listener::keyDown(unsigned char inkey)
 {
