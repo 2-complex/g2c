@@ -36,7 +36,7 @@ class Listener {
     
 private:
     std::set<unsigned char> keys;
-    
+
 public:
     Listener();
     virtual ~Listener();
@@ -44,11 +44,11 @@ public:
     /*! keyDown gets called when a key is first pressed.
         Override to handle key events.*/
     virtual void keyDown(unsigned char inkey);
-    
+
     /*! keyUp gets called when a key is released.
         Override to handle key events.*/
     virtual void keyUp(unsigned char inkey);
-    
+
     /*! mouseDown() gets called when the mouse button is first depressed.
         Override mouseDown to implement new mouse click behavior.  Return true
         to stop Environment from interpreting the mouse event and panning the
@@ -60,9 +60,9 @@ public:
 
     /*! gets called when the mouse is released.*/
     virtual void mouseUp(const Vec2& C);
- 
+
     bool listening;
- 
+
     /*! The base-class behavior is to appeal to the delegate if it's non-null
         for each virtual function.*/
     Listener* delegate;
