@@ -30,9 +30,6 @@ EXES = \
 all: $(EXES)
 
 
-CC = emcc
-
-
 LIBENVIRONMENTS = $(ENVIRONMENTS_DIR)/libenvironments.a
 LIBG2C = $(G2C_SOURCE_DIR)/libg2c.a
 
@@ -46,7 +43,7 @@ force_look:
 	true
 
 define build_with_source
-	$(CC) $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) \
+	c++ $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) \
 		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		$(1) -o $(2) \
 		$(LIBENVIRONMENTS) \

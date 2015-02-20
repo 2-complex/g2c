@@ -90,6 +90,7 @@ var Program = function Program(canvas)
     this.translation = { originX: 0, originY: 0, zoom: 1.0 };
 
     Bindings.resize(canvas.width, canvas.height);
+    Bindings.init();
 
     this.mouseController = new MouseController(canvas, this);
 

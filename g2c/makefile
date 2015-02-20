@@ -9,11 +9,11 @@ G2C_DIRECTORY = ..
 
 SOURCE_DIR = $(G2C_DIRECTORY)/g2c
 OBJ_DIR = obj
-FLAGS = -s FULL_ES2=1 -DEMSCRIPTEN -DSTUB_GL1
+
 CURRENT = libg2c.a
 current: $(CURRENT)
 
-UNAME := Linux
+UNAME := $(shell uname)
 
 ifeq ($(UNAME), Darwin)
 	PLATFORM_BANK = $(OBJ_DIR)/macbank.o
@@ -22,8 +22,6 @@ endif
 ifeq ($(UNAME), Linux)
 	PLATFORM_BANK = $(OBJ_DIR)/unixbank.o
 endif
-
-CC = emcc
 
 
 OFILES = \
