@@ -576,10 +576,10 @@ string Assumption::serializeElements(string indent) const
     string r = Serializable::serializeElements(indent);
 
     if( effect )
-        r += TAB + indent + "'effect' : '" + effect->name + "',\n";
+        r += TAB + indent + "\"effect\" : '" + effect->name + "',\n";
 
     for(const_iterator itr = begin(); itr!=end(); itr++)
-        r += TAB + indent + "'" + itr->first + "' : " + itr->second.toString() + ",\n";
+        r += TAB + indent + "\"" + itr->first + "\" : " + itr->second.toString() + ",\n";
 
     return r;
 }
@@ -643,9 +643,9 @@ void Assumption::handleChild(const parse::Node* n)
             case 16:
                 (*this)[n_name] = Mat4(
                     v[0], v[1], v[2], v[3],
-                                       v[4], v[5], v[6], v[7],
-                                       v[8], v[9], v[10], v[11],
-                                       v[12], v[13], v[14], v[15]);
+                    v[4], v[5], v[6], v[7],
+                    v[8], v[9], v[10], v[11],
+                    v[12], v[13], v[14], v[15]);
             break;
 
             default:
@@ -778,8 +778,7 @@ string Buffer::serializeElements(string indent) const
     float* array = new float[size];
     glGetBufferSubData(GL_ARRAY_BUFFER, 0, size*sizeof(float), array);
 
-
-    r += TAB + indent + "'array' : [";
+    r += TAB + indent + "\"array\" : [";
     for(int i = 0; i < size; i++)
     {
         if( i%8 == 0 )
@@ -795,6 +794,7 @@ string Buffer::serializeElements(string indent) const
     return "(Buffer::serialize does not work on mobile.)";
 #endif
 }
+
 
 void Buffer::handleChild(const parse::Node* n)
 {
@@ -949,7 +949,7 @@ string IndexBuffer::serializeElements(string indent) const
     unsigned short* array = new unsigned short[size];
     glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size*sizeof(unsigned short), array);
 
-    r += TAB + indent + "'array' : [";
+    r += TAB + indent + "\"array\" : [";
     for(int i = 0; i < size; i++)
     {
         if( i%3 == 0 )
@@ -1018,11 +1018,11 @@ string Geometry::serializeElements(string indent) const
     string r = Serializable::serializeElements(indent);
 
     if(indices)
-        r += TAB + indent + "'indices' : '" + indices->name + "',\n";
+        r += TAB + indent + "\"indices\" : \"" + indices->name + "\",\n";
 
     for(const_iterator itr = begin(); itr!=end(); itr++)
     {
-        r += TAB + indent + "'" + itr->first + "' : " +
+        r += TAB + indent + "\"" + itr->first + "\" : " +
             flattenWhitespace(itr->second.serialize(indent + TAB).c_str()) + ",\n";
     }
 
@@ -1095,11 +1095,11 @@ string Field::serializeElements(std::string indent) const
     string r = Serializable::serializeElements(indent);
 
     if( buffer )
-        r += TAB + indent + "'buffer' : '" + buffer->name + "',\n";
+        r += TAB + indent + "\"buffer\" : \"" + buffer->name + "\",\n";
 
-    r += TAB + indent + "'size' : " + intToString(size) + ",\n";
-    r += TAB + indent + "'stride' : " + intToString(stride) + ",\n";
-    r += TAB + indent + "'offset' : " + intToString(offset) + ",\n";
+    r += TAB + indent + "\"size\" : " + intToString(size) + ",\n";
+    r += TAB + indent + "\"stride\" : " + intToString(stride) + ",\n";
+    r += TAB + indent + "\"offset\" : " + intToString(offset) + ",\n";
 
     return r;
 }
@@ -1209,14 +1209,14 @@ string Shape::serializeElements(string indent) const
     string r = Serializable::serializeElements(indent);
 
     if( !visible )
-        r += TAB + indent + "'visible' : '" + intToString(visible) + "',\n";
+        r += TAB + indent + "\"visible\" : \"" + intToString(visible) + "\",\n";
 
     if( geometry )
-        r += TAB + indent + "'geometry' : '" + geometry->name + "',\n";
-    r += TAB + indent + "'assumptions' : [\n";
+        r += TAB + indent + "\"geometry\" : \"" + geometry->name + "\",\n";
+    r += TAB + indent + "\"assumptions\" : [\n";
 
     for(list<Assumption*>::const_iterator itr = assumptions.begin(); itr!=assumptions.end(); itr++)
-        r += TAB + TAB + indent + "'" + (*itr)->name + "',\n";
+        r += TAB + TAB + indent + "\"" + (*itr)->name + "\",\n";
 
     r += TAB + indent + "],\n";
 
@@ -1416,15 +1416,15 @@ string Model::serializeElements(string indent) const
 
     if( !include.empty() )
     {
-        r += TAB + indent + "'include' : [\n";
+        r += TAB + indent + "\"include\" : [\n";
         for(vector<string>::const_iterator itr = include.begin(); itr!=include.end(); itr++)
-            r += TAB + TAB + indent + "'" + (*itr) + "',\n";
+            r += TAB + TAB + indent + "\"" + (*itr) + "\",\n";
         r += TAB + indent +  "],\n";
     }
 
     if( !elements.empty() )
     {
-        r += TAB + indent + "'elements' : [\n";
+        r += TAB + indent + "\"elements\" : [\n";
         for(vector<Element*>::const_iterator itr = elements.begin(); itr!=elements.end(); itr++)
             r += (*itr)->serialize(TAB + TAB + indent) + ",\n";
         r += TAB + indent +  "],\n";

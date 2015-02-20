@@ -12,9 +12,10 @@ include $(G2C_SOURCE_DIR)/platform.mk
 
 EXES = \
 	atlas \
-	modelfile \
+	bitmap \
 	quad \
 	serialize \
+	serializemore \
 	ship \
 	sound \
 	sprite \
@@ -56,13 +57,13 @@ endef
 DEPS := $(LIBG2C) $(LIBENVIRONMENTS) $(G2C_SOURCE_DIR)/lin/lin.h
 
 atlas: $(DEPS) atlas.cpp
-	$(call build_with_source, atlas.cpp, atlas)
+	$(call build_with_source, launch.o atlas.cpp, atlas)
 
-modelfile: $(DEPS) modelfile.cpp
-	$(call build_with_source, modelfile.cpp, modelfile)
+modelapp: $(DEPS) modelapp.cpp
+	$(call build_with_source, launch.o modelapp.cpp, modelapp)
 
-quad: $(DEPS) quad.cpp
-	$(call build_with_source, quad.cpp, quad)
+quad: $(DEPS) launch.o quad.cpp
+	$(call build_with_source, launch.o quad.cpp, quad)
 
 serialize: $(DEPS) serialize.cpp
 	$(call build_with_source, serialize.cpp, serialize)
@@ -70,37 +71,41 @@ serialize: $(DEPS) serialize.cpp
 ship: $(DEPS) launch.o ship.cpp
 	$(call build_with_source, launch.o ship.cpp, ship)
 
+bitmap: $(DEPS) launch.o bitmap.cpp
+	$(call build_with_source, launch.o bitmap.cpp, bitmap)
+
 sound: $(DEPS) sound.cpp
-	$(call build_with_source, sound.cpp, sound)
+	$(call build_with_source, launch.o sound.cpp, sound)
 
 sprite: $(DEPS) launch.o sprite.cpp
 	$(call build_with_source, launch.o sprite.cpp, sprite)
+
+button: $(DEPS) launch.o button.cpp
+	$(call build_with_source, launch.o button.cpp, button)
 
 star: $(DEPS) launch.o star.cpp
 	$(call build_with_source, launch.o star.cpp, star)
 
 tetrahedron: $(DEPS) tetrahedron.cpp
-	$(call build_with_source, tetrahedron.cpp, tetrahedron)
+	$(call build_with_source, launch.o tetrahedron.cpp, tetrahedron)
 
 steam: $(DEPS) launch.o steam.cpp
 	$(call build_with_source, launch.o steam.cpp, steam)
 
 text: $(DEPS) text.cpp
-	$(call build_with_source, text.cpp, text)
+	$(call build_with_source, launch.o text.cpp, text)
 
 triangle: $(DEPS) launch.o triangle.cpp
 	$(call build_with_source, launch.o triangle.cpp, triangle)
 
-worldfile: $(DEPS) worldfile.cpp
-	$(call build_with_source, worldfile.cpp, worldfile)
+worldapp: $(DEPS) launch.o worldapp.cpp
+	$(call build_with_source, launch.o worldapp.cpp, worldapp)
+
 
 launch.o: $(DEPS) launch.h launch.cpp
 	c++  $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) \
 		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		launch.cpp -c
-
-worldapptest: $(DEPS) launch.o worldapptest.cpp worldapp.cpp
-	$(call build_with_source, launch.o worldapptest.cpp worldapp.cpp, worldapptest)
 
 
 clean:

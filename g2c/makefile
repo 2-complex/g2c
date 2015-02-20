@@ -3,6 +3,8 @@ OPTIMIZATION = -O0
 DEBUG = -g3
 ODEBUG = $(DEBUG)
 
+CC = c++
+
 G2C_DIRECTORY = ..
 
 SOURCE_DIR = $(G2C_DIRECTORY)/g2c
@@ -36,7 +38,7 @@ OFILES = \
 	$(OBJ_DIR)/texture.o \
 	$(OBJ_DIR)/sprites.o \
 	$(OBJ_DIR)/fattening.o \
-    $(OBJ_DIR)/rendererg.o \
+	$(OBJ_DIR)/rendererg.o \
 	$(OBJ_DIR)/transforms.o \
 	$(OBJ_DIR)/graphics.o \
 	$(OBJ_DIR)/wave.o \
