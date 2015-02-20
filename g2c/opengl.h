@@ -33,24 +33,10 @@
 #elif EMSCRIPTEN
     #include <emscripten.h>
 
-    typedef unsigned int GLenum;
-    typedef unsigned int GLbitfield;
-    typedef unsigned int GLuint;
-    typedef int GLint;
-    typedef int GLsizei;
-    typedef unsigned char GLboolean;
-    typedef signed char GLbyte;
-    typedef short GLshort;
-    typedef unsigned char GLubyte;
-    typedef unsigned short GLushort;
-    typedef unsigned long GLulong;
-    typedef float GLfloat;
-    typedef float GLclampf;
-    typedef double GLdouble;
-    typedef double GLclampd;
-    typedef void GLvoid;
+    #include <GLES2/gl2.h>
+    #include <GLES2/gl2ext.h>
+    #include <SDL/SDL.h>
 
-    #include "emscripten-gl.h"
 #else // Assume a glut build.
     #define GLUT 1
     #ifdef __APPLE_CC__

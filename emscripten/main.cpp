@@ -1,9 +1,8 @@
-#include <iostream>
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#include <SDL/SDL.h>
 
-#include <emscripten.h>
+#include "app.h"
+#include "opengl.h"
+
+#include <iostream>
 
 
 using namespace std;

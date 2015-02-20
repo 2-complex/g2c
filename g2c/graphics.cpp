@@ -772,7 +772,7 @@ Buffer& Buffer::set(const double* v, int size)
 
 string Buffer::serializeElements(string indent) const
 {
-#if !(defined(TARGET_OS_IPHONE) || defined(ANDROID))
+#if !(defined(TARGET_OS_IPHONE) || defined(ANDROID) || defined(EMSCRIPTEN))
     string r = Serializable::serializeElements(indent);
 
     float* array = new float[size];
@@ -943,7 +943,7 @@ IndexBuffer& IndexBuffer::set(const unsigned short* v, int size)
 
 string IndexBuffer::serializeElements(string indent) const
 {
-#if !(defined(TARGET_OS_IPHONE) || defined(ANDROID))
+#if !(defined(TARGET_OS_IPHONE) || defined(ANDROID) || defined(EMSCRIPTEN))
     string r = Serializable::serializeElements(indent);
 
     unsigned short* array = new unsigned short[size];
