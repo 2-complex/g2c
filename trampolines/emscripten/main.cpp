@@ -1,9 +1,14 @@
 
+#include "emscriptenbank.h"
+
 #include <launch.h>
 
 #include <stdio.h>
 
+#include <SDL/SDL.h>
+
 using namespace std;
+using namespace g2c;
 
 GLuint programObject;
 SDL_Surface* screen;
@@ -14,6 +19,7 @@ GLfloat vVertices[] = {
     0.5f, -0.5f, 0.0f
 };
 GLint uniformOriginX, uniformOriginY, uniformZoom;
+
 
 
 void initSDL(int width, int height)
@@ -55,7 +61,8 @@ extern "C" void mouseUp(double x, double y)
 
 extern "C" void init()
 {
-    printf("init\n");
+    getApp()->setBank(new EmscriptenBank);
+
     getApp()->init();
 }
 

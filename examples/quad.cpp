@@ -35,19 +35,17 @@ void QuadApp::init()
 
     int indexArray[] =
     {
-        0,2,1,
-        0,2,3
+        0, 2, 1,
+        0, 2, 3
     };
 
     buffer = new Buffer(vertexArray, 12);
-    indexBuffer = new IndexBuffer(indexArray, 12);
+    indexBuffer = new IndexBuffer(indexArray, 6);
 
     geometry["position"] = Field(buffer, 3, 3, 0);
     geometry.indices = indexBuffer;
 
-    Bitmap bitmap;
-    bank->initBitmapWithPath(&bitmap, "tiles.png");
-    texture.initWithBitmap(bitmap);
+    bank->initTextureWithPath(&texture, "tiles.png");
 
     effect.vertexCode =
         "\n"

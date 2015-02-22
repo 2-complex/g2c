@@ -94,17 +94,16 @@ protected:
     Texture(GLenum target);
     Texture(GLenum target, int unit);
     virtual ~Texture();
-    
-    bool mipmaps;
-
+  
 public:
     GLuint getUnit() const;
     GLuint getIndex() const;
     GLuint getTarget() const;
-    
+
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
-    
+
+    bool mipmaps;
     int bitsPerPixel;
     
     GLuint index;

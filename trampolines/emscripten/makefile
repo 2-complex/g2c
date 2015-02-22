@@ -23,13 +23,14 @@ SOURCE := \
 	$(G2C)/sound.cpp \
 	$(G2C)/audioplayer.cpp \
 	$(G2C)/bank.cpp \
+	$(G2C)/emscriptenbank.cpp \
 	$(G2C)/texture.cpp \
 	$(G2C)/sprites.cpp \
 	$(G2C)/fattening.cpp \
     $(G2C)/rendererg.cpp \
 	$(G2C)/transforms.cpp \
 	$(G2C)/graphics.cpp \
-	$(G2C_ROOT)/examples/tetrahedron.cpp \
+	$(G2C_ROOT)/examples/quad.cpp \
 	main.cpp
 
 main.js: $(SOURCE) makefile

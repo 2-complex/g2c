@@ -35,7 +35,6 @@
 
     #include <GLES2/gl2.h>
     #include <GLES2/gl2ext.h>
-    #include <SDL/SDL.h>
 
 #else // Assume a glut build.
     #define GLUT 1

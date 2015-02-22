@@ -152,10 +152,10 @@ void TetrahedronApp::init()
 
     int indexArray[] =
     {
-        0,2,1,
-        0,1,3,
-        1,2,3,
-        2,0,3
+        0, 2, 1,
+        0, 1, 3,
+        1, 2, 3,
+        2, 0, 3
     };
 
     buffer.set(vertexArray, sizeof(vertexArray) / sizeof(float));

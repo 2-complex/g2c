@@ -45,16 +45,6 @@ MouseController.prototype.onMouseLeave = function(theEvent)
     this.isMouseDown = false;
 }
 
-// write javascript float arrays to the emscripten heap
-var HeapUtils = function() {}
-
-HeapUtils.floatArrayToHeap = function(arr)
-{
-    var arrayPointer = _malloc(arr.length * 4);
-    for (var i = 0; i < arr.length; i++)
-        Module.setValue(arrayPointer + i * 4, arr[i], 'float');
-    return arrayPointer;
-}
 
 
 var Bindings = function Bindings() {}
@@ -69,6 +59,31 @@ Bindings.mouseDragged = Module.cwrap("mouseDragged", "", ["number", "number"]);
 Bindings.mouseUp = Module.cwrap("mouseUp", "", ["number", "number"]);
 
 
+var Bank = function Bank() {}
+
+function handleTextureLoaded(image, texture, mipmaps)
+{
+    var gl = GLctx;
+
+    _glBindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+    if( mipmaps )
+    {
+        gl.generateMipmap(gl.TEXTURE_2D);
+    }
+
+    // _glBindTexture(gl.TEXTURE_2D, 0);
+}
+
+Bank.initTextureWithPath = function(path, texture, mipmaps)
+{
+    var image = new Image();
+    image.onload = function() { handleTextureLoaded(image, texture, mipmaps); }
+    image.src = path;
+}
+
+
 var Program = function Program(canvas)
 {
     this.canvas = canvas;
@@ -81,7 +96,6 @@ var Program = function Program(canvas)
 
     this.invalidate();
 }
-
 
 Program.prototype.render = function()
 {

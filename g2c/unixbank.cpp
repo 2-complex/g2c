@@ -26,6 +26,7 @@
 #include "log.h"
 
 #include <png.h>
+#include <stdlib.h>
 
 using namespace std;
 

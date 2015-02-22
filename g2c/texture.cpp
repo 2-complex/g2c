@@ -242,21 +242,21 @@ Bitmap::~Bitmap()
 }
 
 
-Texture::Texture(GLenum target) :
-    target(target),
-    unit(0),
-    index(0),
-    bitsPerPixel(0),
-    mipmaps(false)
+Texture::Texture(GLenum target)
+    : target(target)
+    , unit(0)
+    , index(0)
+    , bitsPerPixel(0)
+    , mipmaps(false)
 {
 }
 
-Texture::Texture(GLenum target, int unit) :
-    target(target),
-    unit(unit),
-    index(0),
-    bitsPerPixel(0),
-    mipmaps(false)
+Texture::Texture(GLenum target, int unit)
+    : target(target)
+    , unit(unit)
+    , index(0)
+    , bitsPerPixel(0)
+    , mipmaps(false)
 {
 }
 
@@ -330,10 +330,11 @@ Texture2D::~Texture2D()
         free(data);
 }
 
-void Texture2D::initWithImageData(const GLubyte* inData,
-                                  int inWidth,
-                                  int inHeight,
-                                  int inBitsPerPixel)
+void Texture2D::initWithImageData(
+    const GLubyte* inData,
+    int inWidth,
+    int inHeight,
+    int inBitsPerPixel)
 {
     if( !index )
         glGenTextures(1, &index);
@@ -372,7 +373,7 @@ void Texture2D::initWithImageData(const GLubyte* inData,
     GLenum format = (bitsPerPixel == 24) ? GL_RGB : GL_RGBA;
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     
-    if(mipmaps)
+    if( mipmaps )
     {
         glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
         glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR );
@@ -436,7 +437,7 @@ void CubeMap::initWithImageData(const GLubyte* inDataPositiveX,
     if( !index )
         glGenTextures(1, &index);
     
-    glActiveTexture(GL_TEXTURE0 + unit);
+    // glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_CUBE_MAP, index);
     
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -474,7 +475,7 @@ void CubeMap::initWithImageData(const GLubyte* inDataPositiveX,
             0, format, width, width, 0, format, GL_UNSIGNED_BYTE, data);
     }
     
-    if(mipmaps)
+    if( mipmaps )
     {
         glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
         glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR );
