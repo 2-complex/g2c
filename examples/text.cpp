@@ -14,7 +14,7 @@ class TextApp : public App
     RendererGL2 renderer;
 
     void init();
-    void reshape(int width, int height);
+    void resize(int width, int height);
     void setBank(Bank* bank);
 
     void draw() const;
@@ -46,7 +46,7 @@ void TextApp::setBank(Bank* bank)
     this->bank = bank;
 }
 
-void TextApp::reshape(int width, int height)
+void TextApp::resize(int width, int height)
 {
     renderer.projection = orthographic(0,width,0,height,-1,1);
 }
