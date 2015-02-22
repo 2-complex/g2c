@@ -20,8 +20,6 @@ MouseController.prototype.onMouseDown = function(theEvent)
 {
     var e = this.getLocalCoord(theEvent);
     this.isMouseDown = true;
-    this.lastMouseCoord = e;
-
     Bindings.mouseDown(e.x, e.y);
 }
 
@@ -29,8 +27,6 @@ MouseController.prototype.onMouseUp = function(theEvent)
 {
     var e = this.getLocalCoord(theEvent);
     this.isMouseDown = false;
-    this.lastMouseCoord = null;
-
     Bindings.mouseUp(e.x, e.y);
 }
 
@@ -63,16 +59,14 @@ HeapUtils.floatArrayToHeap = function(arr)
 
 var Bindings = function Bindings() {}
 
-Bindings.mouseDown = Module.cwrap("mouseDown", "", ["number", "number"]);
-Bindings.mouseDragged = Module.cwrap("mouseDragged", "", ["number", "number"]);
-Bindings.mouseUp = Module.cwrap("mouseUp", "", ["number", "number"]);
-
 Bindings.init = Module.cwrap("init", "", []);
 Bindings.resize = Module.cwrap("resize", "", ["number", "number"]);
 Bindings.step = Module.cwrap("step", "", ["number"]);
 Bindings.draw = Module.cwrap("draw", "", []);
 
-Bindings.initGL = Module.cwrap('initGL', 'number', ['number', 'number']);
+Bindings.mouseDown = Module.cwrap("mouseDown", "", ["number", "number"]);
+Bindings.mouseDragged = Module.cwrap("mouseDragged", "", ["number", "number"]);
+Bindings.mouseUp = Module.cwrap("mouseUp", "", ["number", "number"]);
 
 
 var Program = function Program(canvas)

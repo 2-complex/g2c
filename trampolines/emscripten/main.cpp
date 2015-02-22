@@ -22,8 +22,7 @@ void initSDL(int width, int height)
 
     if( ! initializedAlready )
     {
-        //initialise SDL
-        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) == 0) 
+        if( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) == 0 )
         {
             screen = SDL_SetVideoMode(width, height, 0, SDL_OPENGL);
             if (screen == NULL)
@@ -31,22 +30,12 @@ void initSDL(int width, int height)
                 printf("Could not set video mode: %s", SDL_GetError());
             }
         }
-        else 
+        else
         {
             printf("Could not initialize SDL: %s", SDL_GetError());
         }
         initializedAlready = true;
     }
-}
-
-extern "C" int initGL(int width, int height)
-{
-    initSDL(width, height);
-
-    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-    glViewport(0, 0, width, height);
-
-    return 1;
 }
 
 extern "C" void mouseDown(double x, double y)
@@ -72,8 +61,10 @@ extern "C" void init()
 
 extern "C" void resize(int width, int height)
 {
-    printf("resize %d %d\n", width, height);
-    initGL(width, height);
+    initSDL(width, height);
+
+    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+    glViewport(0, 0, width, height);
 
     getApp()->resize(width, height);
 }

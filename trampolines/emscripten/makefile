@@ -4,7 +4,7 @@ LDFLAGS := -O2 --llvm-opts 2
 G2C_ROOT = ../..
 G2C := $(G2C_ROOT)/g2c
 
-EXPORTS := "['_initGL', \
+EXPORTS := "[ \
 	'_init', '_resize', \
 	'_step', '_draw', \
 	'_mouseDown', '_mouseDragged', '_mouseUp']"
@@ -34,6 +34,9 @@ SOURCE := \
 
 main.js: $(SOURCE) makefile
 	$(CC) -DEMSCRIPTEN -DSTUB_GL1 $(INCLUDES) $(SOURCE) -s FULL_ES2=1 -s EXPORTED_FUNCTIONS=$(EXPORTS) -o main.js
+
+run: main.js trampoline.js index.html
+	open index.html
 
 clean:
 	rm main.js
