@@ -1,41 +1,41 @@
 
 
-var MouseController = function (canvas, area)
+var MouseController = function(canvas, area)
 {
     this.canvas = canvas;
     this.area = area;
     this.isMouseDown = false;
     this.lastMouseCoord = null;
     this.zoomSensitivity = 2.0;
-    $(canvas).mousewheel(this.onMouseWheel.bind(this));
+
     canvas.onmousedown = this.onMouseDown.bind(this);
     canvas.onmouseup = this.onMouseUp.bind(this);
     canvas.onmousemove = this.onMouseMove.bind(this);
     canvas.onmouseleave = this.onMouseLeave.bind(this);
 }
 
-MouseController.prototype.getLocalCoord = function (ev)
+MouseController.prototype.getLocalCoord = function(theEvent)
 {
-    return { x: ev.clientX - this.canvas.offsetLeft, y: ev.clientY - this.canvas.offsetTop };
+    return { x: theEvent.clientX - this.canvas.offsetLeft, y: theEvent.clientY - this.canvas.offsetTop };
 }
 
-MouseController.prototype.onMouseDown = function (ev)
+MouseController.prototype.onMouseDown = function(theEvent)
 {
-    var e = this.getLocalCoord(ev);
+    var e = this.getLocalCoord(theEvent);
     this.isMouseDown = true;
     this.lastMouseCoord = e;
 }
 
-MouseController.prototype.onMouseUp = function (ev)
+MouseController.prototype.onMouseUp = function(theEvent)
 {
-    var e = this.getLocalCoord(ev);
+    var e = this.getLocalCoord(theEvent);
     this.isMouseDown = false;
     this.lastMouseCoord = null;
 }
 
-MouseController.prototype.onMouseMove = function (ev)
+MouseController.prototype.onMouseMove = function(theEvent)
 {
-    var e = this.getLocalCoord(ev);
+    var e = this.getLocalCoord(theEvent);
     if (this.isMouseDown)
     {
         var offset = { x: e.x - this.lastMouseCoord.x, y: e.y - this.lastMouseCoord.y };
@@ -44,24 +44,15 @@ MouseController.prototype.onMouseMove = function (ev)
     }
 }
 
-MouseController.prototype.onMouseLeave = function (ev)
+MouseController.prototype.onMouseLeave = function(theEvent)
 {
     this.isMouseDown = false;
 }
 
-MouseController.prototype.onMouseWheel = function (ev)
-{
-    ev.wheelDelta = ev.deltaY * 120.0;
-    var e = this.getLocalCoord(ev);
-    this.area.zoom(1.0 + ev.wheelDelta / 1200.0 * this.zoomSensitivity, e);
-    return false;
-}
-
-
 // write javascript float arrays to the emscripten heap
 var HeapUtils = function() {}
 
-HeapUtils.floatArrayToHeap = function (arr)
+HeapUtils.floatArrayToHeap = function(arr)
 {
     var arrayPointer = _malloc(arr.length * 4);
     for (var i = 0; i < arr.length; i++)
@@ -97,7 +88,7 @@ var Program = function Program(canvas)
     this.invalidate();
 }
 
-Program.prototype.pan = function (offset)
+Program.prototype.pan = function(offset)
 {
     var glOffset = {
         x: offset.x / this.canvas.width * 2.0 / this.translation.zoom,
@@ -107,12 +98,12 @@ Program.prototype.pan = function (offset)
     this.translation.originY -= glOffset.y;
 }
 
-Program.prototype.zoom = function (ratio, origin)
+Program.prototype.zoom = function(ratio, origin)
 {
     this.translation.zoom *= ratio;
 }
 
-Program.prototype.render = function ()
+Program.prototype.render = function()
 {
     Bindings.step((new Date).getTime() / 1000.0);
     Bindings.draw();
@@ -120,7 +111,7 @@ Program.prototype.render = function ()
     this.invalidate();
 }
 
-Program.prototype.invalidate = function ()
+Program.prototype.invalidate = function()
 {
     window.requestAnimationFrame(this.render.bind(this));
 }

@@ -33,5 +33,5 @@ main.js: $(SOURCE) makefile
 	$(CC) -DEMSCRIPTEN -DSTUB_GL1 $(INCLUDES) $(SOURCE) -s FULL_ES2=1 -s EXPORTED_FUNCTIONS=$(EXPORTS) -o main.js
 
 clean:
-	rm glcore.js
+	rm main.js
 
