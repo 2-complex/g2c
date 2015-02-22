@@ -2,7 +2,7 @@
 
 atlas
 bitmap
-modelfile
+modelapp
 quad
 serialize
 ship
@@ -13,6 +13,5 @@ steam
 text
 triangle
 tetrahedron
-worldfile
-worldapptest
+worldapp
 

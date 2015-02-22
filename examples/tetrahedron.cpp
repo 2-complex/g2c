@@ -1,10 +1,10 @@
 
-#include "panenvironment.h"
 #include "graphics.h"
 #include "app.h"
 #include "launch.h"
 
 using namespace std;
+using namespace g2c;
 
 class PanApp : public App
 {

@@ -32,18 +32,6 @@ Listener* gListener = NULL;
 Listener::Listener() : listening(true), delegate(NULL) {}
 Listener::~Listener() {}
 
-void Listener::button(int b, int state, int x, int y)
-{
-    if( delegate )
-        delegate->button(b, state, x, y);
-}
-
-void Listener::motion(int x, int y)
-{
-    if( delegate )
-        delegate->motion(x, y);
-}
-
 void Listener::keyboard(unsigned char inkey)
 {
     if( delegate )
@@ -60,12 +48,6 @@ void Listener::keyUp(unsigned char inkey)
 {
     if( delegate )
         delegate->keyUp(inkey);
-}
-
-void Listener::special(int inkey)
-{
-    if( delegate )
-        delegate->special(inkey);
 }
 
 bool Listener::mouseDown(const Vec2& C)
