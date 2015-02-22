@@ -6,6 +6,14 @@
 
 void launch(g2c::App* app);
 
+#define LAUNCH(AppType) \
+    int main() \
+    { \
+        TetrahedronApp app; \
+        launch(&app); \
+        return 0; \
+    }
+
 #endif
 
 

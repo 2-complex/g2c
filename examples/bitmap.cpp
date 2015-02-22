@@ -48,10 +48,4 @@ void BitmapApp::draw() const
     cynthia.draw();
 }
 
-int main()
-{
-    BitmapApp app;
-    launch(&app);
-    return 0;
-}
-
+LAUNCH(BitmapApp)

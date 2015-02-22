@@ -83,11 +83,4 @@ void StarApp::draw() const
     model.draw();
 }
 
-int main(int argc, char** args)
-{
-    StarApp app;
-    launch(&app);
-
-    return 0;
-}
-
+LAUNCH(StarApp)

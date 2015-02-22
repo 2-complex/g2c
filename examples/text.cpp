@@ -56,12 +56,4 @@ void TextApp::draw() const
     text.draw();
 }
 
-int main()
-{
-    TextApp app;
-    launch(&app);
-
-    return 0;
-}
-
-
+LAUNCH(TextApp)

@@ -96,11 +96,4 @@ void AtlasApp::draw() const
     sherman.draw();
 }
 
-int main(int argc, char** args)
-{
-    AtlasApp app;
-    launch(&app);
-    
-    return 0;
-}
-
+LAUNCH(AtlasApp)

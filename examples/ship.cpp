@@ -113,11 +113,4 @@ void ShipApp::draw() const
     enterprise.draw();
 }
 
-int main(int argc, char** args)
-{
-    ShipApp app;
-    launch(&app);
-
-    return 0;
-}
-
+LAUNCH(ShipApp)

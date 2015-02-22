@@ -55,11 +55,4 @@ bool SoundApp::mouseDown(const Vec2& c)
     return true;
 }
 
-int main()
-{
-    SoundApp app;
-    launch(&app);
-
-    return 0;
-}
-
+LAUNCH(SoundApp)

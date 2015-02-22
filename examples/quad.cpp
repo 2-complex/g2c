@@ -1,4 +1,5 @@
 
+
 #include "graphics.h"
 #include "launch.h"
 
@@ -88,12 +89,5 @@ void QuadApp::draw() const
     shape.draw();
 }
 
-int main()
-{
-    QuadApp app;
-    launch(&app);
-
-    return 0;
-}
-
+LAUNCH(QuadApp)
 

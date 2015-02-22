@@ -209,12 +209,6 @@ void TetrahedronApp::draw() const
     shape.draw();
 }
 
-int main()
-{
-    TetrahedronApp app;
-    launch(&app);
-
-    return 0;
-}
+LAUNCH(TetrahedronApp)
 
 
