@@ -1,19 +1,25 @@
 
-#ifndef _APP_ENVIRONMENT_
-#define _APP_ENVIRONMENT_
+#ifndef _GLUT_TRAMPOLINE_
+#define _GLUT_TRAMPOLINE_
 
 #include "app.h"
-#include "environment.h"
+#include "glut.h"
+
+#include "bank.h"
+#include "audioplayer.h"
 
 using namespace g2c;
 
-class AppEnvironment : public Environment {
+class GlutTrampoline : public Glut
+{
 public:
-	AppEnvironment();
-	virtual ~AppEnvironment();
+	GlutTrampoline();
+	virtual ~GlutTrampoline();
 
 private:
 	bool touchOn;
+	Bank* bank;
+	AudioPlayer* player;
 
 protected:
 	virtual void enables();
@@ -23,6 +29,8 @@ protected:
 	virtual void draw() const;
 
 	virtual void init();
+        virtual void destroy();
+
 	virtual void keyboard(unsigned char inkey);
 	virtual void special(unsigned char inkey);
 

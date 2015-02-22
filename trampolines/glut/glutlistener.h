@@ -33,7 +33,7 @@ class GlutListener;
 
 class GlutListener
 {
-    friend void fbutton( int b, int state, int x, int y );
+    friend void fbutton(int b, int state, int x, int y);
     friend void fkeyboard(unsigned char inkey, int x, int y);
     friend void fkeyboardUp(unsigned char inkey, int x, int y);
     friend void fspecial(int inkey, int x, int y);

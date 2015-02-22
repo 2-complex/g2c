@@ -21,7 +21,7 @@ private:
 
 
     void init();
-    void reshape(int width, int height);
+    void resize(int width, int height);
     void setBank(Bank* bank);
     void draw() const;
 
@@ -53,8 +53,7 @@ void AtlasApp::setBank(Bank* bank)
     this->bank = bank;
 }
 
-
-void AtlasApp::reshape(int width, int height)
+void AtlasApp::resize(int width, int height)
 {
     renderer.projection = orthographic(0,width,0,height,-1,1);
 }

@@ -1,7 +1,8 @@
 
-#include "spriteenvironment.h"
 #include "graphics.h"
 #include "launch.h"
+
+using namespace g2c;
 
 class QuadApp : public App
 {
