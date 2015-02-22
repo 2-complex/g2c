@@ -33,7 +33,7 @@ void BitmapApp::resize(int width, int height)
 
 void BitmapApp::init()
 {
-    bank->initBitmapWithPath(&bitmap, "ladybug.png");
+    bank->initBitmapWithPath(&bitmap, "assets/ladybug.png");
     ladybug.initWithBitmap(bitmap);
     cynthia.sprite = &ladybug;
 

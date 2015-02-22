@@ -42,7 +42,7 @@ void StarApp::setBank(Bank* bank)
 void StarApp::init()
 {
     model.bank = bank;
-    bank->initSerializableWithPath(&model, "star.model");
+    bank->initSerializableWithPath(&model, "assets/star.model");
 
     Polygon starLine;
 

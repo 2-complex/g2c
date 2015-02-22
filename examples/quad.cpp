@@ -44,8 +44,7 @@ void QuadApp::init()
 
     geometry["position"] = Field(buffer, 3, 3, 0);
     geometry.indices = indexBuffer;
-
-    bank->initTextureWithPath(&texture, "tiles.png");
+    bank->initTextureWithPath(&texture, "assets/tiles.png");
 
     effect.vertexCode =
         "\n"

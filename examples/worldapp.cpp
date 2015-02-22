@@ -30,7 +30,7 @@ private:
 };
 
 WorldApp::WorldApp()
-    : filename("bug.world")
+    : filename("assets/bug.world")
 {
 }
 

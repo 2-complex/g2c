@@ -28,7 +28,7 @@ void SoundApp::init()
     sound = new Sound;
     source = new Source;
 
-    bank->initSoundWithPath(sound, "harmonica.wav");
+    bank->initSoundWithPath(sound, "assets/harmonica.wav");
     sound->source = source;
 }
 
