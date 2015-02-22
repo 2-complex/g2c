@@ -36,8 +36,8 @@ SOURCE := \
 main.js: $(SOURCE) makefile
 	$(CC) -DEMSCRIPTEN -DSTUB_GL1 $(INCLUDES) $(SOURCE) -s FULL_ES2=1 -s EXPORTED_FUNCTIONS=$(EXPORTS) -o main.js
 
-run: main.js trampoline.js index.html
-	open index.html
+run: main.js trampoline.js index.html server.py
+	python server.py
 
 clean:
 	rm main.js
