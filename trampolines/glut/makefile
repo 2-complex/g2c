@@ -14,10 +14,16 @@ G2C_SOURCE_DIR = $(G2C_ROOT)/g2c
 include $(G2C_SOURCE_DIR)/platform.mk
 
 OFILES = \
-        $(OBJ_DIR)/glut.o \
+    $(OBJ_DIR)/glut.o \
 	$(OBJ_DIR)/gluttrampoline.o \
-        $(OBJ_DIR)/glutlistener.o
+    $(OBJ_DIR)/glutlistener.o \
+    $(OBJ_DIR)/launch.o
 
+
+$(OBJ_DIR)/launch.o: launch.h launch.cpp
+	c++  $(FLAGS) $(DEBUG) $(OPTIMIZATION) \
+		-I$(G2C_SOURCE_DIR) \
+		launch.cpp -c -o $(OBJ_DIR)/launch.o
 
 $(OBJ_DIR)/glutlistener.o: glutlistener.cpp glutlistener.h
 	@mkdir -p $(@D)

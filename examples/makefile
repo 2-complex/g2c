@@ -50,47 +50,47 @@ endef
 
 DEPS := $(LIBG2C) $(LIBGLUTTRAMPOLINE) $(G2C_SOURCE_DIR)/lin/lin.h
 
-atlas: $(DEPS) launch.o atlas.cpp
-	$(call build_with_source, launch.o atlas.cpp, atlas)
+atlas: $(DEPS) atlas.cpp
+	$(call build_with_source, atlas.cpp, atlas)
 
-modelapp: $(DEPS) launch.o modelapp.cpp
-	$(call build_with_source, launch.o modelapp.cpp, modelapp)
+modelapp: $(DEPS) modelapp.cpp
+	$(call build_with_source, modelapp.cpp, modelapp)
 
-quad: $(DEPS) launch.o quad.cpp
-	$(call build_with_source, launch.o quad.cpp, quad)
+quad: $(DEPS) quad.cpp
+	$(call build_with_source, quad.cpp, quad)
 
 serialize: $(DEPS) serialize.cpp
 	$(call build_with_source, serialize.cpp, serialize)
 
-ship: $(DEPS) launch.o ship.cpp
-	$(call build_with_source, launch.o ship.cpp, ship)
+ship: $(DEPS) ship.cpp
+	$(call build_with_source, ship.cpp, ship)
 
-bitmap: $(DEPS) launch.o bitmap.cpp
-	$(call build_with_source, launch.o bitmap.cpp, bitmap)
+bitmap: $(DEPS) bitmap.cpp
+	$(call build_with_source, bitmap.cpp, bitmap)
 
-sound: $(DEPS) launch.o sound.cpp
-	$(call build_with_source, launch.o sound.cpp, sound)
+sound: $(DEPS) sound.cpp
+	$(call build_with_source, sound.cpp, sound)
 
-button: $(DEPS) launch.o button.cpp
-	$(call build_with_source, launch.o button.cpp, button)
+button: $(DEPS) button.cpp
+	$(call build_with_source, button.cpp, button)
 
-star: $(DEPS) launch.o star.cpp
-	$(call build_with_source, launch.o star.cpp, star)
+star: $(DEPS) star.cpp
+	$(call build_with_source, star.cpp, star)
 
-tetrahedron: $(DEPS) launch.o tetrahedron.cpp
-	$(call build_with_source, launch.o tetrahedron.cpp, tetrahedron)
+tetrahedron: $(DEPS) tetrahedron.cpp
+	$(call build_with_source, tetrahedron.cpp, tetrahedron)
 
-steam: $(DEPS) launch.o steam.cpp
-	$(call build_with_source, launch.o steam.cpp, steam)
+steam: $(DEPS) steam.cpp
+	$(call build_with_source, steam.cpp, steam)
 
-text: $(DEPS) launch.o text.cpp
-	$(call build_with_source, launch.o text.cpp, text)
+text: $(DEPS) text.cpp
+	$(call build_with_source, text.cpp, text)
 
-triangle: $(DEPS) launch.o triangle.cpp
-	$(call build_with_source, launch.o triangle.cpp, triangle)
+triangle: $(DEPS) triangle.cpp
+	$(call build_with_source, triangle.cpp, triangle)
 
-worldapp: $(DEPS) launch.o worldapp.cpp
-	$(call build_with_source, launch.o worldapp.cpp, worldapp)
+worldapp: $(DEPS) worldapp.cpp
+	$(call build_with_source, worldapp.cpp, worldapp)
 
 
 launch.o: $(DEPS) launch.cpp

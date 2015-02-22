@@ -1,7 +1,8 @@
 
 CC=emcc
 LDFLAGS := -O2 --llvm-opts 2
-G2C := ../../g2c
+G2C_ROOT = ../..
+G2C := $(G2C_ROOT)/g2c
 
 EXPORTS := "['_initGL', \
 	'_init', '_resize', \
@@ -27,6 +28,7 @@ SOURCE := \
     $(G2C)/rendererg.cpp \
 	$(G2C)/transforms.cpp \
 	$(G2C)/graphics.cpp \
+	$(G2C_ROOT)/examples/tetrahedron.cpp \
 	main.cpp
 
 main.js: $(SOURCE) makefile

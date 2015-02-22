@@ -7,12 +7,12 @@
 void launch(g2c::App* app);
 
 #define LAUNCH(AppType) \
-    int main() \
-    { \
-        TetrahedronApp app; \
-        launch(&app); \
-        return 0; \
-    }
+int main() \
+{ \
+    AppType app; \
+    launch(&app); \
+    return 0; \
+}
 
 #endif
 

@@ -1,7 +1,7 @@
 
-#include "graphics.h"
-#include "app.h"
-#include "launch.h"
+#include <graphics.h>
+#include <app.h>
+#include <launch.h>
 
 using namespace std;
 using namespace g2c;
@@ -209,6 +209,5 @@ void TetrahedronApp::draw() const
     shape.draw();
 }
 
+
 LAUNCH(TetrahedronApp)
-
-
