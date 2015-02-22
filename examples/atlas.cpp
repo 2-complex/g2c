@@ -60,7 +60,7 @@ void AtlasApp::resize(int width, int height)
 
 void AtlasApp::init()
 {
-    bank->initTextureWithPath(&treeAtlas, "treeatlas.png");
+    bank->initTextureWithPath(&treeAtlas, "assets/treeatlas.png");
 
     treeAtlas.center = true;
 

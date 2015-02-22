@@ -45,7 +45,7 @@ void QuadApp::init()
     geometry.indices = indexBuffer;
 
     Bitmap bitmap;
-    bank->initBitmapWithPath(&bitmap, "tiles.png");
+    bank->initBitmapWithPath(&bitmap, "assets/tiles.png");
     texture.initWithBitmap(bitmap);
 
     effect.vertexCode =

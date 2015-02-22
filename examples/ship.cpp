@@ -60,7 +60,7 @@ void ShipApp::setBank(Bank* bank)
 
 void ShipApp::init()
 {
-    bank->initTextureWithPath(&ship, "ship.png");
+    bank->initTextureWithPath(&ship, "assets/ship.png");
     ship.numberOfRows = 2;
     ship.numberOfColumns = 32;
     ship.center = true;

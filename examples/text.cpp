@@ -23,7 +23,7 @@ class TextApp : public App
 void TextApp::init()
 {
     Bitmap bitmap;
-    bank->initBitmapWithPath(&bitmap, "helv.png");
+    bank->initBitmapWithPath(&bitmap, "assets/helv.png");
     font.initWithBitmap(bitmap);
     font.numberOfRows = 6;
     font.numberOfColumns = 16;
