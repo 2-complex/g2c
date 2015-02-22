@@ -17,7 +17,6 @@ EXES = \
 	serialize \
 	ship \
 	sound \
-	sprite \
 	star \
 	steam \
 	tetrahedron \
@@ -71,9 +70,6 @@ bitmap: $(DEPS) launch.o bitmap.cpp
 
 sound: $(DEPS) launch.o sound.cpp
 	$(call build_with_source, launch.o sound.cpp, sound)
-
-sprite: $(DEPS) launch.o sprite.cpp
-	$(call build_with_source, launch.o sprite.cpp, sprite)
 
 button: $(DEPS) launch.o button.cpp
 	$(call build_with_source, launch.o button.cpp, button)
