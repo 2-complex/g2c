@@ -51,17 +51,17 @@ extern "C" int initGL(int width, int height)
 
 extern "C" void mouseDown(double x, double y)
 {
-    printf( "mouseDown(%f, %f)\n", x, y );
+    getApp()->mouseDown(Vec2(x,y));
 }
 
 extern "C" void mouseDragged(double x, double y)
 {
-    printf( "mouseDragged(%f, %f)\n", x, y );
+    getApp()->mouseDragged(Vec2(x,y));
 }
 
 extern "C" void mouseUp(double x, double y)
 {
-    printf( "mouseUp(%f, %f)\n", x, y );
+    getApp()->mouseUp(Vec2(x,y));
 }
 
 extern "C" void init()
@@ -80,18 +80,12 @@ extern "C" void resize(int width, int height)
 
 extern "C" void step(double t)
 {
-    printf("step %f\n", t);
-
     getApp()->step(t);
 }
 
 extern "C" void draw()
 {
-    printf("draw\n");
-    float a[] = {0.0f,0.0f,1.0f};
-
     getApp()->draw();
-
     SDL_GL_SwapBuffers();
 }
 

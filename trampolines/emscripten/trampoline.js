@@ -1,12 +1,9 @@
 
 
-var MouseController = function(canvas, area)
+var MouseController = function(canvas, program)
 {
     this.canvas = canvas;
-    this.area = area;
     this.isMouseDown = false;
-    this.lastMouseCoord = null;
-    this.zoomSensitivity = 2.0;
 
     canvas.onmousedown = this.onMouseDown.bind(this);
     canvas.onmouseup = this.onMouseUp.bind(this);
@@ -16,7 +13,7 @@ var MouseController = function(canvas, area)
 
 MouseController.prototype.getLocalCoord = function(theEvent)
 {
-    return { x: theEvent.clientX - this.canvas.offsetLeft, y: theEvent.clientY - this.canvas.offsetTop };
+    return { x: theEvent.clientX, y: this.canvas.height - theEvent.clientY };
 }
 
 MouseController.prototype.onMouseDown = function(theEvent)
@@ -24,6 +21,8 @@ MouseController.prototype.onMouseDown = function(theEvent)
     var e = this.getLocalCoord(theEvent);
     this.isMouseDown = true;
     this.lastMouseCoord = e;
+
+    Bindings.mouseDown(e.x, e.y);
 }
 
 MouseController.prototype.onMouseUp = function(theEvent)
@@ -31,16 +30,17 @@ MouseController.prototype.onMouseUp = function(theEvent)
     var e = this.getLocalCoord(theEvent);
     this.isMouseDown = false;
     this.lastMouseCoord = null;
+
+    Bindings.mouseUp(e.x, e.y);
 }
 
 MouseController.prototype.onMouseMove = function(theEvent)
 {
     var e = this.getLocalCoord(theEvent);
-    if (this.isMouseDown)
+
+    if( this.isMouseDown )
     {
-        var offset = { x: e.x - this.lastMouseCoord.x, y: e.y - this.lastMouseCoord.y };
-        this.lastMouseCoord = e;
-        this.area.pan(offset);
+        Bindings.mouseDragged(e.x, e.y);
     }
 }
 
@@ -88,20 +88,6 @@ var Program = function Program(canvas)
     this.invalidate();
 }
 
-Program.prototype.pan = function(offset)
-{
-    var glOffset = {
-        x: offset.x / this.canvas.width * 2.0 / this.translation.zoom,
-        y: offset.y / this.canvas.height * 2.0 / this.translation.zoom
-    };
-    this.translation.originX += glOffset.x;
-    this.translation.originY -= glOffset.y;
-}
-
-Program.prototype.zoom = function(ratio, origin)
-{
-    this.translation.zoom *= ratio;
-}
 
 Program.prototype.render = function()
 {
