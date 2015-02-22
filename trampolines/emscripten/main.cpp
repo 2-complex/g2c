@@ -1,4 +1,8 @@
 
+#include <launch.h>
+
+#include <stdio.h>
+
 using namespace std;
 
 GLuint programObject;
@@ -24,12 +28,12 @@ void initSDL(int width, int height)
             screen = SDL_SetVideoMode(width, height, 0, SDL_OPENGL);
             if (screen == NULL)
             {
-                cerr << "Could not set video mode: " << SDL_GetError() << endl;
+                printf("Could not set video mode: %s", SDL_GetError());
             }
         }
         else 
         {
-            cerr << "Could not initialize SDL: " << SDL_GetError() << endl;
+            printf("Could not initialize SDL: %s", SDL_GetError());
         }
         initializedAlready = true;
     }
@@ -63,7 +67,7 @@ extern "C" void mouseUp(double x, double y)
 extern "C" void init()
 {
     printf("init\n");
-    getApp()()->init();
+    getApp()->init();
 }
 
 extern "C" void resize(int width, int height)

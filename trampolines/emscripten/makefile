@@ -10,7 +10,8 @@ EXPORTS := "['_initGL', \
 	'_mouseDown', '_mouseDragged', '_mouseUp']"
 
 INCLUDES := \
-	-I$(G2C)
+	-I$(G2C) \
+	-I.
 
 SOURCE := \
 	$(G2C)/app.cpp \
