@@ -21,7 +21,6 @@ SOURCE := \
 	$(G2C)/parse.cpp \
 	$(G2C)/serializable.cpp \
 	$(G2C)/sound.cpp \
-	$(G2C)/audioplayer.cpp \
 	$(G2C)/bank.cpp \
 	$(G2C)/emscriptenbank.cpp \
 	$(G2C)/texture.cpp \
@@ -30,6 +29,7 @@ SOURCE := \
     $(G2C)/rendererg.cpp \
 	$(G2C)/transforms.cpp \
 	$(G2C)/graphics.cpp \
+	$(G2C)/wave.cpp \
 	$(G2C_ROOT)/examples/quad.cpp \
 	main.cpp
 

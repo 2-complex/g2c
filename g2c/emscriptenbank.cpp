@@ -35,58 +35,19 @@ namespace g2c {
 
 void EmscriptenBank::initPersistentSerializableWithKey(Serializable* s, const char* key)
 {
-    initSerializableWithPath(s, (string(key) + ".txt").c_str());
 }
 
 void EmscriptenBank::writePersistentSerializableWithKey(const Serializable* s, const char* key)
 {
-    writeSerializableToPath(s, (string(key) + ".txt").c_str());
 }
 
 void EmscriptenBank::initDataWithPath(Data* data, const char* path)
 {
-    string fullpath = base_path + directory + path;
-    
-    FILE* fp = fopen(fullpath.c_str(), "r");
-    if( !fp )
-    {
-        g2cerror( "File not found: %s\n", fullpath.c_str() );
-    }
-    
-    fseek(fp, 0, SEEK_END);
-    int size = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-    
-    data->resize(size+1);
-    data->array()[size] = 0;
-    fread(data->array(), 1, size, fp);
-    fclose(fp);
 }
 
 void EmscriptenBank::initSerializableWithPath(Serializable* s, const char* path)
 {
     string fullpath = base_path + directory + path;
-    
-    FILE* fp = fopen(fullpath.c_str(), "r");
-    if( !fp )
-    {
-        g2cerror( "serializable file not found: %s\n", fullpath.c_str() );
-    }
-    
-    fseek(fp, 0, SEEK_END);
-    int size = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-    char* data = (char*)malloc(size+1);
-    data[size] = 0;
-    fread(data, 1, size, fp);
-    fclose(fp);
-    
-    string old_directory = directory;
-    directory += directoryOfPath(path);
-    s->deserialize(data);
-    directory = old_directory;
-    
-    free(data);
 }
 
 void EmscriptenBank::writeSerializableToPath(const Serializable* s, const char* path)
