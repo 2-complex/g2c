@@ -724,10 +724,10 @@ Buffer& Buffer::operator=(const vector<double>& v)
     float* fv = new float[size];
     for(int i = 0; i < size; i++)
         fv[i] = v[i];
-    
+
     size = v.size();
     initWithFloatArray(fv);
-    
+
     delete[] fv;
     return *this;
 }
@@ -739,7 +739,7 @@ Buffer& Buffer::operator=(const vector<float>& v)
     float* fv = new float[size];
     for(int i = 0; i < size; i++)
         fv[i] = v[i];
-    
+
     initWithFloatArray(fv);
     delete[] fv;
 
@@ -893,26 +893,26 @@ IndexBuffer& IndexBuffer::operator=(const std::vector<int>& v)
     unsigned short* sv = new unsigned short[size];
     for(int i = 0; i < size; i++)
         sv[i] = v[i];
-    
+
     size = v.size();
     initWithShortArray(sv);
-    
+
     delete[] sv;
 
     return *this;
 }
 
-IndexBuffer& IndexBuffer::operator=(const std::vector<unsigned short>& v)    
+IndexBuffer& IndexBuffer::operator=(const std::vector<unsigned short>& v)
 {
     type = "IndexBuffer";
     size = v.size();
     unsigned short* sv = new unsigned short[size];
     for(int i = 0; i < size; i++)
         sv[i] = v[i];
-    
+
     size = v.size();
     initWithShortArray(sv);
-    
+
     delete[] sv;
 
     return *this;
@@ -921,14 +921,14 @@ IndexBuffer& IndexBuffer::operator=(const std::vector<unsigned short>& v)
 IndexBuffer& IndexBuffer::set(const int* v, int size)
 {
     this->size = size;
-    
+
     unsigned short* sv = new unsigned short[size];
     for(int i = 0; i < size; i++)
         sv[i] = v[i];
-    
+
     initWithShortArray(sv);
     delete[] sv;
-    
+
     return *this;
 }
 
@@ -1445,6 +1445,8 @@ void Model::deserialize(const std::string& s)
         add(model, true);
     }
 
+    g2clog("pass 3\n");
+
     compileEffects();
     resolveNames();
 }
@@ -1467,6 +1469,8 @@ void Model::handleChild(const parse::Node* n)
 
     if( n_name == "include" )
     {
+        g2clog("apparelty there's in include\n" );
+
         for(vector<parse::Node*>::const_iterator itr = value->children.begin();
             itr!=value->children.end();
             itr++)
@@ -1514,11 +1518,17 @@ void Model::handleChild(const parse::Node* n)
                 t = new Shape;
 
             t->initWithParseNode(element);
+
+            g2clog(" after that...\n");
+
             add(t, true);
 
             if( elementType == "Texture2D" ||
                 elementType == "Texture" )
             {
+                if( !bank )
+                    g2cerror(" Attempt to initialize model with model bank null.\n");
+
                 if( newTexture->file != "" )
                     bank->initTextureWithPath(newTexture, newTexture->file.c_str());
             }

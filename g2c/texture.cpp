@@ -32,12 +32,12 @@ namespace g2c {
 
 
 Bitmap::Bitmap()
-	: data(NULL)
-	, width(0)
-	, height(0)
-	, bitsPerPixel(32)
+    : data(NULL)
+    , width(0)
+    , height(0)
+    , bitsPerPixel(32)
 {
-    
+
 }
 
 Bitmap::Bitmap(const Bitmap& b) :
@@ -50,22 +50,22 @@ Bitmap::Bitmap(const Bitmap& b) :
 }
 
 void Bitmap::set(
-	uint8_t* inData,
-	int inWidth,
+    uint8_t* inData,
+    int inWidth,
     int inHeight,
     int inBitsPerPixel)
 {
     width = inWidth;
     height = inHeight;
     bitsPerPixel = inBitsPerPixel;
-    
+
     if( data )
         delete[] data;
-    
+
     int size = width * height * bitsPerPixel / 8;
-    
+
     data = new uint8_t[size];
-    
+
     memcpy(data, inData, size * sizeof(uint8_t));
 }
 
@@ -74,7 +74,7 @@ void Bitmap::flipVertically()
     int rowSize = width * bitsPerPixel / 8;
 
     uint8_t* tmp = new uint8_t[rowSize];
-    
+
     for( int i = 0; i < height/2; i++ )
     {
         uint8_t* r0 = data + rowSize * i;
@@ -98,7 +98,7 @@ void Bitmap::swizzleRGB()
         uint8_t r = data[pd*i + 0];
         uint8_t g = data[pd*i + 1];
         uint8_t b = data[pd*i + 2];
-		
+
         data[pd*i + 0] = b;
         data[pd*i + 1] = g;
         data[pd*i + 2] = r;
@@ -106,99 +106,99 @@ void Bitmap::swizzleRGB()
 }
 
 void Bitmap::sample(
-	double x,
-	double y,
-	double* color) const
+    double x,
+    double y,
+    double* color) const
 {
-	int i0 = x;
-	int j0 = y;
-	int i1 = x+1;
-	int j1 = y+1;
-	
-	// weights
-	double w00 = (i1 - x) * (j1 - y);
-	double w10 = (x - i0) * (j1 - y);
-	double w01 = (i1 - x) * (y - j0);
-	double w11 = (x - i0) * (y - j0);
-	
-	int p = bitsPerPixel / 8;
-	
-	for( int channel = 0; channel < bitsPerPixel/8; channel++ )
-	{
-		if( i1 < 0 )
-			i1 = 0;
-		if( i1 >= width )
-			i1 = width-1;
-		if( j1 < 0 )
-			j1 = 0;
-		if( j1 >= height )
-			j1 = height-1;
-		
-		if( i0 < 0 )
-			i0 = 0;
-		if( i0 >= width )
-			i0 = width-1;
-		if( j0 < 0 )
-			j0 = 0;
-		if( j0 >= height )
-			j0 = height-1;
-		
-		int index_00 = p * (width * j0 + i0) + channel;
-		int index_10 = p * (width * j0 + i1) + channel;
-		int index_01 = p * (width * j1 + i0) + channel;
-		int index_11 = p * (width * j1 + i1) + channel;
-		
-		color[channel] +=
-			w00 * data[index_00]/255.0 +
-			w10 * data[index_10]/255.0 +
-			w01 * data[index_01]/255.0 +
-			w11 * data[index_11]/255.0 ;
-	}
+    int i0 = x;
+    int j0 = y;
+    int i1 = x+1;
+    int j1 = y+1;
+
+    // weights
+    double w00 = (i1 - x) * (j1 - y);
+    double w10 = (x - i0) * (j1 - y);
+    double w01 = (i1 - x) * (y - j0);
+    double w11 = (x - i0) * (y - j0);
+
+    int p = bitsPerPixel / 8;
+
+    for( int channel = 0; channel < bitsPerPixel/8; channel++ )
+    {
+        if( i1 < 0 )
+            i1 = 0;
+        if( i1 >= width )
+            i1 = width-1;
+        if( j1 < 0 )
+            j1 = 0;
+        if( j1 >= height )
+            j1 = height-1;
+
+        if( i0 < 0 )
+            i0 = 0;
+        if( i0 >= width )
+            i0 = width-1;
+        if( j0 < 0 )
+            j0 = 0;
+        if( j0 >= height )
+            j0 = height-1;
+
+        int index_00 = p * (width * j0 + i0) + channel;
+        int index_10 = p * (width * j0 + i1) + channel;
+        int index_01 = p * (width * j1 + i0) + channel;
+        int index_11 = p * (width * j1 + i1) + channel;
+
+        color[channel] +=
+            w00 * data[index_00]/255.0 +
+            w10 * data[index_10]/255.0 +
+            w01 * data[index_01]/255.0 +
+            w11 * data[index_11]/255.0 ;
+    }
 }
 
 void Bitmap::resize(int inWidth, int inHeight)
 {
-	uint8_t* newData = (uint8_t*)calloc(inWidth * inHeight * bitsPerPixel / 8, 1);
-	
-	// Uninitialized bitmap becomes a black, transparent, 32-bit image.
-	if( !data )
-	{
-		data = newData;
-		width = inWidth;
-		height = inHeight;
-		bitsPerPixel = 32;
-		return;
-	}
-	
-	int w = width / inWidth;
-	int h = height / inHeight;
-	
-	double sample_w = 1.0 * width / inWidth;
-	double sample_h = 1.0 * height / inHeight;
-	
-	int p = bitsPerPixel / 8;
-	
-	// Otherwise, rescale image by sampling each pixel.
-	for( int j = 0; j < inHeight; j++ )
-	for( int i = 0; i < inWidth; i++ )
+    uint8_t* newData = (uint8_t*)calloc(inWidth * inHeight * bitsPerPixel / 8, 1);
+
+    // Uninitialized bitmap becomes a black, transparent, 32-bit image.
+    if( !data )
     {
-    	int index = p * (inWidth * j + i);
-    	
-    	double color[4] = {0};
-    	
-    	for( int di = 0; di <= w; di++ )
-    	for( int dj = 0; dj <= h; dj++ )
-			sample(sample_w * i + di, sample_h * j + dj, color);
-    	
-    	for( int c = 0; c < p; c++ )
-	    	newData[index + c] = 255 * color[c] / ((w+1) * (h+1));
+        data = newData;
+        width = inWidth;
+        height = inHeight;
+        bitsPerPixel = 32;
+        return;
     }
-	
-	free(data);
-	
-	width = inWidth;
-	height = inHeight;
-	data = newData;
+
+    int w = width / inWidth;
+    int h = height / inHeight;
+
+    double sample_w = 1.0 * width / inWidth;
+    double sample_h = 1.0 * height / inHeight;
+
+    int p = bitsPerPixel / 8;
+
+    // Otherwise, rescale image by sampling each pixel.
+    for( int j = 0; j < inHeight; j++ )
+    for( int i = 0; i < inWidth; i++ )
+    {
+        int index = p * (inWidth * j + i);
+
+        double color[4] = {0};
+
+        for( int di = 0; di <= w; di++ )
+        for( int dj = 0; dj <= h; dj++ )
+            sample(sample_w * i + di, sample_h * j + dj, color);
+
+        for( int c = 0; c < p; c++ )
+            newData[index + c] = 255 * color[c] / ((w+1) * (h+1));
+    }
+
+    free(data);
+
+    width = inWidth;
+    height = inHeight;
+    data = newData;
 }
 
 void Bitmap::mimmic(const Bitmap& b)
@@ -287,10 +287,10 @@ GLuint Texture::getTarget() const
 string Texture::serializeElements(string indent) const
 {
     string r = Serializable::serializeElements(indent);
-    
+
     r += TAB + indent + "'unit' : " + intToString(unit) + ",\n";
     r += TAB + indent + "'mipmaps' : " + intToString(mipmaps) + ",\n";
-    
+
     return r;
 }
 
@@ -338,41 +338,41 @@ void Texture2D::initWithImageData(
 {
     if( !index )
         glGenTextures(1, &index);
-    
+
     // glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, index);
-    
+
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    
+
     width = inWidth;
     height = inHeight;
     bitsPerPixel = inBitsPerPixel;
-    
+
     if( width == 0 || height == 0 )
     {
         g2cerror( "Attempt to initialize texture with zero height or width.\n" );
         g2cerror( "texture: %s\n", name.c_str() );
         exit(0);
     }
-    
+
     if( data )
         free(data);
-    
+
     int size = width * height * bitsPerPixel / 8;
     data = (uint8_t*)malloc(size * sizeof(float));
-    
+
     if( inData )
         memcpy(data, inData, size);
     else
         memset(data, 0, size);
-    
+
     GLenum format = (bitsPerPixel == 24) ? GL_RGB : GL_RGBA;
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-    
+
     if( mipmaps )
     {
         glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
@@ -393,9 +393,9 @@ void Texture2D::initWithBitmap(const Bitmap& bitmap)
 string Texture2D::serializeElements(string indent) const
 {
     string r = Texture::serializeElements(indent);
-    
+
     r += TAB + indent + "'file' : " + string("'") + file + "',\n";
-    
+
     return r;
 }
 
@@ -404,7 +404,7 @@ void Texture2D::handleChild(const parse::Node* n)
     Texture::handleChild(n);
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if( n_name == "file" )
         file = value->data.s;
 }
@@ -436,16 +436,16 @@ void CubeMap::initWithImageData(const GLubyte* inDataPositiveX,
 {
     if( !index )
         glGenTextures(1, &index);
-    
+
     // glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_CUBE_MAP, index);
-    
+
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    
+
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
+
     const GLubyte* datas[6] = {
         inDataPositiveX,
         inDataNegativeX,
@@ -454,27 +454,27 @@ void CubeMap::initWithImageData(const GLubyte* inDataPositiveX,
         inDataPositiveZ,
         inDataNegativeZ
     };
-    
+
     width = inWidth;
     bitsPerPixel = inBitsPerPixel;
-    
+
     if( width == 0 )
     {
         g2cerror( "Attempt to initialize cubemap with zero height or width.\n" );
         g2cerror( "cubemap: %s\n", name.c_str() );
         exit(0);
     }
-    
+
     GLenum format = (bitsPerPixel == 24) ? GL_RGB : GL_RGBA;
-    
+
     for( int i = 0; i < 6; i++ )
     {
         const GLubyte* data = datas[i];
-        
+
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
             0, format, width, width, 0, format, GL_UNSIGNED_BYTE, data);
     }
-    
+
     if( mipmaps )
     {
         glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
@@ -484,12 +484,12 @@ void CubeMap::initWithImageData(const GLubyte* inDataPositiveX,
 }
 
 void CubeMap::initWithBitmaps(
-	const Bitmap& bitmapPositiveX,
-	const Bitmap& bitmapNegativeX,
-	const Bitmap& bitmapPositiveY,
-	const Bitmap& bitmapNegativeY,
-	const Bitmap& bitmapPositiveZ,
-	const Bitmap& bitmapNegativeZ)
+    const Bitmap& bitmapPositiveX,
+    const Bitmap& bitmapNegativeX,
+    const Bitmap& bitmapPositiveY,
+    const Bitmap& bitmapNegativeY,
+    const Bitmap& bitmapPositiveZ,
+    const Bitmap& bitmapNegativeZ)
 {
     int w = bitmapPositiveX.getWidth();
     if( w != bitmapPositiveX.getWidth() || w != bitmapPositiveX.getHeight() ||
@@ -502,7 +502,7 @@ void CubeMap::initWithBitmaps(
         g2cerror( "Attempt to make cube map from images which are not all the same square size.\n" );
         exit(0);
     }
-    
+
     int bpp = bitmapPositiveX.getBitsPerPixel();
     if( bpp != bitmapPositiveX.getBitsPerPixel() ||
         bpp != bitmapNegativeX.getBitsPerPixel() ||
@@ -514,7 +514,7 @@ void CubeMap::initWithBitmaps(
         g2cerror( "Attempt to make cube map from images which are not all the same bit-depth.\n" );
         exit(0);
     }
-    
+
     initWithImageData(
         bitmapPositiveX.getData(),
         bitmapNegativeX.getData(),
@@ -527,14 +527,14 @@ void CubeMap::initWithBitmaps(
 string CubeMap::serializeElements(string indent) const
 {
     string r = Texture::serializeElements(indent);
-    
+
     r += TAB + indent + "'positiveXFile' : " + string("'") + positiveXFile + "',\n";
     r += TAB + indent + "'negativeXFile' : " + string("'") + negativeXFile + "',\n";
     r += TAB + indent + "'positiveYFile' : " + string("'") + positiveYFile + "',\n";
     r += TAB + indent + "'negativeYFile' : " + string("'") + negativeYFile + "',\n";
     r += TAB + indent + "'positiveZFile' : " + string("'") + positiveZFile + "',\n";
     r += TAB + indent + "'negativeZFile' : " + string("'") + negativeZFile + "',\n";
-    
+
     return r;
 }
 
@@ -543,22 +543,22 @@ void CubeMap::handleChild(const parse::Node* n)
     Texture::handleChild(n);
     string n_name = n->data.s;
     parse::Node* value = n->data.value;
-    
+
     if( n_name == "positiveXFile" )
         positiveXFile = value->data.s;
-    
+
     if( n_name == "negativeXFile" )
         negativeXFile = value->data.s;
-    
+
     if( n_name == "positiveYFile" )
         positiveYFile = value->data.s;
-    
+
     if( n_name == "negativeYFile" )
         negativeYFile = value->data.s;
-    
+
     if( n_name == "positiveZFile" )
         positiveZFile = value->data.s;
-    
+
     if( n_name == "negativeZFile" )
         negativeZFile = value->data.s;
 }

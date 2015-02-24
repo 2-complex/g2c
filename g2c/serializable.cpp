@@ -32,10 +32,12 @@ using namespace std;
 namespace g2c {
 
 
-Serializable::Property::Property(PropertyType type, const std::string& name, long offset) :
-    type(type),
-    name(name),
-    offset(offset) {}
+Serializable::Property::Property(PropertyType type, const std::string& name, long offset)
+    : type(type)
+    , name(name)
+    , offset(offset)
+{
+}
 
 void Serializable::deserialize(const std::string& s)
 {
@@ -72,29 +74,29 @@ void Serializable::handleChild(const parse::Node* n)
         itr++ )
     {
         void* ptr = (char*)(this) + itr->offset;
-        
+
         switch( itr->type )
         {
             case kInt:
                 if( n_name == itr->name )
                     *(reinterpret_cast<int*>(ptr)) = value->data.i;
             break;
-            
+
             case kDouble:
                 if( n_name == itr->name )
                     *(reinterpret_cast<double*>(ptr)) = value->data.x;
             break;
-            
+
             case kString:
                 if( n_name == itr->name )
                     *(reinterpret_cast<string*>(ptr)) = value->data.s;
             break;
-            
+
             case kObject:
                 if( n_name == itr->name )
                     reinterpret_cast<Serializable*>(ptr)->initWithParseNode(value);
             break;
-            
+
             case kVectorDouble:
                 if( n_name == itr->name )
                 {
@@ -107,7 +109,7 @@ void Serializable::handleChild(const parse::Node* n)
                     }
                 }
             break;
-            
+
             case kVectorInt:
                 if( n_name == itr->name )
                 {
@@ -120,7 +122,7 @@ void Serializable::handleChild(const parse::Node* n)
                     }
                 }
             break;
-            
+
             case kVectorString:
                 if( n_name == itr->name )
                 {
@@ -168,43 +170,43 @@ string Serializable::serializeBegin(string indent) const
 string Serializable::serializeElements(string indent) const
 {
     string r;
-    
+
     if( type != "" )
         r += TAB + indent + "\"type\" : " + stringRepr(type) + ",\n";
     if( name != "" )
         r += TAB + indent + "\"name\" : " + stringRepr(name) + ",\n";
-    
+
     int size = properties.size();
-    
+
     int i = 0;
     for(vector<Property>::const_iterator itr = properties.begin();
         itr!=properties.end();
         itr++ )
     {
         void* ptr = (char*)(this) + itr->offset;
-        
+
         switch( itr->type )
         {
             case kString:
-                r += TAB + indent + "\"" + itr->name + "\" : " + 
+                r += TAB + indent + "\"" + itr->name + "\" : " +
                     stringRepr(*(reinterpret_cast<string*>(ptr)));
             break;
-            
+
             case kDouble:
                 r += TAB + indent + "\"" + itr->name + "\" : " +
                     floatToString(*(reinterpret_cast<double*>(ptr)));
             break;
-            
+
             case kInt:
                 r += TAB + indent + "\"" + itr->name + "\" : " +
                     intToString(*(reinterpret_cast<int*>(ptr)));
             break;
-            
+
             case kVectorDouble:
                 {
                     r += TAB + indent + "\"" + itr->name + "\" : [\n";
                     vector<double>* vptr = (vector<double>*)ptr;
-                    
+
                     vector<double>::iterator itr = vptr->begin();
                     if( itr != vptr->end() )
                     while(true)
@@ -218,16 +220,16 @@ string Serializable::serializeElements(string indent) const
                         }
                         r += ",\n";
                     }
-                    
+
                     r += TAB + indent + "]";
                 }
             break;
-            
+
             case kVectorInt:
                 {
                     r += TAB + indent + "\"" + itr->name + "\" : [\n";
                     vector<int>* vptr = (vector<int>*)ptr;
-                    
+
                     vector<int>::iterator itr = vptr->begin();
                     if( itr != vptr->end() )
                     while(true)
@@ -241,16 +243,16 @@ string Serializable::serializeElements(string indent) const
                         }
                         r += ",\n";
                     }
-                    
+
                     r += TAB + indent + "]";
                 }
             break;
-            
+
             case kVectorString:
                 {
                     r += TAB + indent + "\"" + itr->name + "\" : [\n";
                     vector<string>* vptr = (vector<string>*)ptr;
-                    
+
                     vector<string>::iterator itr = vptr->begin();
                     if( itr != vptr->end() )
                     while(true)
@@ -264,24 +266,24 @@ string Serializable::serializeElements(string indent) const
                         }
                         r += ",\n";
                     }
-                                        
+
                     r += TAB + indent + "]";
                 }
             break;
-            
+
             case kObject:
                 r += TAB + indent + "\"" + itr->name + "\" : " +
                     (reinterpret_cast<Serializable*>(ptr))->serialize(indent + TAB);
             break;
         }
-        
+
         if( i!=(size-1) )
             r += ",";
         r += "\n";
-        
+
         i++;
     }
-    
+
     return r;
 }
 

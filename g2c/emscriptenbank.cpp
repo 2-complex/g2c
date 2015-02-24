@@ -35,19 +35,22 @@ namespace g2c {
 
 void EmscriptenBank::initPersistentSerializableWithKey(Serializable* s, const char* key)
 {
+    g2clog("EmscriptenBank::initPersistentSerializableWithKey not implemented yet\n");
 }
 
 void EmscriptenBank::writePersistentSerializableWithKey(const Serializable* s, const char* key)
 {
+    g2clog("EmscriptenBank::writePersistentSerializableWithKey not implemented yet\n");
 }
 
 void EmscriptenBank::initDataWithPath(Data* data, const char* path)
 {
+    g2clog("EmscriptenBank::initDataWithPath not implemented yet\n");
 }
 
 void EmscriptenBank::initSerializableWithPath(Serializable* s, const char* path)
 {
-    string fullpath = base_path + directory + path;
+    g2clog("EmscriptenBank::initSerializableWithPath not implemented yet\n");
 }
 
 void EmscriptenBank::writeSerializableToPath(const Serializable* s, const char* path)
@@ -84,11 +87,13 @@ void EmscriptenBank::initTextureWithPath(Texture2D* texture, const char* path)
 
 void EmscriptenBank::initBitmapWithPath(Bitmap* bitmap, const char* path)
 {
-    string newpath = directory + path;
+    // string newpath = directory + path;
+    g2clog("EmscriptenBank::initBitmapWithPath not implemented yet\n");
 }
 
 void EmscriptenBank::initSoundWithPath(Sound* sound, const char* path)
 {
+    g2clog("EmscriptenBank::initSoundWithPath not implemented yet\n");
 }
 
 } // end namespace
