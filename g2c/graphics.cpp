@@ -1445,8 +1445,6 @@ void Model::deserialize(const std::string& s)
         add(model, true);
     }
 
-    g2clog("pass 3\n");
-
     compileEffects();
     resolveNames();
 }
@@ -1518,8 +1516,6 @@ void Model::handleChild(const parse::Node* n)
                 t = new Shape;
 
             t->initWithParseNode(element);
-
-            g2clog(" after that...\n");
 
             add(t, true);
 
