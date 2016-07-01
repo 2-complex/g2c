@@ -47,7 +47,7 @@ void ButtonApp::resize(int width, int height)
 
 void ButtonApp::init()
 {
-    bank->initTextureWithPath(&button, "button.png");
+    bank->initTextureWithPath(&button, "assets/button.png");
     button.numberOfRows = 1;
     button.numberOfColumns = 2;
 

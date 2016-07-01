@@ -241,7 +241,7 @@ namespace g2c
         library.
 
         To implement a renderer, implement init() and drawMesh().  Whichever renderer
-        Sprite::renderer is set to gets used to draw all sprite graphics.*/
+        Mesh::renderer is set to gets used to draw all sprite graphics.*/
     class Renderer
     {
     public:

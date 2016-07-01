@@ -32,7 +32,7 @@ public:
     void mouseUp(const Vec2& C);
 
 protected:
-    /* getCameraLoc returns the current camera location in 3-space*/
+    /* getCameraLoc returns the current camera location in 3-space. */
     Vec3 getCameraLoc() const;
     Vec3 getLookAtLoc() const;
 
