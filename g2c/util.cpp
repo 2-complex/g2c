@@ -33,10 +33,8 @@
 
 #include "util.h"
 
-namespace g2c {
-
-
-
+namespace g2c
+{
 
 double currentTime()
 {
@@ -212,7 +210,7 @@ std::string flattenWhitespace(const char* s)
     r[j++] = 0;
     
     std::string result(r);
-    delete r;
+    delete[] r;
     
     return result;
 }
@@ -327,4 +325,3 @@ bool endsWith(const std::string& path, const std::string& extension)
 }
 
 } // end namespace
-
