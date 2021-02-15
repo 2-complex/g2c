@@ -1,24 +1,44 @@
 index.o
 :
+build/util.o
+build/parse.o
+build/serializable.o
 main.cpp
 :
-emcc
-main.cpp -std=c++11
--O3
--s WASM=1
--s USE_SDL=2
+emcc -std=c++11 -s WASM=1 -O3 -s WASM=1 -s USE_SDL=2
+build/util.o
+build/parse.o
+build/serializable.o
+main.cpp
 -o index.js
 :
 
-build/parse.js
+build/parse.o
 :
 g2c/parse.h
 g2c/parse.cpp
 :
-emcc -c -std=c++11
+emcc -std=c++11 -s WASM=1 -O3 -c
 g2c/parse.cpp
--O3
--s WASM=1
--s USE_SDL=2
--o build/parse.js
+-o build/parse.o
+:
+
+build/util.o
+:
+g2c/util.h
+g2c/util.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/util.cpp
+-o build/util.o
+:
+
+build/serializable.o
+:
+g2c/serializable.h
+g2c/serializable.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/serializable.cpp
+-o build/serializable.o
 :

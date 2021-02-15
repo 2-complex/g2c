@@ -31,6 +31,29 @@ extern "C" void EMSCRIPTEN_KEEPALIVE toggle_background_color()
     background_is_black = !background_is_black;
 }
 
+#include "g2c/serializable.h"
+using namespace g2c;
+
+class Thing : public Serializable
+{
+public:
+    Thing();
+
+    int i;
+    double x;
+    std::string s;
+    std::vector<int> v;
+};
+
+Thing::Thing()
+{
+    addMember("i", i);
+    addMember("x", x);
+    addMember("s", s);
+    addMember("v", v);
+}
+
+
 std::function<void()> loop;
 void main_loop() { loop(); }
 
@@ -74,6 +97,16 @@ int main()
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
     glEnableVertexAttribArray(posAttrib);
     glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    Thing t;
+    t.i = 23;
+    t.x = 10.1;
+    t.s = "fourty five";
+    t.v.push_back(3);
+    t.v.push_back(4);
+    t.v.push_back(5);
+
+    printf("%s\n", t.serialize().c_str());
 
     loop = [&]
     {
