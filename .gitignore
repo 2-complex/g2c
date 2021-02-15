@@ -8,3 +8,6 @@ projects/memory/test
 
 .DS_Store
 */.DS_Store
+
+*index.wasm
+.ruler

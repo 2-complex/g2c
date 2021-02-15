@@ -1,0 +1,24 @@
+index.o
+:
+main.cpp
+:
+emcc
+main.cpp -std=c++11
+-O3
+-s WASM=1
+-s USE_SDL=2
+-o index.js
+:
+
+build/parse.js
+:
+g2c/parse.h
+g2c/parse.cpp
+:
+emcc -c -std=c++11
+g2c/parse.cpp
+-O3
+-s WASM=1
+-s USE_SDL=2
+-o build/parse.js
+:
