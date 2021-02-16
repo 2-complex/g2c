@@ -1,16 +1,111 @@
-index.o
+index.js
 :
-build/util.o
+build/animations.o
+build/app.o
+build/audioplayer.o
+build/bank.o
+build/fattening.o
+build/graphics.o
+build/listener.o
 build/parse.o
 build/serializable.o
+build/sound.o
+build/sprites.o
+build/texture.o
+build/transforms.o
+build/util.o
+build/wave.o
 main.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -s WASM=1 -s USE_SDL=2
-build/util.o
+build/animations.o
+build/app.o
+build/audioplayer.o
+build/bank.o
+build/fattening.o
+build/graphics.o
+build/listener.o
 build/parse.o
 build/serializable.o
+build/sound.o
+build/sprites.o
+build/texture.o
+build/transforms.o
+build/util.o
+build/wave.o
 main.cpp
 -o index.js
+:
+
+build/graphics.o
+:
+g2c/opengl.h
+g2c/graphics.h
+g2c/graphics.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/graphics.cpp
+-o build/graphics.o
+:
+
+build/animations.o
+:
+g2c/animations.h
+g2c/animations.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/animations.cpp
+-o build/animations.o
+:
+
+build/app.o
+:
+g2c/app.h
+g2c/app.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/app.cpp
+-o build/app.o
+:
+
+build/audioplayer.o
+:
+g2c/audioplayer.h
+g2c/audioplayer.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/audioplayer.cpp
+-o build/audioplayer.o
+:
+
+build/bank.o
+:
+g2c/bank.h
+g2c/bank.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/bank.cpp
+-o build/bank.o
+:
+
+build/fattening.o
+:
+g2c/fattening.h
+g2c/fattening.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/fattening.cpp
+-o build/fattening.o
+:
+
+build/listener.o
+:
+g2c/listener.h
+g2c/listener.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/listener.cpp
+-o build/listener.o
 :
 
 build/parse.o
@@ -23,6 +118,56 @@ g2c/parse.cpp
 -o build/parse.o
 :
 
+build/serializable.o
+:
+g2c/serializable.h
+g2c/serializable.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/serializable.cpp
+-o build/serializable.o
+:
+
+build/sound.o
+:
+g2c/sound.h
+g2c/sound.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/sound.cpp
+-o build/sound.o
+:
+
+build/sprites.o
+:
+g2c/sprites.h
+g2c/sprites.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/sprites.cpp
+-o build/sprites.o
+:
+
+build/texture.o
+:
+g2c/texture.h
+g2c/texture.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/texture.cpp
+-o build/texture.o
+:
+
+build/transforms.o
+:
+g2c/transforms.h
+g2c/transforms.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -c
+g2c/transforms.cpp
+-o build/transforms.o
+:
+
 build/util.o
 :
 g2c/util.h
@@ -33,12 +178,12 @@ g2c/util.cpp
 -o build/util.o
 :
 
-build/serializable.o
+build/wave.o
 :
-g2c/serializable.h
-g2c/serializable.cpp
+g2c/wave.h
+g2c/wave.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/serializable.cpp
--o build/serializable.o
+g2c/wave.cpp
+-o build/wave.o
 :

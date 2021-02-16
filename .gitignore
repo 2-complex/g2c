@@ -11,3 +11,5 @@ projects/memory/test
 
 *index.wasm
 .ruler
+
+index.js

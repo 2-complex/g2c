@@ -772,7 +772,7 @@ Buffer& Buffer::set(const double* v, int size)
 
 string Buffer::serializeElements(string indent) const
 {
-#if !(defined(TARGET_OS_IPHONE) || defined(ANDROID))
+#if !(defined(TARGET_OS_IPHONE) || defined(ANDROID) || defined(EMSCRIPTEN))
     string r = Serializable::serializeElements(indent);
 
     float* array = new float[size];
@@ -791,7 +791,7 @@ string Buffer::serializeElements(string indent) const
 
     return r;
 #else
-    return "(Buffer::serialize does not work on mobile.)";
+    return "(Buffer::serialize does not work in GLES2 environments such as mobile or web)";
 #endif
 }
 
@@ -943,7 +943,7 @@ IndexBuffer& IndexBuffer::set(const unsigned short* v, int size)
 
 string IndexBuffer::serializeElements(string indent) const
 {
-#if !(defined(TARGET_OS_IPHONE) || defined(ANDROID))
+#if !(defined(TARGET_OS_IPHONE) || defined(ANDROID) || defined(EMSCRIPTEN))
     string r = Serializable::serializeElements(indent);
 
     unsigned short* array = new unsigned short[size];
