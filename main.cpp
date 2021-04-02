@@ -245,7 +245,7 @@ int main()
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
     app.init();
-    double t = 0;
+    double clock = 0.0;
 
 
     Effect effect;
@@ -274,10 +274,7 @@ int main()
 
     float vertexArray[] =
     {
-         1.0,  0.0,     -0.25 * 1.41421,
-        -0.5,  0.86603, -0.25 * 1.41421,
-        -0.5, -0.86603, -0.25 * 1.41421,
-         0.0,  0.0,      0.75 * 1.41421
+        0.0f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f
     };
 
     int indexArray[] =
@@ -288,34 +285,10 @@ int main()
     buffer.set(vertexArray, sizeof(vertexArray) / sizeof(float));
     indexBuffer.set(indexArray, sizeof(indexArray) / sizeof(int));
 
-    geometry["position"] = Field(&buffer, 3, 3, 0);
+    geometry["position"] = Field(&buffer, 2, 2, 0);
     geometry.indices = &indexBuffer;
 
-
-
-
     effect.compile();
-
-
-    loop = [&]
-    {
-        if( background_is_black )
-        {
-            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-        }
-        else
-        {
-            glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
-        }
-
-        glClearColor(1.0f, t, 0.0f, 1.0f);
-        glClearDepthf(0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        app.step(t);
-        t += 0.01;
-        app.draw();
-
 
     // Create a Vertex Buffer Object and copy the vertex data to it
     GLuint vbo;
@@ -326,12 +299,32 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    effect.use();
+    loop = [&]
+    {
 
-    // Specify the layout of the vertex data
-    GLint posAttrib = glGetAttribLocation(effect.program, "position");
-    glEnableVertexAttribArray(posAttrib);
-    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+        if( background_is_black )
+        {
+            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        }
+        else
+        {
+            glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+        }
+
+        glClearColor(1.0f, 0.0, 0.4f, 1.0f);
+        glClearDepthf(0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+        app.step(clock);
+        clock += 0.01;
+
+        effect.use();
+
+        // Specify the layout of the vertex data
+        GLint posAttrib = glGetAttribLocation(effect.program, "position");
+        glEnableVertexAttribArray(posAttrib);
+        glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 
         // Draw a triangle from the 3 vertices
