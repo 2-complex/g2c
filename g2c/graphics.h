@@ -270,11 +270,13 @@ public:
     IndexBuffer& set(const int*, int size);
     IndexBuffer& set(const unsigned short*, int size);
 
-protected:
+//DEBUG
+public:
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
 
-private:
+//DEBUG
+public:
     void initWithShortArray(const unsigned short* v);
     GLuint size;
     GLuint index;

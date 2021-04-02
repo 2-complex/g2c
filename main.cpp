@@ -60,9 +60,10 @@ public:
     Buffer buffer;
     IndexBuffer indexBuffer;
     Geometry geometry;
-    Effect effect;
+    mutable Effect effect;
     Assumption material;
     mutable Assumption camera;
+    Field field;
     Shape shape;
 
     void init();
@@ -177,6 +178,11 @@ void TriangleApp::init()
         "  gl_FragColor[2] = 0.5;\n"
         "}\n";
 
+    effect.compile();
+
+
+
+
     float vertexArray[] =
     {
         0.0f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f
@@ -190,10 +196,10 @@ void TriangleApp::init()
     buffer.set(vertexArray, sizeof(vertexArray) / sizeof(float));
     indexBuffer.set(indexArray, sizeof(indexArray) / sizeof(int));
 
-    geometry["position"] = Field(&buffer, 2, 2, 0);
+    field = Field(&buffer, 2, 2, 0);
+    geometry["position"] = field;
     geometry.indices = &indexBuffer;
 
-    effect.compile();
 
     // Create a Vertex Buffer Object and copy the vertex data to it
     GLuint vbo;
@@ -208,12 +214,9 @@ void TriangleApp::init()
 void TriangleApp::draw() const
 {
     effect.use();
-
-    GLint posAttrib = glGetAttribLocation(effect.program, "position");
-    glEnableVertexAttribArray(posAttrib);
-    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    effect.addAttribute("position");
+    effect.bindAttributeToField("position", field);
+    glDrawElements(GL_TRIANGLES, geometry.indices->size, GL_UNSIGNED_SHORT, 0);
 }
 
 
