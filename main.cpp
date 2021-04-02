@@ -180,16 +180,12 @@ void TriangleApp::init()
 
     effect.compile();
 
-
     float vertexArray[] =
     {
         0.0f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f
     };
 
-    int indexArray[] =
-    {
-        0,2,1
-    };
+    int indexArray[] = { 0, 1, 2 };
 
     buffer.set(vertexArray, sizeof(vertexArray) / sizeof(float));
     indexBuffer.set(indexArray, sizeof(indexArray) / sizeof(int));
@@ -197,16 +193,20 @@ void TriangleApp::init()
     field = Field(&buffer, 2, 2, 0);
     geometry["position"] = field;
     geometry.indices = &indexBuffer;
+
+    material.effect = &effect;
+
+    shape.geometry = &geometry;
+    shape.assumptions.push_back(&camera);
+    shape.assumptions.push_back(&material);
+
+    material["color"] = Vec4(1.0, 0.0, 0.0, 1.0);
 }
 
 void TriangleApp::draw() const
 {
-    effect.use();
-    effect.addAttribute("position");
-    effect.bindAttributeToField("position", field);
-    glDrawElements(GL_TRIANGLES, geometry.indices->size, GL_UNSIGNED_SHORT, 0);
+    shape.draw();
 }
-
 
 std::function<void()> loop;
 void main_loop() { loop(); }
@@ -237,7 +237,6 @@ int main()
             glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
         }
 
-        glClearColor(1.0f, 0.0, 0.4f, 1.0f);
         glClearDepthf(0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
