@@ -399,7 +399,7 @@ bool Effect::loadShaders()
     program = glCreateProgram();
 
     const string header =
-#if defined(ANDROID)
+#if defined(ANDROID) || defined(EMCC)
         "precision mediump float;\n";
 #else
         "#ifdef GL_ES\nprecision highp float;\n#endif\n";

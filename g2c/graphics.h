@@ -128,13 +128,14 @@ protected:
     virtual std::string serializeElements(std::string indent = "") const;
     virtual void handleChild(const parse::Node* n);
 
-private:
+// DEBUG
+public:
     void assume(const std::map<std::string, Value>* assumption) const;
     void use() const;
-    
+
     void bindAttributeToField(const std::string& name, const Field& field) const;
     void disableEnabledAttributes() const;
-    
+
     bool loadShaders();
     void loadVertexShader(const char* s);
     void loadFragmentShader(const char* s);
