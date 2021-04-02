@@ -181,8 +181,6 @@ void TriangleApp::init()
     effect.compile();
 
 
-
-
     float vertexArray[] =
     {
         0.0f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f
@@ -199,16 +197,6 @@ void TriangleApp::init()
     field = Field(&buffer, 2, 2, 0);
     geometry["position"] = field;
     geometry.indices = &indexBuffer;
-
-
-    // Create a Vertex Buffer Object and copy the vertex data to it
-    GLuint vbo;
-    glGenBuffers(1, &vbo);
-
-    GLfloat vertices[] = {0.0f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f};
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 }
 
 void TriangleApp::draw() const
