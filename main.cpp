@@ -9,21 +9,6 @@
 // an example of something we will control from the javascript side
 bool background_is_black = true;
 
-const GLchar* vertexSource =
-    "attribute vec4 position;                     \n"
-    "void main()                                  \n"
-    "{                                            \n"
-    "  gl_Position = vec4(position.xyz, 1.0);     \n"
-    "}                                            \n";
-const GLchar* fragmentSource =
-    "precision mediump float;\n"
-    "void main()                                  \n"
-    "{                                            \n"
-    "  gl_FragColor[0] = gl_FragCoord.x/640.0;    \n"
-    "  gl_FragColor[1] = gl_FragCoord.y/480.0;    \n"
-    "  gl_FragColor[2] = 0.5;                     \n"
-    "}                                            \n";
-
 
 // the function called by the javascript code
 extern "C" void EMSCRIPTEN_KEEPALIVE toggle_background_color()
@@ -280,7 +265,37 @@ int main()
         "  gl_FragColor[2] = 0.5;                     \n"
         "}                                            \n";
 
+
+
+    Buffer buffer;
+    IndexBuffer indexBuffer;
+    Geometry geometry;
+    Assumption material;
+
+    float vertexArray[] =
+    {
+         1.0,  0.0,     -0.25 * 1.41421,
+        -0.5,  0.86603, -0.25 * 1.41421,
+        -0.5, -0.86603, -0.25 * 1.41421,
+         0.0,  0.0,      0.75 * 1.41421
+    };
+
+    int indexArray[] =
+    {
+        0,2,1
+    };
+
+    buffer.set(vertexArray, sizeof(vertexArray) / sizeof(float));
+    indexBuffer.set(indexArray, sizeof(indexArray) / sizeof(int));
+
+    geometry["position"] = Field(&buffer, 3, 3, 0);
+    geometry.indices = &indexBuffer;
+
+
+
+
     effect.compile();
+
 
     loop = [&]
     {
