@@ -17,6 +17,7 @@ EXES = \
 	serialize \
 	ship \
 	sound \
+	button \
 	star \
 	steam \
 	tetrahedron \

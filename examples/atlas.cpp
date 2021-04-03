@@ -19,7 +19,6 @@ private:
     Bank* bank;
     RendererGL2 renderer;
 
-
     void init();
     void resize(int width, int height);
     void setBank(Bank* bank);
@@ -34,15 +33,21 @@ AtlasApp::AtlasApp()
 
 void AtlasApp::keyDown(unsigned char c)
 {
+    printf("c = %c\n", c);
+
     switch( c )
     {
         case '+':
         case '=':
+        case '.':
+        case '>':
             sherman.frame++;
         break;
 
         case '-':
         case '_':
+        case ',':
+        case '<':
             sherman.frame--;
         break;
     }
