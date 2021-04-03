@@ -62,7 +62,7 @@ void GlutTrampoline::init()
     if(app)
     {
         player = new OpenALPlayer;
-	bank = new
+        bank = new
 #if __APPLE_CC__
             MacFileSystemBank;
 #else

@@ -24,11 +24,9 @@
 #include "glutlistener.h"
 #include "opengl.h"
 
-
-namespace g2c {
-
+namespace g2c
+{
 GlutListener* gGlutListener = NULL;
-
 GlutListener::GlutListener() : listening(true), delegate(NULL) {}
 GlutListener::~GlutListener() {}
 

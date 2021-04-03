@@ -40,6 +40,8 @@ $(LIBGLUTTRAMPOLINE): force_look
 force_look:
 	true
 
+GLFLAGS = -DGL_SILENCE_DEPRECATION
+
 define build_with_source
 	c++ $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) \
 		-I$(G2C_SOURCE_DIR) -I$(GLUT_TRAMPOLINE_DIR) \
