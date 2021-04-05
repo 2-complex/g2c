@@ -19,31 +19,28 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#if IOS
-    #include <OpenGLES/ES1/gl.h>
-    #include <OpenGLES/ES1/glext.h>
-    #include <OpenGLES/ES2/gl.h>
-    #include <OpenGLES/ES2/glext.h>
+#ifndef _SPRITES_
+#define _SPRITES_
 
-#elif ANDROID
-    #include <GLES/gl.h>
-    #include <GLES/glext.h>
-    #include <GLES2/gl2.h>
-    #include <GLES2/gl2ext.h>
+namespace g2c
+{
+    /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 1
+        collection.  The draw function in this will work in desktop OpenGL or in OpenGL ES 1.
 
-#elif EMSCRIPTEN
-    #include <SDL_opengles2.h>
+        Set Mesh::renderer to an instance of RendererGL1 to and call init().  Then all meshes
+        will draw using it.*/
+    class RendererGL1 : public Renderer
+    {
+    public:
+        RendererGL1();
+        ~RendererGL1();
 
-#else // Assume a glut build.
-    #define GLUT 1
-    #ifdef __APPLE_CC__
-        #include <glut/glut.h>
-        #define initOpenGL() do{}while(0)
-    #else
-        #include <GL/glew.h>
-        #include <GL/freeglut.h>
-        #include <GL/freeglut_ext.h>
-        #define initOpenGL() glewInit()
-    #endif
-#endif
-
+        virtual void init();
+        virtual void drawMesh(
+            const Mesh* mesh,
+            const Mat4& matrix,
+            const Mat3& texMatrix,
+            const Color& color,
+            const Texture* texture) const;
+    };
+}

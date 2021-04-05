@@ -60,7 +60,6 @@ namespace g2c
     class Mesh;
     class Polygon;
 
-
     class Mat4Property
         : public Mat4
         , public Serializable
@@ -266,26 +265,6 @@ namespace g2c
             const Mat3& texMatrix,
             const Color& color,
             const Texture* texture) const = 0;
-    };
-
-    /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 1
-        collection.  The draw function in this will work in desktop OpenGL or in OpenGL ES 1.
-
-        Set Mesh::renderer to an instance of RendererGL1 to and call init().  Then all meshes
-        will draw using it.*/
-    class RendererGL1 : public Renderer
-    {
-    public:
-        RendererGL1();
-        ~RendererGL1();
-
-        virtual void init();
-        virtual void drawMesh(
-            const Mesh* mesh,
-            const Mat4& matrix,
-            const Mat3& texMatrix,
-            const Color& color,
-            const Texture* texture) const;
     };
 
     /*! An implementation of Renderer to draw meshes using OpenGL calls from the OpenGL ES 2

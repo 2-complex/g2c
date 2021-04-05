@@ -131,10 +131,10 @@ protected:
 private:
     void assume(const std::map<std::string, Value>* assumption) const;
     void use() const;
-    
+
     void bindAttributeToField(const std::string& name, const Field& field) const;
     void disableEnabledAttributes() const;
-    
+
     bool loadShaders();
     void loadVertexShader(const char* s);
     void loadFragmentShader(const char* s);
@@ -346,23 +346,24 @@ private:
     traverses the list of assumptions and selects an Effect to use, then traverses the assumptions
     again gathering unifrom parameters.  The geometry is then drawn using the shader in that Effect
     with the uniforms set to the values encoded in the assumptions list.*/
-class Shape : public Element {
+class Shape : public Element
+{
 public:
     Shape();
-    
+
     /*! Visible flag.  Drawing with visible set to false does nothing.*/
     bool visible;
-    
+
     std::string geometryName;
     std::vector<std::string> assumptionNames;
-    
+
     /*! A pointer to the Geometry to use when drawing.*/
     Geometry* geometry;
-    
+
     /*! A list of pointers to Assumptions.  Shape::draw() iterates through this list and assumes
         an effect and uniform parameters on that effect before drawing the geometry.*/
     std::list<Assumption*> assumptions;
-    
+
     /*! Draw the shape.  Iterates through the assumptions to obtain an Effect and any uniform
         parameters that Effect needs.*/
     void draw() const;
