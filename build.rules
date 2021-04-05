@@ -1,4 +1,4 @@
-index.js
+website/index.js
 :
 build/animations.o
 build/app.o
@@ -15,9 +15,14 @@ build/texture.o
 build/transforms.o
 build/util.o
 build/wave.o
-main.cpp
+trampolines/emscripten/main.cpp
+trampolines/emscripten/emscriptentrampoline.h
+trampolines/emscripten/triangleapp.h
+trampolines/emscripten/emscriptentrampoline.cpp
+trampolines/emscripten/triangleapp.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -s WASM=1 -s USE_SDL=2
+-Ig2c
 build/animations.o
 build/app.o
 build/audioplayer.o
@@ -33,8 +38,10 @@ build/texture.o
 build/transforms.o
 build/util.o
 build/wave.o
-main.cpp
--o index.js
+trampolines/emscripten/main.cpp
+trampolines/emscripten/emscriptentrampoline.cpp
+trampolines/emscripten/triangleapp.cpp
+-o website/index.js
 :
 
 build/graphics.o
