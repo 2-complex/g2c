@@ -15,11 +15,10 @@ build/texture.o
 build/transforms.o
 build/util.o
 build/wave.o
-trampolines/emscripten/main.cpp
 trampolines/emscripten/emscriptentrampoline.h
-trampolines/emscripten/triangleapp.h
+trampolines/emscripten/launch.h
 trampolines/emscripten/emscriptentrampoline.cpp
-trampolines/emscripten/triangleapp.cpp
+trampolines/emscripten/launch.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -s WASM=1 -s USE_SDL=2
 -Iengine
@@ -38,9 +37,9 @@ build/texture.o
 build/transforms.o
 build/util.o
 build/wave.o
-trampolines/emscripten/main.cpp
 trampolines/emscripten/emscriptentrampoline.cpp
-trampolines/emscripten/triangleapp.cpp
+trampolines/emscripten/launch.cpp
+examples/triangle.cpp
 -o website/index.js
 :
 

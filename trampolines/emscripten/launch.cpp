@@ -1,8 +1,8 @@
-#include "gluttrampoline.h"
+#include "emscriptentrampoline.h"
 
 void launch(App* app)
 {
-    GlutTrampoline trampoline(app);
+    EmscriptenTrampoline trampoline(app);
     trampoline.initWindow("World", 800, 600);
     trampoline.mainLoop();
 }

@@ -24,7 +24,8 @@ EmscriptenTrampoline::~EmscriptenTrampoline()
 {
 }
 
-void EmscriptenTrampoline::initWindow(const std::string& windowTitle, int width, int height)
+void EmscriptenTrampoline::initWindow(
+    const std::string& windowTitle, int width, int height)
 {
     SDL_CreateWindowAndRenderer(640, 480, 0, &window, nullptr);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
@@ -43,15 +44,7 @@ void EmscriptenTrampoline::mainLoop()
 
     loop = [&]
     {
-        if( g_background_is_black )
-        {
-            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-        }
-        else
-        {
-            glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
-        }
-
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClearDepthf(0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

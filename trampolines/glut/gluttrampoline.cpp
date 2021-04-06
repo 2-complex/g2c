@@ -15,8 +15,8 @@
 
 using namespace std;
 
-GlutTrampoline::GlutTrampoline()
-    : app(NULL)
+GlutTrampoline::GlutTrampoline(App* app)
+    : app(app)
 {
 }
 

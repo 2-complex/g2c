@@ -12,7 +12,7 @@ using namespace cello;
 class GlutTrampoline : public Glut
 {
 public:
-    GlutTrampoline();
+    explicit GlutTrampoline(App* app);
     virtual ~GlutTrampoline();
 
 private:
