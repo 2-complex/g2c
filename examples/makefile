@@ -3,12 +3,12 @@ OPTIMIZATION = -O0
 DEBUG = -g3
 ODEBUG = $(DEBUG)
 
-G2C_ROOT_DIR = ..
-G2C_SOURCE_DIR = $(G2C_ROOT_DIR)/g2c
-GLUT_TRAMPOLINE_DIR = $(G2C_ROOT_DIR)/trampolines/glut
+CELLO_ROOT_DIR = ..
+CELLO_SOURCE_DIR = $(CELLO_ROOT_DIR)/engine
+GLUT_TRAMPOLINE_DIR = $(CELLO_ROOT_DIR)/trampolines/glut
 OBJ_DIR = obj
 
-include $(G2C_SOURCE_DIR)/platform.mk
+include $(CELLO_SOURCE_DIR)/platform.mk
 
 EXES = \
 	atlas \
@@ -29,10 +29,10 @@ all: $(EXES)
 
 
 LIBGLUTTRAMPOLINE = $(GLUT_TRAMPOLINE_DIR)/libgluttrampoline.a
-LIBG2C = $(G2C_SOURCE_DIR)/libg2c.a
+LIBCELLO = $(CELLO_SOURCE_DIR)/libcello.a
 
-$(LIBG2C): force_look
-	cd $(G2C_SOURCE_DIR) && $(MAKE) libg2c.a
+$(LIBCELLO): force_look
+	cd $(CELLO_SOURCE_DIR) && $(MAKE) libcello.a
 
 $(LIBGLUTTRAMPOLINE): force_look
 	cd $(GLUT_TRAMPOLINE_DIR) && $(MAKE) libgluttrampoline.a
@@ -44,14 +44,14 @@ GLFLAGS = -DGL_SILENCE_DEPRECATION
 
 define build_with_source
 	c++ $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) \
-		-I$(G2C_SOURCE_DIR) -I$(GLUT_TRAMPOLINE_DIR) \
+		-I$(CELLO_SOURCE_DIR) -I$(GLUT_TRAMPOLINE_DIR) \
 		$(1) -o $(2) \
 		$(LIBGLUTTRAMPOLINE) \
-		$(LIBG2C) \
+		$(LIBCELLO) \
 		$(GRAPHICS_LIBRARIES) $(AUDIO_LIBRARIES)
 endef
 
-DEPS := $(LIBG2C) $(LIBGLUTTRAMPOLINE) $(G2C_SOURCE_DIR)/lin/lin.h
+DEPS := $(LIBCELLO) $(LIBGLUTTRAMPOLINE) $(CELLO_SOURCE_DIR)/lin/lin.h
 
 atlas: $(DEPS) launch.o atlas.cpp
 	$(call build_with_source, launch.o atlas.cpp, atlas)
@@ -98,12 +98,12 @@ worldapp: $(DEPS) launch.o worldapp.cpp
 
 launch.o: $(DEPS) launch.cpp
 	c++  $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) \
-		-I$(G2C_SOURCE_DIR) -I$(GLUT_TRAMPOLINE_DIR) \
+		-I$(CELLO_SOURCE_DIR) -I$(GLUT_TRAMPOLINE_DIR) \
 		launch.cpp -c
 
 
 clean:
-	cd $(G2C_SOURCE_DIR) && $(MAKE) clean
+	cd $(CELLO_SOURCE_DIR) && $(MAKE) clean
 	cd $(GLUT_TRAMPOLINE_DIR) && $(MAKE) clean
 	-rm -f $(EXES)
 	-rm -f *.o

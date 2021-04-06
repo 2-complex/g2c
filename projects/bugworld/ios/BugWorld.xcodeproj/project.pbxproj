@@ -176,7 +176,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		1F0CFAAE18DE73A600E459CF /* g2c */ = {
+		1F0CFAAE18DE73A600E459CF /* cello */ = {
 			isa = PBXGroup;
 			children = (
 				1F0CFAB118DE73A600E459CF /* animations.cpp */,
@@ -218,8 +218,8 @@
 				1F0CFC9F18DE73A800E459CF /* wave.cpp */,
 				1F0CFCA018DE73A800E459CF /* wave.h */,
 			);
-			name = g2c;
-			path = ../../../g2c;
+			name = cello;
+			path = ../../../cello;
 			sourceTree = SOURCE_ROOT;
 		};
 		1F0CFC6918DE73A700E459CF /* lin */ = {
@@ -236,7 +236,7 @@
 			children = (
 				1F1C8DB618DE8CF000E21F3E /* bugworldapp.cpp */,
 				1F1C8DB718DE8CF000E21F3E /* bugworldapp.h */,
-				1F0CFAAE18DE73A600E459CF /* g2c */,
+				1F0CFAAE18DE73A600E459CF /* cello */,
 				080E96DDFE201D6D7F000001 /* xcode */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -395,12 +395,12 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = BugWorld_Prefix.pch;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
-				HEADER_SEARCH_PATHS = ../../../g2c/g2c;
+				HEADER_SEARCH_PATHS = ../../../cello/cello;
 				INFOPLIST_FILE = "BugWorld-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../g2c/g2c\"",
-					"\"$(SRCROOT)/../../../g2c\"",
+					"\"$(SRCROOT)/../cello/cello\"",
+					"\"$(SRCROOT)/../../../cello\"",
 				);
 				PRODUCT_NAME = BugWorld;
 				SDKROOT = iphoneos;
@@ -417,12 +417,12 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = BugWorld_Prefix.pch;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
-				HEADER_SEARCH_PATHS = ../../../g2c/g2c;
+				HEADER_SEARCH_PATHS = ../../../cello/cello;
 				INFOPLIST_FILE = "BugWorldAttack-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../g2c/g2c\"",
-					"\"$(SRCROOT)/../../../g2c\"",
+					"\"$(SRCROOT)/../cello/cello\"",
+					"\"$(SRCROOT)/../../../cello\"",
 				);
 				PRODUCT_NAME = BugWorld;
 				SDKROOT = iphoneos;

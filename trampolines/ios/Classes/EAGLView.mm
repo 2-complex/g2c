@@ -8,7 +8,7 @@
 
 #include "app.h"
 
-class TrampolineApp : public g2c::App {
+class TrampolineApp : public cello::App {
     void draw() const {
         glClearColor(0.3f, 0.4f, 0.6f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -16,7 +16,7 @@ class TrampolineApp : public g2c::App {
 };
 
 using namespace std;
-using namespace g2c;
+using namespace cello;
 
 @implementation EAGLView
 
@@ -166,7 +166,7 @@ using namespace g2c;
         
         // Get the location of the touch on the screen
         CGPoint touchPoint = [touch locationInView:self];
-        // Invert the y point before passing to g2c
+        // Invert the y point before passing to cello
         Vec2 c(touchPoint.x, mHeight - touchPoint.y);
         
         while (filled.find(index) != filled.end())
@@ -191,7 +191,7 @@ using namespace g2c;
     {
         // Get the location of the touch on the screen
         CGPoint touchPoint = [touch locationInView:self];
-        // Invert the y point before passing to g2c
+        // Invert the y point before passing to cello
         Vec2 c(touchPoint.x, mHeight - touchPoint.y);
         
         int index = insider->touchIndexMap[touch];
@@ -210,7 +210,7 @@ using namespace g2c;
         
         // Get the location of the touch on the screen
         CGPoint touchPoint = [touch locationInView:self];
-        // Invert the y point before passing to g2c
+        // Invert the y point before passing to cello
         Vec2 c(touchPoint.x, mHeight - touchPoint.y);
         
         int index = insider->touchIndexMap[touch];

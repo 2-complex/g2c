@@ -52,14 +52,14 @@ def go():
 	print ""
 
 	script_path = os.path.dirname(os.path.realpath(__file__))
-	g2c_dir = os.path.realpath("..")
+	cello_dir = os.path.realpath("..")
 
-	blanks_dir = os.path.join(g2c_dir, "blanks")
+	blanks_dir = os.path.join(cello_dir, "blanks")
 
 	while not os.path.isdir(blanks_dir):
-		print "Could not find blanks/ directory " + blanks_dir + ".  Where is g2c?"
-		g2c_dir = raw_input("Enter path to g2c root directory: ")
-		blanks_dir = os.path.join(g2c_dir, "projects", "blanks")
+		print "Could not find blanks/ directory " + blanks_dir + ".  Where is cello?"
+		cello_dir = raw_input("Enter path to cello root directory: ")
+		blanks_dir = os.path.join(cello_dir, "projects", "blanks")
 		print ""
 
 	print "At what path would you like to place the new project directory?"

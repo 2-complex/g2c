@@ -6,7 +6,7 @@
 #include <string>
 #include <stdlib.h>
 
-using namespace g2c;
+using namespace cello;
 using namespace std;
 
 

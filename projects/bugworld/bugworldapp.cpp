@@ -6,7 +6,7 @@
 #include "bank.h"
 #include "audioplayer.h"
 
-using namespace g2c;
+using namespace cello;
 
 
 void BugWorldApp::setBank(Bank* inBank)
@@ -34,7 +34,7 @@ void BugWorldApp::init()
 
     world->bank = bank;
     bank->initSerializableWithPath(world, "bug.world");
-    g2clog( "%s\n", world->serialize().c_str() );
+    cellolog( "%s\n", world->serialize().c_str() );
 }
 
 void BugWorldApp::draw() const

@@ -3,7 +3,7 @@
 #include "launch.h"
 
 using namespace std;
-using namespace g2c;
+using namespace cello;
 
 struct Particle
 {
@@ -66,7 +66,7 @@ void SteamApp::resize(int width, int height)
         0.1 * cameraRadius,
         1000 * cameraRadius );
 
-    modelView = g2c::lookAt(
+    modelView = cello::lookAt(
         Vec3(1, 5, 1),
         Vec3(0, 0, 0),
         Vec3(0, 0, 1));

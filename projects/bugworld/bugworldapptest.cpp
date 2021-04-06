@@ -8,7 +8,7 @@
 #include "appenvironment.h"
 
 
-using namespace g2c;
+using namespace cello;
 
 int main(int argc, char** args)
 {

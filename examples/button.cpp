@@ -4,7 +4,7 @@
 #include "launch.h"
 #include "transforms.h"
 
-using namespace g2c;
+using namespace cello;
 
 class MyButtonHandler : public ButtonHandler
 {
@@ -13,7 +13,7 @@ class MyButtonHandler : public ButtonHandler
 
 void MyButtonHandler::click(Button* button)
 {
-    g2clog( "I got clicked... or tapped.\n" );
+    cellolog( "I got clicked... or tapped.\n" );
 }
 
 class ButtonApp : public App

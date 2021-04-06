@@ -54,7 +54,7 @@ void GlutTrampoline::resize(int w, int h)
     if(app)
         app->resize(w, h);
     else
-        g2clog( "GlutTrampoline used with no app\n" );
+        cellolog( "GlutTrampoline used with no app\n" );
 }
 
 void GlutTrampoline::init()
@@ -73,7 +73,7 @@ void GlutTrampoline::init()
         app->init();
     }
     else
-        g2clog( "GlutTrampoline used with no app\n" );
+        cellolog( "GlutTrampoline used with no app\n" );
 }
 
 void GlutTrampoline::destroy()
@@ -85,7 +85,7 @@ void GlutTrampoline::destroy()
         delete bank;
     }
     else
-        g2clog( "GlutTrampoline used with no app\n" );
+        cellolog( "GlutTrampoline used with no app\n" );
 }
 
 void GlutTrampoline::step(double t)
@@ -93,7 +93,7 @@ void GlutTrampoline::step(double t)
     if(app)
         app->step(t);
     else
-        g2clog( "GlutTrampoline used with no app\n" );
+        cellolog( "GlutTrampoline used with no app\n" );
 }
 
 void GlutTrampoline::draw() const
@@ -101,7 +101,7 @@ void GlutTrampoline::draw() const
     if(app)
         app->draw();
     else
-        g2clog( "GlutTrampoline used with no app\n" );
+        cellolog( "GlutTrampoline used with no app\n" );
 }
 
 
@@ -110,7 +110,7 @@ void GlutTrampoline::keyboard(unsigned char inkey)
     if(app)
         app->keyboard(inkey);
     else
-        g2clog( "GlutTrampoline used with no app\n" );
+        cellolog( "GlutTrampoline used with no app\n" );
 }
 
 void GlutTrampoline::special(unsigned char inkey)
@@ -118,7 +118,7 @@ void GlutTrampoline::special(unsigned char inkey)
     if(app)
         app->special(inkey);
     else
-        g2clog( "GlutTrampoline used with no app\n" );
+        cellolog( "GlutTrampoline used with no app\n" );
 }
 
 void GlutTrampoline::keyDown(unsigned char inkey)
@@ -126,7 +126,7 @@ void GlutTrampoline::keyDown(unsigned char inkey)
     if(app)
         app->keyDown(inkey);
     else
-        g2clog( "GlutTrampoline used with no app\n" );
+        cellolog( "GlutTrampoline used with no app\n" );
 }
 
 void GlutTrampoline::keyUp(unsigned char inkey)
@@ -134,7 +134,7 @@ void GlutTrampoline::keyUp(unsigned char inkey)
     if(app)
         app->keyUp(inkey);
     else
-        g2clog( "GlutTrampoline used with no app\n" );
+        cellolog( "GlutTrampoline used with no app\n" );
 }
 
 bool GlutTrampoline::mouseDown(const Vec2& C)
@@ -149,7 +149,7 @@ bool GlutTrampoline::mouseDown(const Vec2& C)
         return touchOn;
     }
     else
-        g2clog( "GlutTrampoline used with no app\n" );
+        cellolog( "GlutTrampoline used with no app\n" );
 
     return false;
 }
@@ -164,7 +164,7 @@ void GlutTrampoline::mouseDragged(const Vec2& C)
             app->mouseDragged(C);
     }
     else
-        g2clog( "GlutTrampoline used with no app\n" );
+        cellolog( "GlutTrampoline used with no app\n" );
 }
 
 void GlutTrampoline::mouseUp(const Vec2& C)
@@ -177,5 +177,5 @@ void GlutTrampoline::mouseUp(const Vec2& C)
             app->mouseUp(C);
     }
     else
-        g2clog( "GlutTrampoline used with no app\n" );
+        cellolog( "GlutTrampoline used with no app\n" );
 }

@@ -5,7 +5,7 @@
 #include "launch.h"
 
 
-using namespace g2c;
+using namespace cello;
 using namespace std;
 
 class WorldApp : public App
@@ -58,7 +58,7 @@ void WorldApp::init()
 
     world->bank = bank;
     bank->initSerializableWithPath(world, filename.c_str());
-    g2clog( "%s\n", world->serialize().c_str() );
+    cellolog( "%s\n", world->serialize().c_str() );
 }
 
 void WorldApp::draw() const

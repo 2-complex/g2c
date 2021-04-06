@@ -12,10 +12,10 @@
 class Insider
 {
 public:
-	g2c::App* app;
-	g2c::World* world;
-	g2c::IOSResourceBank* bank;
-	g2c::Renderer* renderer;
+	cello::App* app;
+	cello::World* world;
+	cello::IOSResourceBank* bank;
+	cello::Renderer* renderer;
 	std::map<UITouch*, int> touchIndexMap;
 };
 

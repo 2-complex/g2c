@@ -6,7 +6,7 @@
 #include "app.h"
 
 using namespace std;
-using namespace g2c;
+using namespace cello;
 
 struct Particle
 {

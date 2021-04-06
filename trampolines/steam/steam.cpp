@@ -14,7 +14,7 @@ void SteamApp::reshape(int width, int height)
         0.1 * cameraRadius,
         1000 * cameraRadius );
 
-    modelView = g2c::lookAt(
+    modelView = cello::lookAt(
         Vec3(1, 5, 1),
         Vec3(0, 0, 0),
         Vec3(0, 0, 1));

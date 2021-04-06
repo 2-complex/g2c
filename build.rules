@@ -22,7 +22,7 @@ trampolines/emscripten/emscriptentrampoline.cpp
 trampolines/emscripten/triangleapp.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -s WASM=1 -s USE_SDL=2
--Ig2c
+-Icello
 build/animations.o
 build/app.o
 build/audioplayer.o
@@ -46,151 +46,151 @@ trampolines/emscripten/triangleapp.cpp
 
 build/graphics.o
 :
-g2c/opengl.h
-g2c/graphics.h
-g2c/graphics.cpp
+cello/opengl.h
+cello/graphics.h
+cello/graphics.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/graphics.cpp
+cello/graphics.cpp
 -o build/graphics.o
 :
 
 build/animations.o
 :
-g2c/animations.h
-g2c/animations.cpp
+cello/animations.h
+cello/animations.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/animations.cpp
+cello/animations.cpp
 -o build/animations.o
 :
 
 build/app.o
 :
-g2c/app.h
-g2c/app.cpp
+cello/app.h
+cello/app.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/app.cpp
+cello/app.cpp
 -o build/app.o
 :
 
 build/audioplayer.o
 :
-g2c/audioplayer.h
-g2c/audioplayer.cpp
+cello/audioplayer.h
+cello/audioplayer.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/audioplayer.cpp
+cello/audioplayer.cpp
 -o build/audioplayer.o
 :
 
 build/bank.o
 :
-g2c/bank.h
-g2c/bank.cpp
+cello/bank.h
+cello/bank.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/bank.cpp
+cello/bank.cpp
 -o build/bank.o
 :
 
 build/fattening.o
 :
-g2c/fattening.h
-g2c/fattening.cpp
+cello/fattening.h
+cello/fattening.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/fattening.cpp
+cello/fattening.cpp
 -o build/fattening.o
 :
 
 build/listener.o
 :
-g2c/listener.h
-g2c/listener.cpp
+cello/listener.h
+cello/listener.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/listener.cpp
+cello/listener.cpp
 -o build/listener.o
 :
 
 build/parse.o
 :
-g2c/parse.h
-g2c/parse.cpp
+cello/parse.h
+cello/parse.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/parse.cpp
+cello/parse.cpp
 -o build/parse.o
 :
 
 build/serializable.o
 :
-g2c/serializable.h
-g2c/serializable.cpp
+cello/serializable.h
+cello/serializable.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/serializable.cpp
+cello/serializable.cpp
 -o build/serializable.o
 :
 
 build/sound.o
 :
-g2c/sound.h
-g2c/sound.cpp
+cello/sound.h
+cello/sound.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/sound.cpp
+cello/sound.cpp
 -o build/sound.o
 :
 
 build/sprites.o
 :
-g2c/sprites.h
-g2c/sprites.cpp
+cello/sprites.h
+cello/sprites.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/sprites.cpp
+cello/sprites.cpp
 -o build/sprites.o
 :
 
 build/texture.o
 :
-g2c/texture.h
-g2c/texture.cpp
+cello/texture.h
+cello/texture.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/texture.cpp
+cello/texture.cpp
 -o build/texture.o
 :
 
 build/transforms.o
 :
-g2c/transforms.h
-g2c/transforms.cpp
+cello/transforms.h
+cello/transforms.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/transforms.cpp
+cello/transforms.cpp
 -o build/transforms.o
 :
 
 build/util.o
 :
-g2c/util.h
-g2c/util.cpp
+cello/util.h
+cello/util.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/util.cpp
+cello/util.cpp
 -o build/util.o
 :
 
 build/wave.o
 :
-g2c/wave.h
-g2c/wave.cpp
+cello/wave.h
+cello/wave.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-g2c/wave.cpp
+cello/wave.cpp
 -o build/wave.o
 :

@@ -1,6 +1,6 @@
 
 /*
-  g2c Copyright (C) 2012 2-Complex
+  cello Copyright (C) 2012 2-Complex
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -31,7 +31,8 @@ void motion(int x, int y);
 void button(int b, int state, int x, int y);
 void keyboard(unsigned char inkey, int x, int y);
 
-namespace g2c {
+namespace cello
+{
 
 Glut* gGlut = NULL;
 

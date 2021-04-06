@@ -3,9 +3,9 @@ OPTIMIZATION = -O0
 DEBUG = -g3
 ODEBUG = $(DEBUG)
 
-G2C_ROOT_DIR = ../..
-G2C_SOURCE_DIR = $(G2C_ROOT_DIR)/g2c
-ENVIRONMENTS_DIR = $(G2C_ROOT_DIR)/environments
+CELLO_ROOT_DIR = ../..
+CELLO_SOURCE_DIR = $(CELLO_ROOT_DIR)/cello
+ENVIRONMENTS_DIR = $(CELLO_ROOT_DIR)/environments
 OBJ_DIR = obj
 
 
@@ -26,41 +26,41 @@ ENVIRONMENTS =\
 	$(OBJ_DIR)/environment.o \
 	$(OBJ_DIR)/appenvironment.o
 
-LIBG2C = $(G2C_SOURCE_DIR)/libg2c.a
+LIBCELLO = $(CELLO_SOURCE_DIR)/libcello.a
 
-$(LIBG2C): force_look
-	cd $(G2C_SOURCE_DIR) && $(MAKE) libg2c.a
+$(LIBCELLO): force_look
+	cd $(CELLO_SOURCE_DIR) && $(MAKE) libcello.a
 
 force_look:
 	true
 
 
 bugworldapp.o: bugworldapp.cpp bugworldapp.h
-	c++ $(ODEBUG) $(OPTIMIZATION) $(FLAGS) -I$(G2C_SOURCE_DIR) -c bugworldapp.cpp
+	c++ $(ODEBUG) $(OPTIMIZATION) $(FLAGS) -I$(CELLO_SOURCE_DIR) -c bugworldapp.cpp
 
 bugworldapptest: \
-		$(LIBG2C) \
+		$(LIBCELLO) \
 		$(ENVIRONMENTS) \
 		bugworldapp.o \
 		bugworldapptest.cpp
 	c++ $(FLAGS) $(DEBUG) $(OPTIMIZATION) $(GLFLAGS) $(GRAPHICS_FRAMEWORKS) $(AUDIO_FRAMEWORKS) \
-		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
+		-I$(CELLO_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		$(ENVIRONMENTS) \
-		$(LIBG2C) \
+		$(LIBCELLO) \
 		bugworldapp.o \
 		bugworldapptest.cpp -o bugworldapptest
 
 $(OBJ_DIR)/environment.o: $(ENVIRONMENTS_DIR)/environment.cpp $(ENVIRONMENTS_DIR)/environment.h
 	@mkdir -p $(@D)
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) \
-		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
+		-I$(CELLO_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		-c $(ENVIRONMENTS_DIR)/environment.cpp -o $(OBJ_DIR)/environment.o
 
 $(OBJ_DIR)/appenvironment.o: $(ENVIRONMENTS_DIR)/appenvironment.cpp\
 		$(ENVIRONMENTS_DIR)/appenvironment.h
 	@mkdir -p $(@D)
 	c++ $(FLAGS) $(ODEBUG) $(OPTIMIZATION) \
-		-I$(G2C_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
+		-I$(CELLO_SOURCE_DIR) -I$(ENVIRONMENTS_DIR) \
 		-c $(ENVIRONMENTS_DIR)/appenvironment.cpp -o $(OBJ_DIR)/appenvironment.o
 
 

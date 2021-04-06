@@ -7,7 +7,7 @@
 #include "launch.h"
 
 using namespace std;
-using namespace g2c;
+using namespace cello;
 
 class StarApp : public App
 {

@@ -2,7 +2,7 @@
 #include "app.h"
 #include "launch.h"
 
-using namespace g2c;
+using namespace cello;
 
 class TriangleApp : public App
 {

@@ -7,7 +7,7 @@
 #include "bank.h"
 #include "audioplayer.h"
 
-using namespace g2c;
+using namespace cello;
 
 class GlutTrampoline : public Glut
 {

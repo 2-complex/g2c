@@ -6,7 +6,7 @@
 
 #include <SDL.h>
 
-using namespace g2c;
+using namespace cello;
 
 class EmscriptenTrampoline
 {

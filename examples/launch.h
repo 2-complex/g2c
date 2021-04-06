@@ -4,7 +4,7 @@
 
 #include "app.h"
 
-void launch(g2c::App* app);
+void launch(cello::App* app);
 
 #endif
 

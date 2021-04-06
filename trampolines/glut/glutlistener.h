@@ -1,6 +1,6 @@
 
 /*
-  g2c Copyright (C) 2012 2-Complex
+  cello Copyright (C) 2012 2-Complex
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -27,7 +27,8 @@
 
 #include <set>
 
-namespace g2c {
+namespace cello
+{
 
 class GlutListener;
 

@@ -1,6 +1,6 @@
 
 /*
-  g2c Copyright (C) 2012 2-Complex
+  cello Copyright (C) 2012 2-Complex
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -24,7 +24,7 @@
 #include "glutlistener.h"
 #include "opengl.h"
 
-namespace g2c
+namespace cello
 {
 GlutListener* gGlutListener = NULL;
 GlutListener::GlutListener() : listening(true), delegate(NULL) {}

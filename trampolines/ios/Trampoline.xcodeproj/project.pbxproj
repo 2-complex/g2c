@@ -179,7 +179,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		1FF591B019FD734400C8117D /* g2c */ = {
+		1FF591B019FD734400C8117D /* cello */ = {
 			isa = PBXGroup;
 			children = (
 				1FF591B319FD734400C8117D /* animations.cpp */,
@@ -225,8 +225,8 @@
 				1FF593ED19FD734600C8117D /* wave.cpp */,
 				1FF593EE19FD734600C8117D /* wave.h */,
 			);
-			name = g2c;
-			path = ../../g2c;
+			name = cello;
+			path = ../../cello;
 			sourceTree = "<group>";
 		};
 		1FF5939619FD734500C8117D /* lin */ = {
@@ -242,7 +242,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				1FF591B019FD734400C8117D /* g2c */,
+				1FF591B019FD734400C8117D /* cello */,
 				080E96DDFE201D6D7F000001 /* xcode */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -402,13 +402,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Trampoline_Prefix.pch;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
-				HEADER_SEARCH_PATHS = ../../g2c;
+				HEADER_SEARCH_PATHS = ../../cello;
 				INFOPLIST_FILE = "Trampoline-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../g2c\"",
-					/Users/peterson/source/g2c/g2c,
+					"\"$(SRCROOT)/../../../cello\"",
+					/Users/peterson/source/cello/cello,
 				);
 				PRODUCT_NAME = Trampoline;
 				SDKROOT = iphoneos;
@@ -425,13 +425,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Trampoline_Prefix.pch;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
-				HEADER_SEARCH_PATHS = ../../g2c;
+				HEADER_SEARCH_PATHS = ../../cello;
 				INFOPLIST_FILE = "TrampolineAttack-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../g2c\"",
-					/Users/peterson/source/g2c/g2c,
+					"\"$(SRCROOT)/../../../cello\"",
+					/Users/peterson/source/cello/cello,
 				);
 				PRODUCT_NAME = Trampoline;
 				SDKROOT = iphoneos;

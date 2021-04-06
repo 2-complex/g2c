@@ -1,6 +1,6 @@
 *.dSYM
 
-g2c/libg2c.a
+engine/libcello.a
 
 *.o
 */obj
