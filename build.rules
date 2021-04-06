@@ -22,7 +22,7 @@ trampolines/emscripten/emscriptentrampoline.cpp
 trampolines/emscripten/triangleapp.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -s WASM=1 -s USE_SDL=2
--Icello
+-Iengine
 build/animations.o
 build/app.o
 build/audioplayer.o
@@ -46,151 +46,151 @@ trampolines/emscripten/triangleapp.cpp
 
 build/graphics.o
 :
-cello/opengl.h
-cello/graphics.h
-cello/graphics.cpp
+engine/opengl.h
+engine/graphics.h
+engine/graphics.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/graphics.cpp
+engine/graphics.cpp
 -o build/graphics.o
 :
 
 build/animations.o
 :
-cello/animations.h
-cello/animations.cpp
+engine/animations.h
+engine/animations.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/animations.cpp
+engine/animations.cpp
 -o build/animations.o
 :
 
 build/app.o
 :
-cello/app.h
-cello/app.cpp
+engine/app.h
+engine/app.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/app.cpp
+engine/app.cpp
 -o build/app.o
 :
 
 build/audioplayer.o
 :
-cello/audioplayer.h
-cello/audioplayer.cpp
+engine/audioplayer.h
+engine/audioplayer.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/audioplayer.cpp
+engine/audioplayer.cpp
 -o build/audioplayer.o
 :
 
 build/bank.o
 :
-cello/bank.h
-cello/bank.cpp
+engine/bank.h
+engine/bank.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/bank.cpp
+engine/bank.cpp
 -o build/bank.o
 :
 
 build/fattening.o
 :
-cello/fattening.h
-cello/fattening.cpp
+engine/fattening.h
+engine/fattening.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/fattening.cpp
+engine/fattening.cpp
 -o build/fattening.o
 :
 
 build/listener.o
 :
-cello/listener.h
-cello/listener.cpp
+engine/listener.h
+engine/listener.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/listener.cpp
+engine/listener.cpp
 -o build/listener.o
 :
 
 build/parse.o
 :
-cello/parse.h
-cello/parse.cpp
+engine/parse.h
+engine/parse.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/parse.cpp
+engine/parse.cpp
 -o build/parse.o
 :
 
 build/serializable.o
 :
-cello/serializable.h
-cello/serializable.cpp
+engine/serializable.h
+engine/serializable.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/serializable.cpp
+engine/serializable.cpp
 -o build/serializable.o
 :
 
 build/sound.o
 :
-cello/sound.h
-cello/sound.cpp
+engine/sound.h
+engine/sound.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/sound.cpp
+engine/sound.cpp
 -o build/sound.o
 :
 
 build/sprites.o
 :
-cello/sprites.h
-cello/sprites.cpp
+engine/sprites.h
+engine/sprites.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/sprites.cpp
+engine/sprites.cpp
 -o build/sprites.o
 :
 
 build/texture.o
 :
-cello/texture.h
-cello/texture.cpp
+engine/texture.h
+engine/texture.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/texture.cpp
+engine/texture.cpp
 -o build/texture.o
 :
 
 build/transforms.o
 :
-cello/transforms.h
-cello/transforms.cpp
+engine/transforms.h
+engine/transforms.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/transforms.cpp
+engine/transforms.cpp
 -o build/transforms.o
 :
 
 build/util.o
 :
-cello/util.h
-cello/util.cpp
+engine/util.h
+engine/util.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/util.cpp
+engine/util.cpp
 -o build/util.o
 :
 
 build/wave.o
 :
-cello/wave.h
-cello/wave.cpp
+engine/wave.h
+engine/wave.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -c
-cello/wave.cpp
+engine/wave.cpp
 -o build/wave.o
 :
