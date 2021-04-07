@@ -1,6 +1,8 @@
 *.dSYM
 
 engine/libcello.a
+website/*.js
+website/*.wasm
 
 *.o
 */obj
