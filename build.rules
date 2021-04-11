@@ -1,12 +1,25 @@
 website/triangle.js
 :
 build/libcello.a
+examples/triangle.cpp
 :
 emcc -std=c++11 -s WASM=1 -O3 -s WASM=1 -s USE_SDL=2
 -Iengine
 build/libcello.a
 examples/triangle.cpp
 -o website/triangle.js
+:
+
+website/tetrahedron.js
+:
+build/libcello.a
+examples/tetrahedron.cpp
+:
+emcc -std=c++11 -s WASM=1 -O3 -s WASM=1 -s USE_SDL=2
+-Iengine
+build/libcello.a
+examples/tetrahedron.cpp
+-o website/tetrahedron.js
 :
 
 build/emscriptentrampoline.o

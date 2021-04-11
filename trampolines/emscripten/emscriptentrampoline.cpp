@@ -10,7 +10,7 @@ using namespace std;
 bool g_background_is_black = true;
 
 // the function called by the javascript code
-extern "C" void EMSCRIPTEN_KEEPALIVE g_toggle_background_color()
+extern "C" void EMSCRIPTEN_KEEPALIVE toggle_background_color()
 {
     g_background_is_black = !g_background_is_black;
 }
@@ -40,6 +40,8 @@ static void main_loop() { loop(); }
 void EmscriptenTrampoline::mainLoop()
 {
     app->init();
+    app->resize(640, 480);
+
     double clock = 0.0;
 
     loop = [&]
